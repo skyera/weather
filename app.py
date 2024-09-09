@@ -22,6 +22,15 @@ def get_neofetch_info():
         return "Failed to retrieve system info"
 
 
+def get_fastfetch_info():
+    try:
+        # Execute the fastfetch command and capture the output
+        fastfetch_output = subprocess.check_output(["fastfetch"], text=True)
+        return fastfetch_output
+    except subprocess.CalledProcessError:
+        return "Failed to retrieve system info."
+
+
 @app.route("/")
 def index():
     now = datetime.now()
@@ -37,6 +46,7 @@ def index():
     camera.close()
 
     neofetch_info = get_neofetch_info()
+    # neofetch_info = get_fastfetch_info()
 
     cmd = f"/usr/bin/convert {filename} -pointsize 16 -fill red -annotate +400+450 '{now}' {filename}"
     call(cmd, shell=True)
