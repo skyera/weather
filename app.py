@@ -1,3 +1,4 @@
+import subprocess
 import time
 from datetime import datetime
 from subprocess import call
@@ -9,6 +10,16 @@ import bme280 as bme
 
 app = Flask(__name__, static_url_path="/static")
 filename = "/home/pi/test/weather/static/image.jpg"
+
+
+def get_neofetch_info():
+    try:
+        neofetch_output = subprocess.check_output(
+            "neofetch --stdout", shell=True, text=True
+        )
+        return neofetch_output
+    except subprocess.CalledProcessError as e:
+        return "Failed to retrieve system info"
 
 
 @app.route("/")
@@ -25,7 +36,14 @@ def index():
     camera.stop_preview()
     camera.close()
 
+    neofetch_info = get_neofetch_info()
+
     cmd = f"/usr/bin/convert {filename} -pointsize 16 -fill red -annotate +400+450 '{now}' {filename}"
     call(cmd, shell=True)
 
-    return render_template("index.html", curr_time=now, temperature=temperature)
+    return render_template(
+        "index.html",
+        curr_time=now,
+        temperature=temperature,
+        neofetch_info=neofetch_info,
+    )

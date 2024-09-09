@@ -1,17 +1,57 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta character="utf-8">
-    <title>Raspberry Pi</title>
+    <title>Weather Statation</title>
+    <style>
+          body {
+              background-color: #2E4053;
+              color: #F7F9F9;
+              font-family: 'Helvetica', sans-serif;
+              text-align: center;
+              padding: 20px;
+          }
+          h1 {
+              font-size: 3em;
+              margin-bottom: 10px;
+          }
+          img {
+              width: 640px;
+              height: 480px;
+          }
+          .temperature {
+              font-size: 2.5em;
+              margin-top: 20px;
+          }
+          .footer {
+              margin-top: 30px;
+              font-size: 1em;
+              color: #BDC3C7;
+          }
+          .neofetch-info {
+            text-align: left;
+            font-family: 'Courier New', monospace;
+            background-color: #1B2631;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            max-width: 100%;
+            margin: 20px auto;
+          }
+      </style>
   </head>
   <body>
-    <h1>Raspberry Pi</h1>
+    <h1>Weather Station on Raspberry Pi</h1>
+    <div class="neofetch-info">
+      <pre>{{neofetch_info}}</pre>
+    </div>
 
-    <h2>Time: {{curr_time}}</h2>
 
-    <h2>Temperatur: {{temperature}}</h2>
+    <div class="temperature">Temperature: {{temperature}}</div>
     <p>
-      <img src="/static/image.jpg">
+      <img src="{{url_for('static', filename='image.jpg')}}"/>
     </p>
+    <div class="footer">Data Updated: {{curr_time}}</div>
   </body>
 </html>
