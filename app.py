@@ -37,6 +37,15 @@ image_path = "/home/pi/test/weather/static/image.jpg"
 image_folder = "/home/pi/Pictures/"
 
 
+def get_filename():
+    current_time = datetime.now()
+    formatted_time = current_time.strftime("%Y-%m-%d_%H-%M-%S")
+
+    filename = f"{formatted_time}.png"
+
+    return filename
+
+
 @app.route("/")
 def index():
     now = datetime.now()
@@ -46,7 +55,9 @@ def index():
     camera.resolution = (640, 480)
 
     if os.path.exists(image_path):
-        shutil.copy(image_path, image_folder)
+        path = os.path.join(image_folder, get_filename())
+        print(path)
+        shutil.copy(image_path, path)
 
     camera.start_preview()
     time.sleep(2)
