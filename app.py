@@ -1,3 +1,5 @@
+import os
+import shutil
 import subprocess
 import time
 from datetime import datetime
@@ -31,6 +33,10 @@ def get_fastfetch_info():
         return "Failed to retrieve system info."
 
 
+image_path = "/home/pi/test/weather/static/image.jpg"
+image_folder = "/home/pi/Pictures/"
+
+
 @app.route("/")
 def index():
     now = datetime.now()
@@ -38,6 +44,9 @@ def index():
     temperature, pressure, humidity = bme.readBME280All()
     camera = PiCamera()
     camera.resolution = (640, 480)
+
+    if os.path.exists(image_path):
+        shutil.copy(image_path, image_folder)
 
     camera.start_preview()
     time.sleep(2)
