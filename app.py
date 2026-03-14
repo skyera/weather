@@ -31,15 +31,41 @@ IMAGE_FOLDER.mkdir(exist_ok=True)
 
 
 def get_system_info():
-    """Get system info using fastfetch or neofetch."""
-    for cmd in [["fastfetch", "--stdout"], ["fastfetch"], ["neofetch", "--stdout"]]:
-        try:
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
-            if result.returncode == 0 and result.stdout.strip():
-                return result.stdout
-        except (subprocess.TimeoutExpired, FileNotFoundError):
-            continue
-    return "System info unavailable"
+    """Get Raspberry Pi model, CPU uptime, and memory info."""
+    info = {}
+    
+    # Get Raspberry Pi model
+    try:
+        with open("/proc/device-tree/model", "r") as f:
+            info["model"] = f.read().strip().replace("\x00", "")
+    except (FileNotFoundError, IOError):
+        info["model"] = "Unknown Model"
+    
+    # Get CPU uptime
+    try:
+        result = subprocess.run(["uptime", "-p"], capture_output=True, text=True, timeout=5)
+        if result.returncode == 0:
+            info["uptime"] = result.stdout.strip()
+        else:
+            info["uptime"] = "Uptime unavailable"
+    except (subprocess.TimeoutExpired, FileNotFoundError):
+        info["uptime"] = "Uptime unavailable"
+    
+    # Get memory info
+    try:
+        result = subprocess.run(["free", "-h"], capture_output=True, text=True, timeout=5)
+        if result.returncode == 0:
+            lines = result.stdout.strip().split("\n")
+            if len(lines) > 1:
+                info["memory"] = lines[1]  # Memory line from free output
+            else:
+                info["memory"] = "Memory info unavailable"
+        else:
+            info["memory"] = "Memory info unavailable"
+    except (subprocess.TimeoutExpired, FileNotFoundError):
+        info["memory"] = "Memory info unavailable"
+    
+    return info
 
 
 def get_sensor_data():
