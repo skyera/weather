@@ -1,57 +1,543 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta character="utf-8">
-    <title>Weather Statation</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌤️ Weather Station</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <style>
-          body {
-              background-color: #2E4053;
-              color: #F7F9F9;
-              font-family: 'Helvetica', sans-serif;
-              text-align: center;
-              padding: 20px;
-          }
-          h1 {
-              font-size: 3em;
-              margin-bottom: 10px;
-          }
-          img {
-              width: 640px;
-              height: 480px;
-          }
-          .temperature {
-              font-size: 2.5em;
-              margin-top: 20px;
-          }
-          .footer {
-              margin-top: 30px;
-              font-size: 1em;
-              color: #BDC3C7;
-          }
-          .neofetch-info {
-            text-align: left;
-            font-family: 'Courier New', monospace;
-            background-color: #1B2631;
-            padding: 10px;
-            border-radius: 5px;
-            white-space: pre-wrap;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #ec4899;
+            --accent: #06b6d4;
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* Animated background particles */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-animation span {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float 15s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Main grid */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Glassmorphism cards */
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeInUp 0.6s ease backwards;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        .card:nth-child(4) { animation-delay: 0.4s; }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .temp-icon { background: linear-gradient(135deg, #f97316, #ef4444); }
+        .humidity-icon { background: linear-gradient(135deg, #06b6d4, #3b82f6); }
+        .pressure-icon { background: linear-gradient(135deg, #8b5cf6, #a855f7); }
+        .altitude-icon { background: linear-gradient(135deg, #10b981, #22c55e); }
+
+        .card-title {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .card-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-top: 0.25rem;
+        }
+
+        .card-unit {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* Weather status card */
+        .weather-status {
+            grid-column: span 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(236, 72, 153, 0.2));
+        }
+
+        .weather-icon {
+            font-size: 6rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .weather-info h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .weather-desc {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Camera feed */
+        .camera-section {
+            grid-column: span 2;
+        }
+
+        .camera-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .live-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+            animation: blink 1s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .camera-feed {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .camera-feed img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .camera-feed:hover img {
+            transform: scale(1.02);
+        }
+
+        .timestamp-overlay {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+        }
+
+        /* System info */
+        .system-card {
+            grid-column: span 2;
+        }
+
+        .system-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .system-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .system-content {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 12px;
+            padding: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
             overflow-x: auto;
-            max-width: 100%;
-            margin: 20px auto;
-          }
-      </style>
-  </head>
-  <body>
-    <h1>Weather Station on Raspberry Pi</h1>
-    <div class="neofetch-info">
-      <pre>{{neofetch_info}}</pre>
+        }
+
+        .system-content pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .refresh-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .dashboard { grid-template-columns: 1fr; }
+            .weather-status,
+            .camera-section,
+            .system-card { grid-column: span 1; }
+            .weather-icon { font-size: 4rem; }
+            .card-value { font-size: 2rem; }
+        }
+
+        /* Loading state */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation" id="particles"></div>
+
+    <div class="container">
+        <header>
+            <h1>🌤️ Weather Station</h1>
+            <p class="subtitle">Raspberry Pi Live Monitoring</p>
+        </header>
+
+        <div class="dashboard">
+            <!-- Weather Status -->
+            <div class="card weather-status">
+                <div class="weather-icon">{{weather_icon}}</div>
+                <div class="weather-info">
+                    <h2>Current Conditions</h2>
+                    <p class="weather-desc" id="weather-desc">
+                        {% if temperature %}
+                            {% if temperature < 10 %}Cold{% elif temperature < 25 %}Mild{% else %}Hot{% endif %} with {{humidity}}% humidity
+                        {% else %}
+                            Sensor unavailable
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Temperature -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon temp-icon">🌡️</div>
+                    <div>
+                        <div class="card-title">Temperature</div>
+                        <div class="card-value">
+                            {% if temperature %}
+                                {{temperature}}<span class="card-unit">°C</span>
+                            {% else %}--{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Humidity -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon humidity-icon">💧</div>
+                    <div>
+                        <div class="card-title">Humidity</div>
+                        <div class="card-value">
+                            {% if humidity %}
+                                {{humidity}}<span class="card-unit">%</span>
+                            {% else %}--{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pressure -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon pressure-icon">📊</div>
+                    <div>
+                        <div class="card-title">Pressure</div>
+                        <div class="card-value">
+                            {% if pressure %}
+                                {{pressure}}<span class="card-unit">hPa</span>
+                            {% else %}--{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Altitude -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon altitude-icon">⛰️</div>
+                    <div>
+                        <div class="card-title">Altitude</div>
+                        <div class="card-value">
+                            {% if altitude %}
+                                {{altitude}}<span class="card-unit">m</span>
+                            {% else %}--{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Camera Feed -->
+            <div class="card camera-section">
+                <div class="camera-header">
+                    <h3>📷 Live Camera</h3>
+                    <div class="live-badge">
+                        <span class="live-dot"></span>
+                        LIVE
+                    </div>
+                </div>
+                <div class="camera-feed">
+                    {% if image_exists %}
+                        <img src="{{url_for('static', filename='image.jpg')}}?t={{curr_time.timestamp()}}" alt="Weather Camera" id="camera-img">
+                    {% else %}
+                        <div style="padding: 4rem; text-align: center; color: var(--text-secondary);">
+                            📷 No image available
+                        </div>
+                    {% endif %}
+                    <div class="timestamp-overlay" id="timestamp">{{curr_time.strftime('%Y-%m-%d %H:%M:%S')}}</div>
+                </div>
+            </div>
+
+            <!-- System Info -->
+            <div class="card system-card">
+                <div class="system-header">
+                    <div class="system-icon">🖥️</div>
+                    <h3>System Information</h3>
+                </div>
+                <div class="system-content">
+                    <pre>{{system_info}}</pre>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Last Updated: <span id="footer-time">{{curr_time.strftime('%Y-%m-%d %H:%M:%S')}}</span></p>
+            <div class="refresh-indicator">
+                <div class="spinner"></div>
+                <span>Auto-refreshing every 30s</span>
+            </div>
+        </footer>
     </div>
 
+    <script>
+        // Create floating particles
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 50; i++) {
+            const span = document.createElement('span');
+            span.style.left = Math.random() * 100 + '%';
+            span.style.animationDelay = Math.random() * 15 + 's';
+            span.style.animationDuration = (10 + Math.random() * 10) + 's';
+            particlesContainer.appendChild(span);
+        }
 
-    <div class="temperature">Temperature: {{temperature}}</div>
-    <p>
-      <img src="{{url_for('static', filename='image.jpg')}}"/>
-    </p>
-    <div class="footer">Data Updated: {{curr_time}}</div>
-  </body>
+        // Auto-refresh data every 30 seconds
+        setInterval(() => {
+            fetch('/api/data')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.temperature) {
+                        document.querySelector('.temp-icon + div .card-value').innerHTML =
+                            data.temperature + '<span class="card-unit">°C</span>';
+                    }
+                    if (data.humidity) {
+                        document.querySelector('.humidity-icon + div .card-value').innerHTML =
+                            data.humidity + '<span class="card-unit">%</span>';
+                    }
+                    if (data.pressure) {
+                        document.querySelector('.pressure-icon + div .card-value').innerHTML =
+                            data.pressure + '<span class="card-unit">hPa</span>';
+                    }
+                    if (data.altitude) {
+                        document.querySelector('.altitude-icon + div .card-value').innerHTML =
+                            data.altitude + '<span class="card-unit">m</span>';
+                    }
+                    if (data.weather_icon) {
+                        document.querySelector('.weather-icon').textContent = data.weather_icon;
+                    }
+
+                    // Update timestamps
+                    const now = new Date(data.timestamp);
+                    const timeStr = now.toISOString().slice(0, 19).replace('T', ' ');
+                    document.getElementById('timestamp').textContent = timeStr;
+                    document.getElementById('footer-time').textContent = timeStr;
+
+                    // Refresh camera image
+                    const img = document.getElementById('camera-img');
+                    if (img) {
+                        img.src = img.src.split('?')[0] + '?t=' + Date.now();
+                    }
+                })
+                .catch(console.error);
+        }, 30000);
+    </script>
+</body>
 </html>
