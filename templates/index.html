@@ -606,20 +606,49 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            h1 { font-size: 1.8rem; }
-            .container { padding: 1rem; }
-            .dashboard { grid-template-columns: 1fr; }
+            h1 { font-size: 1.6rem; }
+            .subtitle { font-size: 0.8rem; }
+            .container { padding: 0.75rem; }
+            .dashboard { grid-template-columns: 1fr; gap: 1rem; }
+
+            /* Make large cards full width and stack content vertically */
             .weather-status,
             .camera-section,
             .system-card,
-            .bible-card { grid-column: span 1; }
+            .bible-card,
+            .photo-card,
+            .word-card { grid-column: span 1; }
+
             .weather-status {
                 flex-direction: column;
                 text-align: center;
+                gap: 1rem;
             }
-            .weather-icon { font-size: 3rem; }
-            .card-value { font-size: 1.5rem; }
-            .card { padding: 1rem; }
+
+            .weather-icon { font-size: 2.4rem; }
+            .card-value { font-size: 1.4rem; }
+
+            /* Reduce padding and icon sizes */
+            .card { padding: 0.9rem; border-radius: 3px; }
+            .card-icon { width: 40px; height: 40px; font-size: 1.25rem; }
+
+            /* Camera and photo adjustments */
+            .nature-image, .camera-feed { height: 180px; }
+            .camera-feed { aspect-ratio: auto; }
+
+            /* Photo header layout */
+            .photo-header { gap: 0.5rem; }
+            .photo-header-left { gap: 0.5rem; }
+            .refresh-btn { width: 28px; height: 28px; font-size: 0.95rem; }
+
+            /* System info smaller font and scrolling */
+            .system-content { font-size: 0.8rem; }
+
+            /* Word of the day */
+            .word-main { font-size: 1.25rem; }
+            .word-definition, .word-example { font-size: 0.85rem; }
+
+            footer { padding: 1rem; font-size: 0.75rem; }
         }
 
         /* Loading state */
