@@ -2,6 +2,7 @@ import os
 import shutil
 import subprocess
 import time
+import random
 from datetime import datetime
 from pathlib import Path
 
@@ -115,25 +116,112 @@ def get_system_info():
 
 
 def get_bible_verse():
-    """Get a random Bible verse from the Bible API."""
-    try:
-        response = requests.get("https://bible-api.com/?random=books", timeout=5)
-        if response.status_code == 200:
-            data = response.json()
-            return {
-                "reference": data.get("reference", ""),
-                "text": data.get("text", "").strip(),
-                "translation": data.get("translation_name", "Web English Bible")
-            }
-    except (requests.RequestException, ValueError, KeyError):
-        pass
+    """Get a random famous Bible verse."""
+    famous_verses = [
+        {
+            "reference": "John 3:16",
+            "text": "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.",
+            "translation": "King James Version"
+        },
+        {
+            "reference": "Psalm 23:1",
+            "text": "The Lord is my shepherd; I shall not want.",
+            "translation": "King James Version"
+        },
+        {
+            "reference": "Matthew 5:3-10",
+            "text": "Blessed are the poor in spirit: for theirs is the kingdom of heaven. Blessed are they that mourn: for they shall be comforted. Blessed are the meek: for they shall inherit the earth. Blessed are they which do hunger and thirst after righteousness: for they shall be filled.",
+            "translation": "King James Version"
+        },
+        {
+            "reference": "Romans 3:23",
+            "text": "For all have sinned, and come short of the glory of God.",
+            "translation": "King James Version"
+        },
+        {
+            "reference": "John 11:25-26",
+            "text": "Jesus said unto her, I am the resurrection, and the life: he that believeth in me, though he were dead, yet shall he live.",
+            "translation": "King James Version"
+        },
+        {
+            "reference": "Proverbs 3:5-6",
+            "text": "Trust in the Lord with all thine heart; and lean not unto thine own understanding. In all thy ways acknowledge him, and he shall direct thy paths.",
+            "translation": "King James Version"
+        },
+        {
+            "reference": "1 Corinthians 13:4-7",
+            "text": "Charity suffereth long, and is kind; charity envieth not; charity vaunteth not itself, is not puffed up. Doth not behave itself unseemly, seeketh not her own, is not easily provoked, thinketh no evil.",
+            "translation": "King James Version"
+        },
+        {
+            "reference": "Philippians 4:6-7",
+            "text": "Be careful for nothing; but in every thing by prayer and supplication with thanksgiving let your requests be made known unto God. And the peace of God, which passeth all understanding, shall keep your hearts and your minds through Christ Jesus.",
+            "translation": "King James Version"
+        },
+        {
+            "reference": "Matthew 6:9-13",
+            "text": "Our Father which art in heaven, Hallowed be thy name. Thy kingdom come. Thy will be done in earth, as it is in heaven. Give us this day our daily bread.",
+            "translation": "King James Version"
+        },
+        {
+            "reference": "1 John 4:7-8",
+            "text": "Beloved, let us love one another: for love is of God; and every one that loveth is born of God, and knoweth God. He that loveth not knoweth not God; for God is love.",
+            "translation": "King James Version"
+        },
+        {
+            "reference": "2 Timothy 1:7",
+            "text": "For God hath not given us the spirit of fear; but of power, and of love, and of a sound mind.",
+            "translation": "King James Version"
+        },
+        {
+            "reference": "Joshua 1:8-9",
+            "text": "This book of the law shall not depart out of thy mouth; but thou shalt meditate therein day and night, that thou mayest observe to do according to all that is written therein: for then thou shalt make thy way prosperous, and then thou shalt have good success.",
+            "translation": "King James Version"
+        },
+        {
+            "reference": "Jeremiah 29:11",
+            "text": "For I know the thoughts that I think toward you, saith the Lord, thoughts of peace, and not of evil, to give you an expected end.",
+            "translation": "King James Version"
+        },
+        {
+            "reference": "Psalm 119:105",
+            "text": "Thy word is a lamp unto my feet, and a light unto my path.",
+            "translation": "King James Version"
+        },
+        {
+            "reference": "Romans 6:23",
+            "text": "For the wages of sin is death; but the gift of God is eternal life through Jesus Christ our Lord.",
+            "translation": "King James Version"
+        },
+        {
+            "reference": "Ephesians 2:8-9",
+            "text": "For by grace are ye saved through faith; and that not of yourselves: it is the gift of God: Not of works, lest any man should boast.",
+            "translation": "King James Version"
+        },
+        {
+            "reference": "Matthew 7:7-8",
+            "text": "Ask, and it shall be given you; seek, and ye shall find; knock, and it shall be opened unto you: For every one that asketh receiveth; and he that seeketh findeth; and to him that knocketh it shall be opened.",
+            "translation": "King James Version"
+        },
+        {
+            "reference": "1 Peter 5:7",
+            "text": "Casting all your care upon him; for he careth for you.",
+            "translation": "King James Version"
+        },
+        {
+            "reference": "Proverbs 22:6",
+            "text": "Train up a child in the way he should go: and when he is old, he will not depart from it.",
+            "translation": "King James Version"
+        },
+        {
+            "reference": "Psalm 100:1-2",
+            "text": "Make a joyful noise unto the Lord, all ye earth. Serve the Lord with gladness: come before his presence with singing.",
+            "translation": "King James Version"
+        }
+    ]
     
-    # Fallback verse
-    return {
-        "reference": "Psalm 23:1",
-        "text": "The Lord is my shepherd; I shall not want.",
-        "translation": "King James Version"
-    }
+    # Return a random famous verse
+    return random.choice(famous_verses)
 
 
 def get_sensor_data():
