@@ -798,11 +798,14 @@
             <!-- Camera Feed -->
             <div class="card camera-section">
                 <div class="camera-header">
-                    <h3>📷 Live Camera</h3>
-                    <div class="live-badge">
-                        <span class="live-dot"></span>
-                        LIVE
+                    <div class="camera-header-left">
+                        <h3>📷 Live Camera</h3>
+                        <div class="live-badge">
+                            <span class="live-dot"></span>
+                            LIVE
+                        </div>
                     </div>
+                    <button class="refresh-btn" onclick="refreshCamera(event)">🔄</button>
                 </div>
                 <div class="camera-feed">
                     {% if image_exists %}
@@ -865,6 +868,30 @@ Disk: {{system_info.get('disk', 'N/A')}}</pre>
                 console.error('Failed to refresh photo:', error);
             }
         }
+        // Refresh live camera image (capture new photo via server)
+        async function refreshCamera(event) {
+            try {
+                const resp = await fetch('/api/capture', { method: 'POST' });
+                if (!resp.ok) {
+                    const err = await resp.json().catch(() => ({}));
+                    throw new Error(err.error || 'capture failed');
+                }
+                const data = await resp.json();
+                const img = document.getElementById('camera-img');
+                if (data && data.url) {
+                    const sep = data.url.includes('?') ? '&' : '?';
+                    img.src = data.url + sep + 'cb=' + Date.now();
+                }
+                // Update timestamp overlay to now
+                const ts = document.getElementById('timestamp');
+                if (ts) ts.textContent = new Date().toISOString().slice(0,19).replace('T',' ');
+                const btn = event && event.target ? (event.target.closest ? event.target.closest('.refresh-btn') : null) : null;
+                if (btn) { btn.style.transform = 'rotate(180deg)'; setTimeout(() => { btn.style.transform = 'rotate(0deg)'; }, 300); }
+            } catch (e) {
+                console.error('Failed to refresh camera:', e);
+            }
+        }
+
         // Create floating particles
         const particlesContainer = document.getElementById('particles');
         for (let i = 0; i < 50; i++) {

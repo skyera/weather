@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytz
 import requests
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, url_for
 
 # Camera availability detection
 PICAMERA_AVAILABLE = False
@@ -390,6 +390,22 @@ def api_photo():
     """Return a JSON object with a random nature photo."""
     photo = get_random_nature_photo()
     return jsonify(photo)
+
+
+@app.route('/api/capture', methods=['POST'])
+def api_capture():
+    """Trigger a camera capture and return the static image URL with cache-bust."""
+    try:
+        ok = capture_image()
+        url = url_for('static', filename='image.jpg') + '?t=' + str(time.time())
+        if ok and IMAGE_PATH.exists():
+            return jsonify({'ok': True, 'url': url})
+        else:
+            # Return current image URL even if capture failed, with non-200 status
+            return jsonify({'ok': False, 'url': url}), 500
+    except Exception as e:
+        app.logger.error(f"api_capture error: {e}")
+        return jsonify({'ok': False, 'error': str(e)}), 500
 
 
 def get_weather_icon(temp):
