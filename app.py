@@ -376,6 +376,13 @@ def capture_image():
         return False
 
 
+@app.route('/api/photo')
+def api_photo():
+    """Return a JSON object with a random nature photo."""
+    photo = get_random_nature_photo()
+    return jsonify(photo)
+
+
 def get_weather_icon(temp):
     """Return appropriate weather icon based on temperature."""
     if temp is None:

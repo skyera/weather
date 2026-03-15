@@ -687,7 +687,8 @@
                     </div>
                     <button class="refresh-btn" onclick="refreshPhoto()">🔄</button>
                 </div>
-                <img id="nature-photo" src="{{ nature_photo.get('url', '') }}" alt="{{ nature_photo.get('alt', '') }}" class="nature-image">
+                {% set _sep = '&' if '?' in nature_photo.get('url','') else '?' %}
+<img id="nature-photo" src="{{ nature_photo.get('url', '') }}{{ _sep }}cb={{ curr_time.timestamp() }}" alt="{{ nature_photo.get('alt', '') }}" class="nature-image">
                 <div class="photo-credit">
                     <span class="credit-author">📸 <span id="photo-author">{{ nature_photo.get('author', 'Unknown') }}</span></span>
                     <span class="credit-source" id="photo-source">{{ nature_photo.get('source', '') }}</span>
@@ -842,29 +843,24 @@ Disk: {{system_info.get('disk', 'N/A')}}</pre>
 
     <script>
         // Refresh nature photo
-        async function refreshPhoto() {
+        async function refreshPhoto(event) {
             try {
-                const response = await fetch(window.location.href);
-                const html = await response.text();
-                const parser = new DOMParser();
-                const newDoc = parser.parseFromString(html, 'text/html');
-                
-                const newPhotoUrl = newDoc.getElementById('nature-photo').src;
-                const newAuthor = newDoc.getElementById('photo-author').textContent;
-                const newSource = newDoc.getElementById('photo-source').textContent;
-                
+                const response = await fetch('/api/photo');
+                if (!response.ok) throw new Error('photo API error');
+                const data = await response.json();
+                const url = data.url || '';
+                const sep = url.includes('?') ? '&' : '?';
                 const photoImg = document.getElementById('nature-photo');
                 const authorSpan = document.getElementById('photo-author');
                 const sourceSpan = document.getElementById('photo-source');
-                
-                photoImg.src = newPhotoUrl;
-                authorSpan.textContent = newAuthor;
-                sourceSpan.textContent = newSource;
-                
-                // Add visual feedback
-                const btn = event.target.closest('.refresh-btn');
-                btn.style.transform = 'rotate(180deg)';
-                setTimeout(() => { btn.style.transform = 'rotate(0deg)'; }, 300);
+
+                photoImg.src = url + sep + 'cb=' + Date.now();
+                authorSpan.textContent = data.author || 'Unknown';
+                sourceSpan.textContent = data.source || '';
+
+                // Visual feedback
+                const btn = event && event.target ? (event.target.closest ? event.target.closest('.refresh-btn') : null) : null;
+                if (btn) { btn.style.transform = 'rotate(180deg)'; setTimeout(() => { btn.style.transform = 'rotate(0deg)'; }, 300); }
             } catch (error) {
                 console.error('Failed to refresh photo:', error);
             }
