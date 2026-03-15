@@ -395,6 +395,143 @@ def get_random_nature_photo():
     }
 
 
+# Constellation data: visible by season
+CONSTELLATIONS_BY_SEASON = {
+    'winter': [  # Dec, Jan, Feb
+        {
+            'name': 'Orion',
+            'bright_stars': ['Betelgeuse', 'Rigel', 'Alnitak'],
+            'mythology': 'A mighty hunter in Greek mythology, eternally pursuing the Pleiades.',
+            'description': 'One of the most recognizable constellations with distinctive belt of three stars.'
+        },
+        {
+            'name': 'Ursa Major',
+            'bright_stars': ['Dubhe', 'Merak', 'Alkaid'],
+            'mythology': 'The Great Bear. Callisto transformed into a bear by Zeus.',
+            'description': 'Contains the Big Dipper asterism, helps locate Polaris.'
+        },
+        {
+            'name': 'Canis Major',
+            'bright_stars': ['Sirius', 'Murzim', 'Wezen'],
+            'mythology': 'The Great Dog, said to represent Laelaps, a hunting dog of Cephalus.',
+            'description': 'Home to Sirius, the brightest star in the night sky.'
+        },
+        {
+            'name': 'Taurus',
+            'bright_stars': ['Aldebaran', 'Electra', 'Atlas'],
+            'mythology': 'The Bull; Zeus transformed into a white bull to seduce Europa.',
+            'description': 'Contains the bright red giant Aldebaran and the Pleiades star cluster.'
+        },
+    ],
+    'spring': [  # Mar, Apr, May
+        {
+            'name': 'Leo',
+            'bright_stars': ['Regulus', 'Denebola', 'Algieba'],
+            'mythology': 'The Lion slain by Hercules as his first labor.',
+            'description': 'Contains bright Regulus and forms a distinctive sickle shape.'
+        },
+        {
+            'name': 'Virgo',
+            'bright_stars': ['Spica', 'Porrima', 'Vindemiatrix'],
+            'mythology': 'The Virgin goddess of justice; sometimes identified as Astraea.',
+            'description': 'Contains Spica, the 15th brightest star in the sky.'
+        },
+        {
+            'name': 'Ursa Major',
+            'bright_stars': ['Dubhe', 'Merak', 'Alkaid'],
+            'mythology': 'The Great Bear. Callisto transformed into a bear by Zeus.',
+            'description': 'Contains the Big Dipper, visible all night in spring.'
+        },
+        {
+            'name': 'Hydra',
+            'bright_stars': ['Alphard', 'Giansar', 'Ashlesha'],
+            'mythology': 'The Water Snake, slain by Hercules as his second labor.',
+            'description': 'The largest constellation but no bright stars; scattered and large.'
+        },
+    ],
+    'summer': [  # Jun, Jul, Aug
+        {
+            'name': 'Scorpius',
+            'bright_stars': ['Antares', 'Shaula', 'Sargas'],
+            'mythology': 'The Scorpion that stung Orion; an enemy of the hunter.',
+            'description': 'Contains red supergiant Antares; curved tail marks the scorpion\'s stinger.'
+        },
+        {
+            'name': 'Sagittarius',
+            'bright_stars': ['Epsilon Sagittarii', 'Sigma Sagittarii', 'Tau Sagittarii'],
+            'mythology': 'The Archer; often identified as Crotus the satyr or Chiron the centaur.',
+            'description': 'Marks the direction to the center of our Milky Way galaxy.'
+        },
+        {
+            'name': 'Lyra',
+            'bright_stars': ['Vega', 'Epsilon Lyrae', 'Zeta Lyrae'],
+            'mythology': 'The Lyre of Orpheus, used to charm the Argonauts.',
+            'description': 'Contains Vega, the 5th brightest star; one of the Summer Triangle.'
+        },
+        {
+            'name': 'Aquila',
+            'bright_stars': ['Altair', 'Alshain', 'Tarazed'],
+            'mythology': 'The Eagle sent by Zeus to carry off Ganymede.',
+            'description': 'Contains Altair, the 12th brightest star; part of Summer Triangle.'
+        },
+    ],
+    'autumn': [  # Sep, Oct, Nov
+        {
+            'name': 'Pegasus',
+            'bright_stars': ['Markab', 'Scheat', 'Algenib'],
+            'mythology': 'The Winged Horse born from Medusa\'s blood.',
+            'description': 'The Great Square of Pegasus is an easy autumn pattern to spot.'
+        },
+        {
+            'name': 'Andromeda',
+            'bright_stars': ['Alpheratz', 'Mirach', 'Almach'],
+            'mythology': 'A princess, rescued by Perseus from a sea monster.',
+            'description': 'Contains the Andromeda Galaxy, closest major galaxy to the Milky Way.'
+        },
+        {
+            'name': 'Cassiopeia',
+            'bright_stars': ['Schedar', 'Caph', 'Gamma Cassiopeiae'],
+            'mythology': 'A vain queen, punished by being tied to a chair in the sky.',
+            'description': 'Forms a distinctive W-shape; circumpolar from northern latitudes.'
+        },
+        {
+            'name': 'Cygnus',
+            'bright_stars': ['Deneb', 'Sadr', 'Gienah'],
+            'mythology': 'The Swan; associated with several swan figures in Greek mythology.',
+            'description': 'Forms the Northern Cross asterism; contains Deneb of Summer Triangle.'
+        },
+    ]
+}
+
+
+def get_visible_constellations():
+    """Get visible constellations for the current month."""
+    current_month = datetime.now().month
+    
+    # Determine season
+    if current_month in [12, 1, 2]:
+        season = 'winter'
+    elif current_month in [3, 4, 5]:
+        season = 'spring'
+    elif current_month in [6, 7, 8]:
+        season = 'summer'
+    else:  # 9, 10, 11
+        season = 'autumn'
+    
+    # Get constellations for this season
+    constellations = CONSTELLATIONS_BY_SEASON.get(season, [])
+    
+    # Select a featured constellation (rotate through them)
+    featured = constellations[current_month % len(constellations)] if constellations else {}
+    
+    return {
+        'season': season,
+        'featured': featured,
+        'all': constellations,
+        'month': datetime.now().strftime('%B')
+    }
+
+
 def get_sensor_data():
     """Read BME280 sensor data with fallback values."""
     if not BME280_AVAILABLE:
@@ -518,6 +655,13 @@ def api_photo():
     return jsonify(photo)
 
 
+@app.route('/api/constellation')
+def api_constellation():
+    """Return visible constellation info for the current season."""
+    constellation_data = get_visible_constellations()
+    return jsonify(constellation_data)
+
+
 @app.route('/api/capture', methods=['POST'])
 def api_capture():
     """Trigger a camera capture and return the static image URL with cache-bust."""
@@ -557,6 +701,7 @@ def index():
     system_info = get_system_info()
     bible_verse = get_bible_verse()
     random_word = get_random_word()
+    constellation_info = get_visible_constellations()
 
     return render_template(
         "index.html",
@@ -569,6 +714,7 @@ def index():
         system_info=system_info,
         bible_verse=bible_verse,
         random_word=random_word,
+        constellation_info=constellation_info,
         nature_photo=get_random_nature_photo(),
         image_exists=IMAGE_PATH.exists()
     )
