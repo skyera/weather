@@ -136,6 +136,114 @@ def get_bible_verse():
     }
 
 
+def get_random_word():
+    """Get a random word with definition and example."""
+    words = [
+        {
+            "word": "Serendipity",
+            "definition": "The occurrence of events by chance in a happy or beneficial way",
+            "example": "Finding that perfect book at the library was pure serendipity."
+        },
+        {
+            "word": "Ephemeral",
+            "definition": "Lasting for a very short time; transitory",
+            "example": "The beauty of cherry blossoms is ephemeral, blooming for only a few weeks."
+        },
+        {
+            "word": "Eloquent",
+            "definition": "Fluent or persuasive in speaking or writing",
+            "example": "The speaker gave an eloquent address about climate change."
+        },
+        {
+            "word": "Benevolent",
+            "definition": "Kind and generous; showing goodwill",
+            "example": "The benevolent philanthropist donated millions to charity."
+        },
+        {
+            "word": "Ubiquitous",
+            "definition": "Present, appearing, or found everywhere",
+            "example": "Smartphones have become ubiquitous in modern society."
+        },
+        {
+            "word": "Melancholic",
+            "definition": "Feeling or expressing sadness, gloom, or despondency",
+            "example": "The melancholic music touched everyone's heart."
+        },
+        {
+            "word": "Pragmatic",
+            "definition": "Dealing with things in a practical, realistic way based on actual circumstances",
+            "example": "We need a pragmatic approach to solve this budget crisis."
+        },
+        {
+            "word": "Vivacious",
+            "definition": "Lively, animated, and high-spirited",
+            "example": "Her vivacious personality made her the life of the party."
+        },
+        {
+            "word": "Zenith",
+            "definition": "The time at which something is most powerful or successful",
+            "example": "The company reached its zenith during the 1990s."
+        },
+        {
+            "word": "Nostalgia",
+            "definition": "A sentimental longing for the past; a yearning for a period gone by",
+            "example": "Looking at old photos filled her with nostalgia for her childhood."
+        },
+        {
+            "word": "Resilient",
+            "definition": "Able to withstand or recover quickly from difficult conditions",
+            "example": "She proved to be a resilient person despite all her hardships."
+        },
+        {
+            "word": "Aesthetic",
+            "definition": "Concerned with beauty or the appreciation of beauty",
+            "example": "The museum's aesthetic design draws visitors from around the world."
+        },
+        {
+            "word": "Candid",
+            "definition": "Truthful and straightforward; frank",
+            "example": "He gave a candid interview about his struggles with addiction."
+        },
+        {
+            "word": "Diligent",
+            "definition": "Having or showing care and effort in one's work or duties",
+            "example": "Her diligent study habits earned her top grades."
+        },
+        {
+            "word": "Ethereal",
+            "definition": "Extremely delicate and light; seeming not of this world",
+            "example": "The ethereal voice of the soprano captivated the audience."
+        },
+        {
+            "word": "Fortuitous",
+            "definition": "Happening by chance in a happy or beneficial way",
+            "example": "Meeting my best friend was a fortuitous accident in college."
+        },
+        {
+            "word": "Gregarious",
+            "definition": "Fond of being in company; sociable",
+            "example": "He's a gregarious person who loves attending social events."
+        },
+        {
+            "word": "Harbinger",
+            "definition": "A person or thing that announces or signals the approach of another",
+            "example": "Dark clouds are often a harbinger of storms."
+        },
+        {
+            "word": "Incisive",
+            "definition": "Intelligently decisive and direct; keen",
+            "example": "The critic gave an incisive analysis of the film's weaknesses."
+        },
+        {
+            "word": "Jubilant",
+            "definition": "Feeling or expressing great happiness and triumph",
+            "example": "The jubilant crowd celebrated their team's victory."
+        }
+    ]
+    
+    return random.choice(words)
+
+
 def get_sensor_data():
     """Read BME280 sensor data with fallback values."""
     if not BME280_AVAILABLE:
@@ -220,6 +328,7 @@ def index():
     sensor_data = get_sensor_data()
     system_info = get_system_info()
     bible_verse = get_bible_verse()
+    random_word = get_random_word()
 
     return render_template(
         "index.html",
@@ -231,6 +340,7 @@ def index():
         weather_icon=get_weather_icon(sensor_data.get("temperature")),
         system_info=system_info,
         bible_verse=bible_verse,
+        random_word=random_word,
         image_exists=IMAGE_PATH.exists()
     )
 

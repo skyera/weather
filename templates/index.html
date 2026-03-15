@@ -413,6 +413,68 @@
             font-style: normal;
         }
 
+        /* Word of the Day card */
+        .word-card {
+            grid-column: span 2;
+        }
+
+        .word-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .word-header h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .word-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(200, 200, 200, 0.1);
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: none;
+            border: 1px solid var(--border);
+        }
+
+        .word-main {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .word-definition,
+        .word-example {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .word-example {
+            margin-bottom: 0;
+        }
+
+        .word-definition .label,
+        .word-example .label {
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
         /* Footer */
         footer {
             text-align: center;
@@ -499,6 +561,21 @@
                 </div>
                 <div class="verse-text">"{{bible_verse.get('text', '')}}"</div>
                 <div class="verse-reference">— {{bible_verse.get('reference', 'Bible')}}</div>
+            </div>
+
+            <!-- Word of the Day -->
+            <div class="card word-card">
+                <div class="word-header">
+                    <div class="word-icon">📚</div>
+                    <h3>Word of the Day</h3>
+                </div>
+                <div class="word-main">{{random_word.get('word', '')}}</div>
+                <div class="word-definition">
+                    <span class="label">Definition:</span> {{random_word.get('definition', '')}}
+                </div>
+                <div class="word-example">
+                    <span class="label">Example:</span> "{{random_word.get('example', '')}}"
+                </div>
             </div>
 
             <!-- Weather Status -->
