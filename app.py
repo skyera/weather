@@ -495,8 +495,8 @@ def add_timestamp_to_image(image_path):
                 fill=(0, 0, 0, 160)
             )
             
-            # Draw the text in Cyan (cheat.sh style)
-            draw.text((x, y), timestamp_text, font=font, fill=(0, 215, 215))
+            # Draw the text in White
+            draw.text((x, y), timestamp_text, font=font, fill=(255, 255, 255))
             
             img.save(image_path, quality=95)
         return True

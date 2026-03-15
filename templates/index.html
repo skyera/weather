@@ -611,7 +611,6 @@
                             No camera feed available
                         </div>
                     {% endif %}
-                    <div class="overlay" id="timestamp">{{curr_time.strftime('%Y-%m-%d %H:%M:%S')}}</div>
                 </div>
             </div>
 
@@ -735,7 +734,6 @@
                 if (data.url) {
                     const img = document.getElementById('camera-img');
                     img.src = data.url + (data.url.includes('?') ? '&' : '?') + 'cb=' + Date.now();
-                    document.getElementById('timestamp').textContent = new Date().toLocaleString();
                 }
             } catch (e) { console.error('Camera refresh failed:', e); }
         }
