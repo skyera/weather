@@ -156,8 +156,12 @@ def get_system_info():
                 info["uptime"] = f"{hours}h {minutes}m"
             else:
                 info["uptime"] = f"{minutes}m"
+            
+            # Store raw seconds for badge display
+            info["uptime_seconds"] = uptime_seconds
     except (FileNotFoundError, IOError, ValueError):
         info["uptime"] = "Uptime unavailable"
+        info["uptime_seconds"] = 0
     
     # Get memory info (free and total)
     try:
@@ -395,6 +399,37 @@ def get_random_nature_photo():
     }
 
 
+def get_sunrise_sunset():
+    """Get sunrise and sunset times using the sunrise-sunset.org API."""
+    try:
+        # Use a default location (San Francisco). Can be customized or detected.
+        response = requests.get(
+            'https://api.sunrise-sunset.org/json',
+            params={'lat': 37.7749, 'lng': -122.4194},
+            timeout=5
+        )
+        if response.status_code == 200:
+            data = response.json()
+            if data.get('status') == 'OK':
+                results = data.get('results', {})
+                return {
+                    'sunrise': results.get('sunrise', 'N/A'),
+                    'sunset': results.get('sunset', 'N/A'),
+                    'civil_twilight_begin': results.get('civil_twilight_begin', 'N/A'),
+                    'civil_twilight_end': results.get('civil_twilight_end', 'N/A'),
+                }
+    except (requests.RequestException, ValueError, KeyError):
+        pass
+    
+    # Fallback values
+    return {
+        'sunrise': '6:30 AM',
+        'sunset': '6:45 PM',
+        'civil_twilight_begin': '6:00 AM',
+        'civil_twilight_end': '7:15 PM',
+    }
+
+
 def get_sensor_data():
     """Read BME280 sensor data with fallback values."""
     if not BME280_AVAILABLE:
@@ -557,6 +592,7 @@ def index():
     system_info = get_system_info()
     bible_verse = get_bible_verse()
     random_word = get_random_word()
+    sunrise_sunset = get_sunrise_sunset()
 
     return render_template(
         "index.html",
@@ -569,6 +605,7 @@ def index():
         system_info=system_info,
         bible_verse=bible_verse,
         random_word=random_word,
+        sunrise_sunset=sunrise_sunset,
         nature_photo=get_random_nature_photo(),
         image_exists=IMAGE_PATH.exists()
     )
