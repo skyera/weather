@@ -605,19 +605,22 @@
         }
 
         /* Responsive */
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
             h1 { font-size: 1.6rem; }
             .subtitle { font-size: 0.8rem; }
             .container { padding: 0.75rem; }
             .dashboard { grid-template-columns: 1fr; gap: 1rem; }
 
-            /* Make large cards full width and stack content vertically */
+            /* Force important dashboard cards to occupy full width */
+            .bible-card,
             .weather-status,
             .camera-section,
             .system-card,
-            .bible-card,
             .photo-card,
-            .word-card { grid-column: span 1; }
+            .word-card {
+                grid-column: 1 / -1 !important;
+                width: 100%;
+            }
 
             .weather-status {
                 flex-direction: column;
