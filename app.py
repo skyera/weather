@@ -31,7 +31,7 @@ IMAGE_FOLDER.mkdir(exist_ok=True)
 
 
 def get_system_info():
-    """Get Raspberry Pi model, CPU uptime, and memory info."""
+    """Get Raspberry Pi model, uptime, memory, CPU temp, and disk usage."""
     info = {}
     
     # Get Raspberry Pi model
@@ -41,29 +41,73 @@ def get_system_info():
     except (FileNotFoundError, IOError):
         info["model"] = "Unknown Model"
     
-    # Get CPU uptime
+    # Get uptime in formatted days/hours/minutes
     try:
-        result = subprocess.run(["uptime", "-p"], capture_output=True, text=True, timeout=5)
-        if result.returncode == 0:
-            info["uptime"] = result.stdout.strip()
-        else:
-            info["uptime"] = "Uptime unavailable"
-    except (subprocess.TimeoutExpired, FileNotFoundError):
+        with open("/proc/uptime", "r") as f:
+            uptime_seconds = int(float(f.read().split()[0]))
+            days = uptime_seconds // 86400
+            hours = (uptime_seconds % 86400) // 3600
+            minutes = (uptime_seconds % 3600) // 60
+            
+            if days > 0:
+                info["uptime"] = f"{days}d {hours}h {minutes}m"
+            elif hours > 0:
+                info["uptime"] = f"{hours}h {minutes}m"
+            else:
+                info["uptime"] = f"{minutes}m"
+    except (FileNotFoundError, IOError, ValueError):
         info["uptime"] = "Uptime unavailable"
     
-    # Get memory info
+    # Get memory info (free and total)
     try:
         result = subprocess.run(["free", "-h"], capture_output=True, text=True, timeout=5)
         if result.returncode == 0:
             lines = result.stdout.strip().split("\n")
             if len(lines) > 1:
-                info["memory"] = lines[1]  # Memory line from free output
+                parts = lines[1].split()
+                if len(parts) >= 7:
+                    total = parts[1]
+                    used = parts[2]
+                    free = parts[3]
+                    info["memory"] = f"Used: {used} / {total} (Free: {free})"
+                else:
+                    info["memory"] = "Memory info unavailable"
             else:
                 info["memory"] = "Memory info unavailable"
         else:
             info["memory"] = "Memory info unavailable"
     except (subprocess.TimeoutExpired, FileNotFoundError):
         info["memory"] = "Memory info unavailable"
+    
+    # Get CPU temperature
+    try:
+        with open("/sys/class/thermal/thermal_zone0/temp", "r") as f:
+            temp_millidegrees = int(f.read().strip())
+            temp_celsius = temp_millidegrees / 1000.0
+            info["cpu_temp"] = f"{temp_celsius:.1f}°C"
+    except (FileNotFoundError, IOError, ValueError):
+        info["cpu_temp"] = "N/A"
+    
+    # Get disk usage for root partition
+    try:
+        result = subprocess.run(["df", "-h", "/"], capture_output=True, text=True, timeout=5)
+        if result.returncode == 0:
+            lines = result.stdout.strip().split("\n")
+            if len(lines) > 1:
+                parts = lines[1].split()
+                if len(parts) >= 5:
+                    used = parts[2]
+                    total = parts[1]
+                    percent = parts[4]
+                    info["disk"] = f"{used} / {total} ({percent})"
+                else:
+                    info["disk"] = "Disk info unavailable"
+            else:
+                info["disk"] = "Disk info unavailable"
+        else:
+            info["disk"] = "Disk info unavailable"
+    except (subprocess.TimeoutExpired, FileNotFoundError):
+        info["disk"] = "Disk info unavailable"
     
     return info
 
