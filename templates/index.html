@@ -241,6 +241,33 @@
             grid-column: span 2;
         }
 
+        .chart-section {
+            grid-column: span 2;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .chart-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .camera-section {
+
         .camera-header h3 {
             font-size: 1rem;
             font-weight: 600;
@@ -676,7 +703,8 @@
             0% { background-position: 200% 0; }
             100% { background-position: -200% 0; }
         }
-    </style>
+     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="bg-animation" id="particles"></div>
@@ -805,6 +833,16 @@
                 </div>
             </div>
 
+            <!-- Temperature History Chart -->
+            <div class="card chart-section">
+                <div class="chart-header">
+                    <h3>📈 Temperature History (24h)</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="temperatureChart"></canvas>
+                </div>
+            </div>
+
             <!-- Camera Feed -->
             <div class="card camera-section">
                 <div class="camera-header">
@@ -866,6 +904,125 @@ BME280:
     </div>
 
     <script>
+        // Initialize temperature chart
+        let temperatureChart = null;
+
+        async function initializeTemperatureChart() {
+            try {
+                const response = await fetch('/api/temperature-history?hours=24');
+                if (!response.ok) throw new Error('Failed to fetch temperature history');
+                
+                const result = await response.json();
+                const data = result.data || [];
+
+                if (data.length === 0) {
+                    console.warn('No temperature data available');
+                    return;
+                }
+
+                const labels = data.map(d => {
+                    const date = new Date(d.timestamp);
+                    return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                });
+
+                const temperatures = data.map(d => d.temperature);
+
+                const ctx = document.getElementById('temperatureChart').getContext('2d');
+                temperatureChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Temperature (°C)',
+                            data: temperatures,
+                            borderColor: '#d0d0d0',
+                            backgroundColor: 'rgba(208, 208, 208, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            pointHoverRadius: 6,
+                            pointBackgroundColor: '#d0d0d0',
+                            pointBorderColor: '#000000',
+                            pointBorderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                labels: {
+                                    color: '#d0d0d0',
+                                    font: { family: "'JetBrains Mono', monospace", size: 12 }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                grid: {
+                                    color: 'rgba(200, 200, 200, 0.1)',
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    color: '#909090',
+                                    font: { family: "'JetBrains Mono', monospace", size: 11 }
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false,
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    color: '#909090',
+                                    font: { family: "'JetBrains Mono', monospace", size: 11 },
+                                    maxRotation: 45,
+                                    minRotation: 0
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Failed to initialize temperature chart:', error);
+            }
+        }
+
+        // Refresh temperature chart data
+        async function refreshTemperatureChart() {
+            try {
+                const response = await fetch('/api/temperature-history?hours=24');
+                if (!response.ok) throw new Error('Failed to fetch temperature history');
+                
+                const result = await response.json();
+                const data = result.data || [];
+
+                if (!temperatureChart || data.length === 0) return;
+
+                const labels = data.map(d => {
+                    const date = new Date(d.timestamp);
+                    return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                });
+
+                const temperatures = data.map(d => d.temperature);
+
+                temperatureChart.data.labels = labels;
+                temperatureChart.data.datasets[0].data = temperatures;
+                temperatureChart.update();
+            } catch (error) {
+                console.error('Failed to refresh temperature chart:', error);
+            }
+        }
+
+        // Initialize chart on page load
+        document.addEventListener('DOMContentLoaded', initializeTemperatureChart);
+
+        // Refresh chart every 5 minutes
+        setInterval(refreshTemperatureChart, 5 * 60 * 1000);
+
         // Refresh nature photo
         async function refreshPhoto(event) {
             try {

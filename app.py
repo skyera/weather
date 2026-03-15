@@ -3,12 +3,14 @@ import shutil
 import subprocess
 import time
 import random
-from datetime import datetime
+import sqlite3
+import threading
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import pytz
 import requests
-from flask import Flask, render_template, jsonify, url_for
+from flask import Flask, render_template, jsonify, url_for, request
 
 # Camera availability detection
 PICAMERA_AVAILABLE = False
@@ -42,6 +44,91 @@ IMAGE_FOLDER = Path.home() / "Pictures"
 
 STATIC_DIR.mkdir(exist_ok=True)
 IMAGE_FOLDER.mkdir(exist_ok=True)
+
+
+app = Flask(__name__, static_url_path="/static")
+
+BASE_DIR = Path(__file__).parent.resolve()
+STATIC_DIR = BASE_DIR / "static"
+IMAGE_PATH = STATIC_DIR / "image.jpg"
+IMAGE_FOLDER = Path.home() / "Pictures"
+DB_PATH = BASE_DIR / "weather_history.db"
+
+STATIC_DIR.mkdir(exist_ok=True)
+IMAGE_FOLDER.mkdir(exist_ok=True)
+
+# Database lock for thread-safe operations
+DB_LOCK = threading.Lock()
+
+
+def init_db():
+    """Initialize the temperature history database."""
+    with DB_LOCK:
+        conn = sqlite3.connect(str(DB_PATH))
+        cursor = conn.cursor()
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS temperature_readings (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                temperature REAL,
+                pressure REAL,
+                humidity REAL
+            )
+        ''')
+        cursor.execute('CREATE INDEX IF NOT EXISTS idx_timestamp ON temperature_readings(timestamp)')
+        conn.commit()
+        conn.close()
+
+
+def record_temperature(temperature, pressure, humidity):
+    """Record temperature reading in the database."""
+    with DB_LOCK:
+        try:
+            conn = sqlite3.connect(str(DB_PATH))
+            cursor = conn.cursor()
+            cursor.execute(
+                'INSERT INTO temperature_readings (temperature, pressure, humidity) VALUES (?, ?, ?)',
+                (temperature, pressure, humidity)
+            )
+            conn.commit()
+            
+            # Clean up old data (keep only last 7 days)
+            week_ago = datetime.now() - timedelta(days=7)
+            cursor.execute('DELETE FROM temperature_readings WHERE timestamp < ?', (week_ago,))
+            conn.commit()
+            conn.close()
+        except Exception as e:
+            app.logger.error(f"Error recording temperature: {e}")
+
+
+def get_temperature_history(hours=24):
+    """Get temperature history for the last N hours."""
+    with DB_LOCK:
+        try:
+            conn = sqlite3.connect(str(DB_PATH))
+            cursor = conn.cursor()
+            cutoff_time = datetime.now() - timedelta(hours=hours)
+            cursor.execute(
+                'SELECT timestamp, temperature FROM temperature_readings WHERE timestamp > ? ORDER BY timestamp ASC',
+                (cutoff_time,)
+            )
+            rows = cursor.fetchall()
+            conn.close()
+            
+            return [
+                {
+                    'timestamp': row[0],
+                    'temperature': row[1]
+                }
+                for row in rows
+            ]
+        except Exception as e:
+            app.logger.error(f"Error retrieving temperature history: {e}")
+            return []
+
+
+# Initialize database on startup
+init_db()
 
 
 def get_system_info():
@@ -311,32 +398,38 @@ def get_random_nature_photo():
 def get_sensor_data():
     """Read BME280 sensor data with fallback values."""
     if not BME280_AVAILABLE:
-        return {
+        data = {
             "temperature": 22.5,
             "pressure": 1013.25,
             "humidity": 45.0,
             "altitude": 0
         }
-
-    try:
-        _, _ = bme.readBME280ID()
-        temperature, pressure, humidity = bme.readBME280All()
-        altitude = 44330 * (1 - (pressure / 1013.25) ** 0.1903)
-        return {
-            "temperature": round(temperature, 1),
-            "pressure": round(pressure, 2),
-            "humidity": round(humidity, 1),
-            "altitude": round(altitude, 1)
-        }
-    except Exception as e:
-        app.logger.error(f"Sensor error: {e}")
-        return {
-            "temperature": None,
-            "pressure": None,
-            "humidity": None,
-            "altitude": None,
-            "error": str(e)
-        }
+    else:
+        try:
+            _, _ = bme.readBME280ID()
+            temperature, pressure, humidity = bme.readBME280All()
+            altitude = 44330 * (1 - (pressure / 1013.25) ** 0.1903)
+            data = {
+                "temperature": round(temperature, 1),
+                "pressure": round(pressure, 2),
+                "humidity": round(humidity, 1),
+                "altitude": round(altitude, 1)
+            }
+        except Exception as e:
+            app.logger.error(f"Sensor error: {e}")
+            data = {
+                "temperature": None,
+                "pressure": None,
+                "humidity": None,
+                "altitude": None,
+                "error": str(e)
+            }
+    
+    # Record the reading if temperature is available
+    if data.get("temperature") is not None:
+        record_temperature(data["temperature"], data.get("pressure"), data.get("humidity"))
+    
+    return data
 
 
 def capture_image():
@@ -490,6 +583,17 @@ def api_data():
         "timestamp": datetime.now().isoformat(),
         **sensor_data,
         "weather_icon": get_weather_icon(sensor_data.get("temperature"))
+    })
+
+
+@app.route("/api/temperature-history")
+def api_temperature_history():
+    """API endpoint for temperature history (last 24 hours)."""
+    hours = request.args.get('hours', default=24, type=int)
+    history = get_temperature_history(hours=hours)
+    return jsonify({
+        "data": history,
+        "count": len(history)
     })
 
 
