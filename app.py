@@ -223,54 +223,6 @@ def get_fallback_word():
     return random.choice(fallback_words)
 
 
-def get_random_nature_video():
-    """Get a random nature/ambient YouTube video."""
-    nature_videos = [
-        {
-            "id": "ZfBSJhztKqQ",
-            "title": "10 Hours of Relaxing Rain Sounds",
-            "channel": "Meditation Relax Club"
-        },
-        {
-            "id": "e9nDR5Aaz9E",
-            "title": "Peaceful Piano Music - Sleep & Relaxation",
-            "channel": "Peaceful Piano"
-        },
-        {
-            "id": "z3wG0tHfP-g",
-            "title": "8 Hour Deep Sleep Music & Rain Sounds",
-            "channel": "Deep Sleep Sounds"
-        },
-        {
-            "id": "WU21WG_a1A0",
-            "title": "Beautiful Nature Scenery with Relaxing Music",
-            "channel": "4K Relaxation"
-        },
-        {
-            "id": "dBq3N0Cojdc",
-            "title": "Sleeping Music for Deep Sleep - Relaxation",
-            "channel": "Golden Waves"
-        },
-        {
-            "id": "5YiQv0jf73I",
-            "title": "Amazing Sky Time Lapse - Clouds & Stars",
-            "channel": "Nature Channel"
-        },
-        {
-            "id": "jqBP7yflx8s",
-            "title": "Morning Birds Singing in Forest",
-            "channel": "Nature Sounds"
-        },
-        {
-            "id": "JXMfKalJ1jI",
-            "title": "Heavenly Hymns - Relaxing Music",
-            "channel": "Heaven Music"
-        }
-    ]
-    
-    return random.choice(nature_videos)
-
-
 def get_sensor_data():
     """Read BME280 sensor data with fallback values."""
     if not BME280_AVAILABLE:
@@ -368,7 +320,6 @@ def index():
         system_info=system_info,
         bible_verse=bible_verse,
         random_word=random_word,
-        nature_video=get_random_nature_video(),
         image_exists=IMAGE_PATH.exists()
     )
 
