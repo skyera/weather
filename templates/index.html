@@ -103,9 +103,14 @@
         /* Main grid */
         .dashboard {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(4, minmax(240px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
+        }
+
+        /* Metric cards (small tiles) */
+        .metric-card {
+            grid-column: span 1;
         }
 
         /* Glassmorphism cards */
@@ -736,7 +741,7 @@
             </div>
 
             <!-- Temperature -->
-            <div class="card">
+            <div class="card metric-card">
                 <div class="card-header">
                     <div class="card-icon temp-icon">🌡️</div>
                     <div>
@@ -751,7 +756,7 @@
             </div>
 
             <!-- Humidity -->
-            <div class="card">
+            <div class="card metric-card">
                 <div class="card-header">
                     <div class="card-icon humidity-icon">💧</div>
                     <div>
@@ -766,7 +771,7 @@
             </div>
 
             <!-- Pressure -->
-            <div class="card">
+            <div class="card metric-card">
                 <div class="card-header">
                     <div class="card-icon pressure-icon">📊</div>
                     <div>
@@ -781,7 +786,7 @@
             </div>
 
             <!-- Altitude -->
-            <div class="card">
+            <div class="card metric-card">
                 <div class="card-header">
                     <div class="card-icon altitude-icon">⛰️</div>
                     <div>
