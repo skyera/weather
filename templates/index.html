@@ -536,25 +536,8 @@
             } catch (error) { console.error('Chart refresh failed:', error); }
         }
 
-        setInterval(() => {
-            fetch('/api/data')
-                .then(r => r.json())
-                .then(data => {
-                    if (data.temperature) document.getElementById('val-temp').textContent = data.temperature + '°';
-                    if (data.humidity) document.getElementById('val-humidity').textContent = data.humidity + '%';
-                    if (data.pressure) document.getElementById('val-pressure').textContent = data.pressure;
-                    if (data.altitude) document.getElementById('val-altitude').textContent = data.altitude + 'm';
-                    
-                    document.getElementById('footer-time').textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                    
-                    const camImg = document.getElementById('camera-img');
-                    if (camImg) camImg.src = camImg.src.split('?')[0] + '?t=' + Date.now();
-                });
-        }, 30000);
-
         document.addEventListener('DOMContentLoaded', () => {
             initializeTemperatureChart();
-            setInterval(refreshTemperatureChart, 300000);
         });
     </script>
 </body>
