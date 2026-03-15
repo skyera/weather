@@ -5,6 +5,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+import pytz
 import requests
 from flask import Flask, render_template, jsonify
 
@@ -167,11 +168,15 @@ def get_sensor_data():
 
 
 def capture_image():
-    """Capture image from PiCamera with timestamp overlay."""
+    """Capture image from PiCamera with timestamp overlay in Pacific time."""
     if not PICAMERA_AVAILABLE:
         return False
 
-    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    # Get Pacific timezone
+    tz_pacific = pytz.timezone('US/Pacific')
+    now_pacific = datetime.now(tz_pacific)
+    
+    timestamp = now_pacific.strftime("%Y-%m-%d_%H-%M-%S")
     backup_path = IMAGE_FOLDER / f"{timestamp}.jpg"
 
     try:
@@ -182,7 +187,7 @@ def capture_image():
             camera.resolution = (1280, 720)
             camera.annotate_text_size = 24
             camera.annotate_foreground = 0xFF0000
-            camera.annotate_text = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            camera.annotate_text = now_pacific.strftime("%Y-%m-%d %H:%M:%S %Z")
             camera.start_preview()
             time.sleep(1)
             camera.capture(IMAGE_PATH)
