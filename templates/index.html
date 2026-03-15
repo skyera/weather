@@ -475,6 +475,65 @@
             letter-spacing: 0.05em;
         }
 
+        /* YouTube Video card */
+        .video-card {
+            grid-column: span 2;
+        }
+
+        .video-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .video-header h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .video-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(200, 200, 200, 0.1);
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: none;
+            border: 1px solid var(--border);
+        }
+
+        .video-container {
+            margin-bottom: 1rem;
+            border-radius: 2px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .video-container iframe {
+            border: none;
+            display: block;
+        }
+
+        .video-title {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .video-channel {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
         /* Footer */
         footer {
             text-align: center;
@@ -576,6 +635,19 @@
                 <div class="word-example">
                     <span class="label">Example:</span> "{{random_word.get('example', '')}}"
                 </div>
+            </div>
+
+            <!-- YouTube Nature Video -->
+            <div class="card video-card">
+                <div class="video-header">
+                    <div class="video-icon">🎬</div>
+                    <h3>Nature & Peace</h3>
+                </div>
+                <div class="video-container">
+                    <iframe width="100%" height="300" src="https://www.youtube.com/embed/{{ nature_video.get('id', '') }}?autoplay=1&mute=1" title="{{ nature_video.get('title', '') }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <div class="video-title">{{ nature_video.get('title', '') }}</div>
+                <div class="video-channel">{{ nature_video.get('channel', '') }}</div>
             </div>
 
             <!-- Weather Status -->
