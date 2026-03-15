@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>✨ Scripture & Skies</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,28 +13,33 @@
         }
 
         :root {
-            --primary: #d0d0d0;
-            --primary-dark: #a0a0a0;
-            --secondary: #d0d0d0;
-            --accent: #d0d0d0;
-            --bg-dark: #000000;
-            --bg-card: rgba(20, 20, 20, 0.95);
-            --text-primary: #d0d0d0;
-            --text-secondary: #909090;
-            --border: rgba(200, 200, 200, 0.2);
-            --shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-            --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.7);
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: rgba(148, 163, 184, 0.1);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --radius: 16px;
         }
 
         body {
-            font-family: 'JetBrains Mono', 'Courier New', monospace;
-            background: #000000;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0, transparent 50%), 
+                radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.1) 0, transparent 50%);
             min-height: 100vh;
             color: var(--text-primary);
             overflow-x: hidden;
+            line-height: 1.5;
         }
 
-        /* Animated background particles */
         .bg-animation {
             position: fixed;
             top: 0;
@@ -43,23 +48,22 @@
             height: 100%;
             pointer-events: none;
             z-index: 0;
-            overflow: hidden;
         }
 
         .bg-animation span {
             position: absolute;
-            width: 4px;
-            height: 4px;
-            background: rgba(200, 200, 200, 0.1);
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 50%;
-            animation: float 15s infinite;
+            animation: float 20s infinite linear;
         }
 
         @keyframes float {
-            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            0% { transform: translateY(110vh) translateX(0); opacity: 0; }
             10% { opacity: 1; }
             90% { opacity: 1; }
-            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+            100% { transform: translateY(-10vh) translateX(100px); opacity: 0; }
         }
 
         .container {
@@ -70,767 +74,366 @@
             z-index: 1;
         }
 
-        /* Header */
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+        }
+
         header {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
             animation: fadeInDown 0.8s ease;
         }
 
         @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-30px); }
+            from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #818cf8, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin-bottom: 0.5rem;
-            letter-spacing: 0.05em;
-            font-family: 'JetBrains Mono', monospace;
-            text-shadow: 0 0 10px rgba(200, 200, 200, 0.3);
+            letter-spacing: -0.025em;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
         }
 
         .subtitle {
             color: var(--text-secondary);
-            font-size: 0.9rem;
-            font-weight: 400;
-            letter-spacing: 0.05em;
-            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: 500;
         }
 
-        /* Main grid */
         .dashboard {
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(12, 1fr);
             gap: 1.5rem;
-            margin-bottom: 2rem;
         }
 
-        /* Metric cards (small tiles) */
-        .metric-card {
-            grid-column: span 1;
+        @media (max-width: 1024px) {
+            .dashboard { grid-template-columns: repeat(2, 1fr); }
         }
 
-        /* Glassmorphism cards */
+        @media (max-width: 768px) {
+            .dashboard { grid-template-columns: 1fr; gap: 1rem; }
+        }
+
         .card {
             background: var(--bg-card);
-            backdrop-filter: none;
-            border: 2px solid var(--border);
-            border-radius: 4px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
             padding: 1.5rem;
             box-shadow: var(--shadow);
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             animation: fadeInUp 0.6s ease backwards;
-            font-family: 'JetBrains Mono', monospace;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         .card:hover {
-            transform: translateY(-2px);
+            transform: translateY(-4px);
             box-shadow: var(--shadow-lg);
-            border-color: var(--text-primary);
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .card:nth-child(1) { animation-delay: 0.1s; }
-        .card:nth-child(2) { animation-delay: 0.2s; }
-        .card:nth-child(3) { animation-delay: 0.3s; }
-        .card:nth-child(4) { animation-delay: 0.4s; }
+        /* Grid Spans */
+        .col-12 { grid-column: span 12; }
+        .col-8 { grid-column: span 8; }
+        .col-6 { grid-column: span 6; }
+        .col-4 { grid-column: span 4; }
+        .col-3 { grid-column: span 3; }
 
-        .card-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
+        @media (max-width: 1024px) {
+            .col-12, .col-8, .col-6, .col-4, .col-3 { grid-column: span 1; }
         }
 
-        .card-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            box-shadow: none;
-            background: rgba(200, 200, 200, 0.1);
-            border: 1px solid var(--border);
-        }
-
-        .temp-icon { background: rgba(200, 200, 200, 0.15); }
-        .humidity-icon { background: rgba(200, 200, 200, 0.15); }
-        .pressure-icon { background: rgba(200, 200, 200, 0.15); }
-        .altitude-icon { background: rgba(200, 200, 200, 0.15); }
-
-        .card-title {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            font-weight: 600;
-        }
-
-        .card-value {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-top: 0.5rem;
-            letter-spacing: 0.05em;
-            color: var(--text-primary);
-        }
-
-        .card-unit {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            font-weight: 400;
-            margin-left: 0.25rem;
-        }
-
-        /* Weather status card */
-        .weather-status {
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            gap: 2rem;
-            background: var(--bg-card);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .weather-status::before {
-            display: none;
-        }
-
-        .weather-icon {
-            font-size: 4rem;
-            animation: glow 2s ease-in-out infinite;
-            position: relative;
-            z-index: 1;
-        }
-
-        @keyframes glow {
-            0%, 100% { text-shadow: 0 0 5px rgba(200, 200, 200, 0.2); }
-            50% { text-shadow: 0 0 20px rgba(200, 200, 200, 0.4); }
-        }
-
-        .weather-info {
-            position: relative;
-            z-index: 1;
-        }
-
-        .weather-info h2 {
-            font-size: 1.5rem;
-            margin-bottom: 0.75rem;
-            font-weight: 600;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .weather-desc {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            line-height: 1.6;
-        }
-
-        /* Camera feed */
-        .camera-section {
-        }
-
-        .chart-section {
-            display: flex;
-            flex-direction: column;
-        }
-
-        @media (max-width: 1200px) {
-
-        .chart-header {
+        /* Section Headers */
+        .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
         }
 
-        .chart-header h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .chart-container {
-            position: relative;
-            height: 300px;
-            width: 100%;
-        }
-
-        @media (max-width: 900px) {
-            .chart-container {
-                height: 250px;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .chart-container {
-                height: 200px;
-            }
-
-            .chart-header h3 {
-                font-size: 0.9rem;
-            }
-        }
-
-        .camera-section {
-
-        .camera-header h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .live-badge {
+        .header-title {
             display: flex;
             align-items: center;
-            gap: 0.6rem;
-            background: rgba(200, 200, 200, 0.1);
-            color: var(--text-primary);
-            padding: 0.4rem 0.8rem;
-            border-radius: 2px;
-            font-size: 0.7rem;
+            gap: 0.75rem;
+        }
+
+        .header-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        h3 {
+            font-size: 0.875rem;
             font-weight: 700;
-            border: 1px solid var(--border);
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
         }
 
-        .live-dot {
-            width: 6px;
-            height: 6px;
-            background: var(--text-primary);
-            border-radius: 50%;
-            animation: blink 1s ease-in-out infinite;
-            box-shadow: 0 0 4px rgba(200, 200, 200, 0.4);
+        /* Metric Styles */
+        .metric-content {
+            display: flex;
+            flex-direction: column;
         }
 
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
+        .metric-value {
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1;
+            margin: 0.5rem 0;
         }
 
-        .camera-feed {
-            position: relative;
-            border-radius: 2px;
+        .metric-unit {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-left: 0.25rem;
+        }
+
+        /* Weather Status Banner */
+        .weather-banner {
+            display: flex;
+            align-items: center;
+            gap: 2.5rem;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(16, 185, 129, 0.1));
+        }
+
+        @media (max-width: 640px) {
+            .weather-banner { flex-direction: column; text-align: center; gap: 1rem; }
+        }
+
+        .weather-icon-large {
+            font-size: 4.5rem;
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.2));
+            animation: float-icon 3s ease-in-out infinite;
+        }
+
+        @keyframes float-icon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .weather-info h2 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Media Elements */
+        .media-container {
+            width: 100%;
+            border-radius: 12px;
             overflow: hidden;
+            border: 1px solid var(--glass-border);
+            position: relative;
             background: #000;
-            border: 1px solid var(--border);
-            /* Maintain 16:9 aspect ratio responsively */
-            padding-top: 56.25%; /* 16:9 */
+            margin-top: auto;
         }
 
-        .camera-feed img {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .aspect-16-9 { aspect-ratio: 16/9; }
+
+        .media-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block;
-            transition: transform 0.3s ease;
+            transition: transform 0.5s ease;
         }
 
-        .camera-feed:hover img {
-            transform: scale(1.03);
-        }
+        .card:hover .media-img { transform: scale(1.05); }
 
-        .timestamp-overlay {
-            position: absolute;
-            bottom: 1rem;
-            right: 1rem;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: none;
-            padding: 0.4rem 0.8rem;
-            border-radius: 2px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            border: 1px solid var(--border);
-        }
-
-        /* System info */
-        .system-card {
-        }
-
-        .system-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .system-header h3 {
-            font-size: 0.9rem;
-            font-weight: 600;
-            font-family: 'JetBrains Mono', monospace;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        .system-icon {
+        /* Buttons */
+        .icon-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
             width: 36px;
             height: 36px;
-            background: rgba(200, 200, 200, 0.1);
-            border-radius: 2px;
+            border-radius: 10px;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
-            box-shadow: none;
-            border: 1px solid var(--border);
+            transition: all 0.2s;
         }
 
-        .system-content {
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 2px;
-            padding: 1rem;
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.1);
+        }
+
+        /* Custom Content */
+        .verse-box {
+            border-left: 4px solid var(--primary);
+            padding-left: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .verse-text {
+            font-size: 1.25rem;
+            font-weight: 500;
+            font-style: italic;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .verse-ref {
+            color: var(--primary-light);
+            font-weight: 700;
+            text-align: right;
+            display: block;
+        }
+
+        .word-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .data-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+
+        /* System Info Grid */
+        .system-grid {
+            background: rgba(15, 23, 42, 0.5);
+            padding: 1.25rem;
+            border-radius: 12px;
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.85rem;
+            border: 1px solid var(--glass-border);
             overflow-x: auto;
-            border: 1px solid var(--border);
-            line-height: 1.6;
         }
 
-        .system-content pre {
-            margin: 0;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            color: var(--text-primary);
-        }
-
-        /* Uptime Badge Card */
-        .uptime-card {
-        }
-
-        .uptime-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .uptime-header h3 {
-            font-size: 0.9rem;
-            font-weight: 600;
-            font-family: 'JetBrains Mono', monospace;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        .uptime-icon {
-            width: 36px;
-            height: 36px;
-            background: rgba(200, 200, 200, 0.1);
-            border: 1px solid var(--border);
-            border-radius: 2px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
-
-        .uptime-content {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-        }
-
-        .uptime-badge {
-            background: rgba(208, 208, 208, 0.05);
-            border: 1px solid rgba(208, 208, 208, 0.2);
-            border-radius: 4px;
-            padding: 1rem;
-            text-align: center;
-        }
-
-        .uptime-label {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 0.4rem;
-        }
-
-        .uptime-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .uptime-status {
-            font-size: 0.8rem;
-            color: #5dd57d;
-            margin-top: 0.4rem;
-        }
-
-        /* Sunrise/Sunset Card */
-        .sunrise-sunset-card {
-        }
-
-        .sunrise-sunset-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .sunrise-sunset-header h3 {
-            font-size: 0.9rem;
-            font-weight: 600;
-            font-family: 'JetBrains Mono', monospace;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        .sunrise-sunset-icon {
-            width: 36px;
-            height: 36px;
-            background: rgba(200, 200, 200, 0.1);
-            border: 1px solid var(--border);
-            border-radius: 2px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
-
-        .sunrise-sunset-times {
+        .sun-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1rem;
         }
 
-        .time-block {
-            background: rgba(208, 208, 208, 0.05);
-            border: 1px solid rgba(208, 208, 208, 0.2);
-            border-radius: 4px;
-            padding: 0.8rem;
+        .sun-box {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--glass-border);
+        }
+
+        .uptime-banner {
+            background: linear-gradient(to right, rgba(16, 185, 129, 0.1), transparent);
+            padding: 1.25rem;
+            border-radius: 12px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
             text-align: center;
         }
 
-        .time-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 0.4rem;
-        }
-
-        .time-value {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        /* Bible verse card */
-        .bible-card {
-            background: var(--bg-card);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .bible-card::before {
-            display: none;
-        }
-
-        .bible-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .bible-header h3 {
-            font-size: 0.9rem;
-            font-weight: 600;
-            font-family: 'JetBrains Mono', monospace;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        .bible-icon {
-            width: 36px;
-            height: 36px;
-            background: rgba(200, 200, 200, 0.1);
-            border-radius: 2px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            box-shadow: none;
-            border: 1px solid var(--border);
-        }
-
-        .verse-text {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            font-style: italic;
-            color: var(--text-primary);
-            margin-bottom: 0.75rem;
-            padding: 0;
-        }
-
-        .verse-reference {
-            text-align: right;
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            font-weight: 500;
-            font-style: normal;
-        }
-
-        /* Nature Photo Card */
-        .photo-card {
-        }
-
-        .photo-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .photo-header-left {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .photo-header h3 {
-            font-size: 0.9rem;
-            font-weight: 600;
-            font-family: 'JetBrains Mono', monospace;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        .refresh-btn {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text-secondary);
-            width: 32px;
-            height: 32px;
-            border-radius: 2px;
-            cursor: pointer;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-        }
-
-        .refresh-btn:hover {
-            background: rgba(200, 200, 200, 0.1);
-            color: var(--text-primary);
-            border-color: var(--text-primary);
-        }
-
-        .refresh-btn:active {
-            transform: scale(0.95);
-        }
-
-        .photo-icon {
-            width: 36px;
-            height: 36px;
-            background: rgba(200, 200, 200, 0.1);
-            border-radius: 2px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            box-shadow: none;
-            border: 1px solid var(--border);
-        }
-
-        .nature-image {
-            width: 100%;
-            height: auto;
-            max-height: 420px;
-            object-fit: cover;
-            border-radius: 2px;
-            border: 1px solid var(--border);
-            margin-bottom: 1rem;
+        .uptime-val {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--secondary);
             display: block;
         }
 
-        .photo-credit {
-            display: flex;
-            justify-content: space-between;
+        /* Charts */
+        .chart-wrapper {
+            height: 300px;
+            margin-top: 1rem;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
             align-items: center;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .credit-author {
-            flex: 1;
-        }
-
-        .credit-source {
-            text-align: right;
-        }
-
-
-        /* Word of the Day card */
-        .word-card {
-        }
-
-        .word-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .word-header h3 {
-            font-size: 0.9rem;
-            font-weight: 600;
-            font-family: 'JetBrains Mono', monospace;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        .word-icon {
-            width: 36px;
-            height: 36px;
-            background: rgba(200, 200, 200, 0.1);
-            border-radius: 2px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            box-shadow: none;
-            border: 1px solid var(--border);
-        }
-
-        .word-main {
-            font-size: 1.5rem;
+            gap: 0.4rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
             font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.75rem;
+        }
+
+        .badge-live { background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .dot { width: 6px; height: 6px; border-radius: 50%; }
+        .dot-red { background: #ef4444; animation: pulse 2s infinite; }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        /* Overlay */
+        .overlay {
+            position: absolute;
+            bottom: 0.75rem;
+            right: 0.75rem;
+            background: rgba(15, 23, 42, 0.8);
+            padding: 0.4rem 0.75rem;
+            border-radius: 8px;
             font-family: 'JetBrains Mono', monospace;
-        }
-
-        .word-definition,
-        .word-example {
-            font-size: 0.9rem;
-            line-height: 1.5;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
-        }
-
-        .word-example {
-            margin-bottom: 0;
-        }
-
-        .word-definition .label,
-        .word-example .label {
-            color: var(--text-secondary);
-            font-weight: 600;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            font-size: 0.75rem;
+            border: 1px solid var(--glass-border);
         }
 
         /* Footer */
         footer {
+            margin-top: 4rem;
+            padding-bottom: 4rem;
             text-align: center;
-            padding: 1.5rem;
             color: var(--text-secondary);
-            font-size: 0.8rem;
-            border-top: 1px solid var(--border);
-            margin-top: 2rem;
-            font-family: 'JetBrains Mono', monospace;
         }
 
-        footer p {
-            margin-bottom: 0.5rem;
-            font-weight: 400;
-        }
-
-        .refresh-indicator {
+        .status-pill {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
+            gap: 0.6rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.5rem 1.25rem;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            margin-top: 1rem;
         }
 
-        .spinner {
-            width: 12px;
-            height: 12px;
-            border: 2px solid var(--border);
-            border-top-color: var(--text-primary);
+        .spin {
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--primary-light);
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            animation: spinner 1s linear infinite;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Responsive */
-        @media (max-width: 900px) {
-            h1 { font-size: 1.6rem; }
-            .subtitle { font-size: 0.8rem; }
-            .container { padding: 0.75rem; }
-            .dashboard { gap: 1rem; }
-
-            /* Responsive adjustments */
-            .weather-status {
-                flex-direction: column;
-                text-align: center;
-                gap: 1rem;
-            }
-
-            .weather-icon { font-size: 2.4rem; }
-            .card-value { font-size: 1.4rem; }
-
-            /* Reduce padding and icon sizes */
-            .card { padding: 0.9rem; border-radius: 3px; }
-            .card-icon { width: 40px; height: 40px; font-size: 1.25rem; }
-
-            /* Camera and photo adjustments */
-            .nature-image, .camera-feed { height: 180px; }
-            .camera-feed { aspect-ratio: auto; }
-
-            /* Photo header layout */
-            .photo-header { gap: 0.5rem; }
-            .photo-header-left { gap: 0.5rem; }
-            .refresh-btn { width: 28px; height: 28px; font-size: 0.95rem; }
-
-            /* System info smaller font and scrolling */
-            .system-content { font-size: 0.8rem; }
-
-            /* Word of the day */
-            .word-main { font-size: 1.25rem; }
-            .word-definition, .word-example { font-size: 0.85rem; }
-
-            footer { padding: 1rem; font-size: 0.75rem; }
-        }
-
-        /* Loading state */
-        .skeleton {
-            background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-            border-radius: 8px;
-        }
-
-        @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-     </style>
+        @keyframes spinner { to { transform: rotate(360deg); } }
+    </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -843,248 +446,227 @@
         </header>
 
         <div class="dashboard">
-            <!-- Random Nature Photo -->
-            <div class="card photo-card">
-                <div class="photo-header">
-                    <div class="photo-header-left">
-                        <div class="photo-icon">🌅</div>
-                        <h3>Nature Photo</h3>
-                    </div>
-                    <button class="refresh-btn" onclick="refreshPhoto()">🔄</button>
-                </div>
-                {% set _sep = '&' if '?' in nature_photo.get('url','') else '?' %}
-<img id="nature-photo" src="{{ nature_photo.get('url', '') }}{{ _sep }}cb={{ curr_time.timestamp() }}" alt="{{ nature_photo.get('alt', '') }}" class="nature-image">
-                <div class="photo-credit">
-                    <span class="credit-author">📸 <span id="photo-author">{{ nature_photo.get('author', 'Unknown') }}</span></span>
-                    <span class="credit-source" id="photo-source">{{ nature_photo.get('source', '') }}</span>
-                </div>
-            </div>
-
-            <!-- Bible Verse -->
-            <div class="card bible-card">
-                <div class="bible-header">
-                    <div class="bible-icon">📖</div>
-                    <h3>Daily Verse</h3>
-                </div>
-                <div class="verse-text">"{{bible_verse.get('text', '')}}"</div>
-                <div class="verse-reference">— {{bible_verse.get('reference', 'Bible')}}</div>
-            </div>
-
-            <!-- Word of the Day -->
-            <div class="card word-card">
-                <div class="word-header">
-                    <div class="word-icon">📚</div>
-                    <h3>Word of the Day</h3>
-                </div>
-                <div class="word-main">{{random_word.get('word', '')}}</div>
-                <div class="word-definition">
-                    <span class="label">Definition:</span> {{random_word.get('definition', '')}}
-                </div>
-                <div class="word-example">
-                    <span class="label">Example:</span> "{{random_word.get('example', '')}}"
-                </div>
-            </div>
-
-            <!-- Weather Status -->
-            <div class="card weather-status">
-                <div class="weather-icon">{{weather_icon}}</div>
+            <!-- Weather Status Banner -->
+            <div class="card col-12 weather-banner">
+                <div class="weather-icon-large">{{weather_icon}}</div>
                 <div class="weather-info">
                     <h2>Current Conditions</h2>
-                    <p class="weather-desc" id="weather-desc">
+                    <p class="weather-desc">
                         {% if temperature %}
-                            {% if temperature < 10 %}Cold{% elif temperature < 25 %}Mild{% else %}Hot{% endif %} with {{humidity}}% humidity
+                            {% if temperature < 10 %}Chilly{% elif temperature < 25 %}Comfortable{% else %}Warm{% endif %} atmospheric conditions with {{humidity}}% humidity.
                         {% else %}
-                            Sensor unavailable
+                            Sensor data currently unavailable.
                         {% endif %}
                     </p>
                 </div>
             </div>
 
-            <!-- Temperature -->
-            <div class="card metric-card">
-                <div class="card-header">
-                    <div class="card-icon temp-icon">🌡️</div>
-                    <div>
-                        <div class="card-title">Temperature</div>
-                        <div class="card-value">
-                            {% if temperature %}
-                                {{temperature}}<span class="card-unit">°C</span>
-                            {% else %}--{% endif %}
-                        </div>
+            <!-- Metrics -->
+            <div class="card col-3">
+                <div class="section-header">
+                    <div class="header-title">
+                        <div class="header-icon">🌡️</div>
+                        <h3>Temperature</h3>
+                    </div>
+                </div>
+                <div class="metric-content">
+                    <div class="metric-value" id="val-temp">
+                        {% if temperature %}{{temperature}}{% else %}--{% endif %}<span class="metric-unit">°C</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Humidity -->
-            <div class="card metric-card">
-                <div class="card-header">
-                    <div class="card-icon humidity-icon">💧</div>
-                    <div>
-                        <div class="card-title">Humidity</div>
-                        <div class="card-value">
-                            {% if humidity %}
-                                {{humidity}}<span class="card-unit">%</span>
-                            {% else %}--{% endif %}
-                        </div>
+            <div class="card col-3">
+                <div class="section-header">
+                    <div class="header-title">
+                        <div class="header-icon">💧</div>
+                        <h3>Humidity</h3>
+                    </div>
+                </div>
+                <div class="metric-content">
+                    <div class="metric-value" id="val-humidity">
+                        {% if humidity %}{{humidity}}{% else %}--{% endif %}<span class="metric-unit">%</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Pressure -->
-            <div class="card metric-card">
-                <div class="card-header">
-                    <div class="card-icon pressure-icon">📊</div>
-                    <div>
-                        <div class="card-title">Pressure</div>
-                        <div class="card-value">
-                            {% if pressure %}
-                                {{pressure}}<span class="card-unit">hPa</span>
-                            {% else %}--{% endif %}
-                        </div>
+            <div class="card col-3">
+                <div class="section-header">
+                    <div class="header-title">
+                        <div class="header-icon">📊</div>
+                        <h3>Pressure</h3>
+                    </div>
+                </div>
+                <div class="metric-content">
+                    <div class="metric-value" id="val-pressure">
+                        {% if pressure %}{{pressure}}{% else %}--{% endif %}<span class="metric-unit">hPa</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Altitude -->
-            <div class="card metric-card">
-                <div class="card-header">
-                    <div class="card-icon altitude-icon">⛰️</div>
-                    <div>
-                        <div class="card-title">Altitude</div>
-                        <div class="card-value">
-                            {% if altitude %}
-                                {{altitude}}<span class="card-unit">m</span>
-                            {% else %}--{% endif %}
-                        </div>
+            <div class="card col-3">
+                <div class="section-header">
+                    <div class="header-title">
+                        <div class="header-icon">⛰️</div>
+                        <h3>Altitude</h3>
+                    </div>
+                </div>
+                <div class="metric-content">
+                    <div class="metric-value" id="val-altitude">
+                        {% if altitude %}{{altitude}}{% else %}--{% endif %}<span class="metric-unit">m</span>
                     </div>
                 </div>
             </div>
 
-            <!-- System Uptime Badge -->
-            <div class="card uptime-card">
-                <div class="uptime-header">
-                    <div class="uptime-icon">⏱️</div>
-                    <h3>System Uptime</h3>
+            <!-- Nature Photo & Bible Verse -->
+            <div class="card col-8">
+                <div class="section-header">
+                    <div class="header-title">
+                        <div class="header-icon">🌅</div>
+                        <h3>Nature Perspective</h3>
+                    </div>
+                    <button class="icon-btn" onclick="refreshPhoto()">🔄</button>
                 </div>
-                <div class="uptime-content">
-                    <div class="uptime-badge">
-                        <div class="uptime-label">System Running</div>
-                        <div class="uptime-value">{{system_info.get('uptime', 'N/A')}}</div>
-                        <div class="uptime-status">🟢 Healthy</div>
+                <div class="media-container aspect-16-9">
+                    {% set _sep = '&' if '?' in nature_photo.get('url','') else '?' %}
+                    <img id="nature-photo" src="{{ nature_photo.get('url', '') }}{{ _sep }}cb={{ curr_time.timestamp() }}" alt="{{ nature_photo.get('alt', '') }}" class="media-img">
+                    <div class="overlay">
+                        📸 <span id="photo-author">{{ nature_photo.get('author', 'Unknown') }}</span> via <span id="photo-source">{{ nature_photo.get('source', 'Web') }}</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Sunrise/Sunset Times -->
-            <div class="card sunrise-sunset-card">
-                <div class="sunrise-sunset-header">
-                    <div class="sunrise-sunset-icon">🌅</div>
-                    <h3>Sun Times</h3>
+            <div class="card col-4">
+                <div class="section-header">
+                    <div class="header-title">
+                        <div class="header-icon">📖</div>
+                        <h3>Daily Verse</h3>
+                    </div>
                 </div>
-                <div class="sunrise-sunset-times">
-                    <div class="time-block">
-                        <div class="time-label">Sunrise</div>
-                        <div class="time-value">{{sunrise_sunset.get('sunrise', 'N/A')}}</div>
-                    </div>
-                    <div class="time-block">
-                        <div class="time-label">Sunset</div>
-                        <div class="time-value">{{sunrise_sunset.get('sunset', 'N/A')}}</div>
-                    </div>
+                <div class="verse-box">
+                    <div class="verse-text">"{{bible_verse.get('text', '')}}"</div>
+                    <div class="verse-ref">— {{bible_verse.get('reference', 'Holy Bible')}}</div>
+                </div>
+                <div style="margin-top: auto;">
+                    <span class="data-label">Translation</span>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary);">{{bible_verse.get('translation', 'WEB')}}</p>
                 </div>
             </div>
 
-            <!-- Temperature History Chart -->
-            <div class="card chart-section">
-                <div class="chart-header">
-                    <h3>📈 Temperature History (24h)</h3>
+            <!-- Chart -->
+            <div class="card col-8">
+                <div class="section-header">
+                    <div class="header-title">
+                        <div class="header-icon">📈</div>
+                        <h3>Temperature History (24h)</h3>
+                    </div>
                 </div>
-                <div class="chart-container">
+                <div class="chart-wrapper">
                     <canvas id="temperatureChart"></canvas>
                 </div>
             </div>
 
-            <!-- Camera Feed -->
-            <div class="card camera-section">
-                <div class="camera-header">
-                    <div class="camera-header-left">
-                        <h3>📷 Live Camera</h3>
-                        <div class="live-badge">
-                            <span class="live-dot"></span>
-                            LIVE
-                        </div>
+            <!-- Word of the Day -->
+            <div class="card col-4">
+                <div class="section-header">
+                    <div class="header-title">
+                        <div class="header-icon">📚</div>
+                        <h3>Word Discovery</h3>
                     </div>
-                    <button class="refresh-btn" onclick="refreshCamera(event)">🔄</button>
                 </div>
-                <div class="camera-feed">
-                    {% if image_exists %}
-                        <img src="{{url_for('static', filename='image.jpg')}}?t={{curr_time.timestamp()}}" alt="Weather Camera" id="camera-img">
-                    {% else %}
-                        <div style="padding: 4rem; text-align: center; color: var(--text-secondary);">
-                            📷 No image available
-                        </div>
-                    {% endif %}
-                    <div class="timestamp-overlay" id="timestamp">{{curr_time.strftime('%Y-%m-%d %H:%M:%S')}}</div>
+                <div class="word-title">{{random_word.get('word', 'Inspiration')}}</div>
+                <div style="margin-bottom: 1.5rem;">
+                    <span class="data-label">Definition</span>
+                    <p style="font-size: 0.95rem;">{{random_word.get('definition', '')}}</p>
+                </div>
+                <div>
+                    <span class="data-label">Example</span>
+                    <p style="font-size: 0.95rem; font-style: italic; color: var(--text-secondary);">"{{random_word.get('example', '')}}"</p>
                 </div>
             </div>
 
-            <!-- System Info -->
-            <div class="card system-card">
-                <div class="system-header">
-                    <div class="system-icon">🖥️</div>
-                    <h3>System Information</h3>
+            <!-- Camera Feed -->
+            <div class="card col-6">
+                <div class="section-header">
+                    <div class="header-title">
+                        <div class="header-icon">📷</div>
+                        <h3>Live Camera</h3>
+                        <div class="badge badge-live">
+                            <span class="dot dot-red"></span>
+                            LIVE
+                        </div>
+                    </div>
+                    <button class="icon-btn" onclick="refreshCamera()">🔄</button>
                 </div>
-                <div class="system-content">
-                    <pre>Model:  {{system_info.get('model', 'N/A')}}
-Uptime: {{system_info.get('uptime', 'N/A')}}
-Memory: {{system_info.get('memory', 'N/A')}}
-CPU Temp: {{system_info.get('cpu_temp', 'N/A')}}
-Disk: {{system_info.get('disk', 'N/A')}}
+                <div class="media-container aspect-16-9">
+                    {% if image_exists %}
+                        <img src="{{url_for('static', filename='image.jpg')}}?t={{curr_time.timestamp()}}" alt="Weather Camera" id="camera-img" class="media-img">
+                    {% else %}
+                        <div style="height: 100%; display: flex; align-items: center; justify-content: center; color: var(--text-secondary);">
+                            No camera feed available
+                        </div>
+                    {% endif %}
+                    <div class="overlay" id="timestamp">{{curr_time.strftime('%Y-%m-%d %H:%M:%S')}}</div>
+                </div>
+            </div>
 
-Camera:
-  picamera: {{ 'Yes' if system_info.get('camera', {}).get('picamera') else 'No' }}
-  raspistill: {{ 'Yes' if system_info.get('camera', {}).get('raspistill') else 'No' }}
-  libcamera: {{ 'Yes' if system_info.get('camera', {}).get('libcamera') else 'No' }}
-  vcgencmd: {{ system_info.get('camera', {}).get('vcgencmd', 'N/A') }}
+            <!-- Sun & System -->
+            <div class="card col-6">
+                <div class="section-header">
+                    <div class="header-title">
+                        <div class="header-icon">🛰️</div>
+                        <h3>System & Environment</h3>
+                    </div>
+                </div>
+                
+                <div class="sun-grid" style="margin-bottom: 1.5rem;">
+                    <div class="sun-box">
+                        <span class="data-label">Sunrise</span>
+                        <div class="time-value" style="font-size: 1.25rem; font-weight: 700;">{{sunrise_sunset.get('sunrise', 'N/A')}}</div>
+                    </div>
+                    <div class="sun-box">
+                        <span class="data-label">Sunset</span>
+                        <div class="time-value" style="font-size: 1.25rem; font-weight: 700;">{{sunrise_sunset.get('sunset', 'N/A')}}</div>
+                    </div>
+                </div>
 
-BME280:
-  present: {{ 'Yes' if system_info.get('bme280', {}).get('present') else 'No' }}
-  id: {{ system_info.get('bme280', {}).get('id', '') }}
-  error: {{ system_info.get('bme280', {}).get('error', '') }}</pre>
+                <div class="uptime-banner" style="margin-bottom: 1.5rem;">
+                    <span class="data-label">System Uptime</span>
+                    <span class="uptime-val">{{system_info.get('uptime', 'N/A')}}</span>
+                    <span style="color: var(--secondary); font-size: 0.75rem; font-weight: 700;">● STABLE</span>
+                </div>
+
+                <div class="system-grid">
+                    <div style="display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 1rem;">
+                        <span style="color: var(--text-secondary);">Model:</span> <span>{{system_info.get('model', 'N/A')}}</span>
+                        <span style="color: var(--text-secondary);">Memory:</span> <span>{{system_info.get('memory', 'N/A')}}</span>
+                        <span style="color: var(--text-secondary);">CPU:</span> <span>{{system_info.get('cpu_temp', 'N/A')}}</span>
+                        <span style="color: var(--text-secondary);">Disk:</span> <span>{{system_info.get('disk', 'N/A')}}</span>
+                    </div>
                 </div>
             </div>
         </div>
 
         <footer>
-            <p>Last Updated: <span id="footer-time">{{curr_time.strftime('%Y-%m-%d %H:%M:%S')}}</span></p>
-            <div class="refresh-indicator">
-                <div class="spinner"></div>
-                <span>Auto-refreshing every 30s</span>
+            <p>© 2026 Scripture & Skies • Raspberry Pi Weather Station</p>
+            <div class="status-pill">
+                <div class="spin"></div>
+                <span>Auto-updating • Last sync: <span id="footer-time">{{curr_time.strftime('%H:%M:%S')}}</span></span>
             </div>
         </footer>
     </div>
 
     <script>
-        // Initialize temperature chart
         let temperatureChart = null;
 
         async function initializeTemperatureChart() {
             try {
                 const response = await fetch('/api/temperature-history?hours=24');
-                if (!response.ok) throw new Error('Failed to fetch temperature history');
-                
                 const result = await response.json();
                 const data = result.data || [];
+                if (data.length === 0) return;
 
-                if (data.length === 0) {
-                    console.warn('No temperature data available');
-                    return;
-                }
-
-                const labels = data.map(d => {
-                    const date = new Date(d.timestamp);
-                    return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-                });
-
+                const labels = data.map(d => new Date(d.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }));
                 const temperatures = data.map(d => d.temperature);
 
                 const ctx = document.getElementById('temperatureChart').getContext('2d');
@@ -1093,192 +675,97 @@ BME280:
                     data: {
                         labels: labels,
                         datasets: [{
-                            label: 'Temperature (°C)',
+                            label: 'Temperature',
                             data: temperatures,
-                            borderColor: '#d0d0d0',
-                            backgroundColor: 'rgba(208, 208, 208, 0.1)',
-                            borderWidth: 2,
+                            borderColor: '#818cf8',
+                            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                            borderWidth: 3,
                             fill: true,
                             tension: 0.4,
                             pointRadius: 0,
                             pointHoverRadius: 6,
-                            pointBackgroundColor: '#d0d0d0',
-                            pointBorderColor: '#000000',
-                            pointBorderWidth: 2
+                            pointBackgroundColor: '#818cf8'
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: true,
-                                labels: {
-                                    color: '#d0d0d0',
-                                    font: { family: "'JetBrains Mono', monospace", size: 12 }
-                                }
-                            }
-                        },
+                        plugins: { legend: { display: false } },
                         scales: {
-                            y: {
-                                beginAtZero: false,
-                                grid: {
-                                    color: 'rgba(200, 200, 200, 0.1)',
-                                    drawBorder: false
-                                },
-                                ticks: {
-                                    color: '#909090',
-                                    font: { family: "'JetBrains Mono', monospace", size: 11 }
-                                }
-                            },
-                            x: {
-                                grid: {
-                                    display: false,
-                                    drawBorder: false
-                                },
-                                ticks: {
-                                    color: '#909090',
-                                    font: { family: "'JetBrains Mono', monospace", size: 11 },
-                                    maxRotation: 45,
-                                    minRotation: 0
-                                }
-                            }
+                            y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8' } },
+                            x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
                         }
                     }
                 });
-            } catch (error) {
-                console.error('Failed to initialize temperature chart:', error);
-            }
+            } catch (error) { console.error('Chart init failed:', error); }
         }
 
-        // Refresh temperature chart data
         async function refreshTemperatureChart() {
             try {
                 const response = await fetch('/api/temperature-history?hours=24');
-                if (!response.ok) throw new Error('Failed to fetch temperature history');
-                
                 const result = await response.json();
                 const data = result.data || [];
-
                 if (!temperatureChart || data.length === 0) return;
-
-                const labels = data.map(d => {
-                    const date = new Date(d.timestamp);
-                    return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-                });
-
-                const temperatures = data.map(d => d.temperature);
-
-                temperatureChart.data.labels = labels;
-                temperatureChart.data.datasets[0].data = temperatures;
+                temperatureChart.data.labels = data.map(d => new Date(d.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }));
+                temperatureChart.data.datasets[0].data = data.map(d => d.temperature);
                 temperatureChart.update();
-            } catch (error) {
-                console.error('Failed to refresh temperature chart:', error);
-            }
+            } catch (error) { console.error('Chart refresh failed:', error); }
         }
 
-        // Initialize chart on page load
-        document.addEventListener('DOMContentLoaded', initializeTemperatureChart);
-
-        // Refresh chart every 5 minutes
-        setInterval(refreshTemperatureChart, 5 * 60 * 1000);
-
-        // Refresh nature photo
-        async function refreshPhoto(event) {
+        async function refreshPhoto() {
             try {
                 const response = await fetch('/api/photo');
-                if (!response.ok) throw new Error('photo API error');
                 const data = await response.json();
-                const url = data.url || '';
-                const sep = url.includes('?') ? '&' : '?';
-                const photoImg = document.getElementById('nature-photo');
-                const authorSpan = document.getElementById('photo-author');
-                const sourceSpan = document.getElementById('photo-source');
-
-                photoImg.src = url + sep + 'cb=' + Date.now();
-                authorSpan.textContent = data.author || 'Unknown';
-                sourceSpan.textContent = data.source || '';
-
-                // Visual feedback
-                const btn = event && event.target ? (event.target.closest ? event.target.closest('.refresh-btn') : null) : null;
-                if (btn) { btn.style.transform = 'rotate(180deg)'; setTimeout(() => { btn.style.transform = 'rotate(0deg)'; }, 300); }
-            } catch (error) {
-                console.error('Failed to refresh photo:', error);
-            }
+                const img = document.getElementById('nature-photo');
+                img.src = data.url + (data.url.includes('?') ? '&' : '?') + 'cb=' + Date.now();
+                document.getElementById('photo-author').textContent = data.author || 'Unknown';
+                document.getElementById('photo-source').textContent = data.source || 'Web';
+            } catch (error) { console.error('Photo refresh failed:', error); }
         }
-        // Refresh live camera image (capture new photo via server)
-        async function refreshCamera(event) {
+
+        async function refreshCamera() {
             try {
                 const resp = await fetch('/api/capture', { method: 'POST' });
-                if (!resp.ok) {
-                    const err = await resp.json().catch(() => ({}));
-                    throw new Error(err.error || 'capture failed');
-                }
                 const data = await resp.json();
-                const img = document.getElementById('camera-img');
-                if (data && data.url) {
-                    const sep = data.url.includes('?') ? '&' : '?';
-                    img.src = data.url + sep + 'cb=' + Date.now();
+                if (data.url) {
+                    const img = document.getElementById('camera-img');
+                    img.src = data.url + (data.url.includes('?') ? '&' : '?') + 'cb=' + Date.now();
+                    document.getElementById('timestamp').textContent = new Date().toLocaleString();
                 }
-                // Update timestamp overlay to now
-                const ts = document.getElementById('timestamp');
-                if (ts) ts.textContent = new Date().toISOString().slice(0,19).replace('T',' ');
-                const btn = event && event.target ? (event.target.closest ? event.target.closest('.refresh-btn') : null) : null;
-                if (btn) { btn.style.transform = 'rotate(180deg)'; setTimeout(() => { btn.style.transform = 'rotate(0deg)'; }, 300); }
-            } catch (e) {
-                console.error('Failed to refresh camera:', e);
-            }
+            } catch (e) { console.error('Camera refresh failed:', e); }
         }
 
-        // Create floating particles
         const particlesContainer = document.getElementById('particles');
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < 40; i++) {
             const span = document.createElement('span');
             span.style.left = Math.random() * 100 + '%';
-            span.style.animationDelay = Math.random() * 15 + 's';
-            span.style.animationDuration = (10 + Math.random() * 10) + 's';
+            span.style.top = Math.random() * 100 + '%';
+            span.style.animationDelay = Math.random() * 20 + 's';
+            span.style.animationDuration = (15 + Math.random() * 15) + 's';
             particlesContainer.appendChild(span);
         }
 
-        // Auto-refresh data every 30 seconds
         setInterval(() => {
             fetch('/api/data')
                 .then(r => r.json())
                 .then(data => {
-                    if (data.temperature) {
-                        document.querySelector('.temp-icon + div .card-value').innerHTML =
-                            data.temperature + '<span class="card-unit">°C</span>';
-                    }
-                    if (data.humidity) {
-                        document.querySelector('.humidity-icon + div .card-value').innerHTML =
-                            data.humidity + '<span class="card-unit">%</span>';
-                    }
-                    if (data.pressure) {
-                        document.querySelector('.pressure-icon + div .card-value').innerHTML =
-                            data.pressure + '<span class="card-unit">hPa</span>';
-                    }
-                    if (data.altitude) {
-                        document.querySelector('.altitude-icon + div .card-value').innerHTML =
-                            data.altitude + '<span class="card-unit">m</span>';
-                    }
-                    if (data.weather_icon) {
-                        document.querySelector('.weather-icon').textContent = data.weather_icon;
-                    }
-
-                    // Update timestamps
-                    const now = new Date(data.timestamp);
-                    const timeStr = now.toISOString().slice(0, 19).replace('T', ' ');
-                    document.getElementById('timestamp').textContent = timeStr;
+                    if (data.temperature) document.getElementById('val-temp').innerHTML = data.temperature + '<span class="metric-unit">°C</span>';
+                    if (data.humidity) document.getElementById('val-humidity').innerHTML = data.humidity + '<span class="metric-unit">%</span>';
+                    if (data.pressure) document.getElementById('val-pressure').innerHTML = data.pressure + '<span class="metric-unit">hPa</span>';
+                    if (data.altitude) document.getElementById('val-altitude').innerHTML = data.altitude + '<span class="metric-unit">m</span>';
+                    
+                    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
                     document.getElementById('footer-time').textContent = timeStr;
-
-                    // Refresh camera image
-                    const img = document.getElementById('camera-img');
-                    if (img) {
-                        img.src = img.src.split('?')[0] + '?t=' + Date.now();
-                    }
-                })
-                .catch(console.error);
+                    
+                    const camImg = document.getElementById('camera-img');
+                    if (camImg) camImg.src = camImg.src.split('?')[0] + '?t=' + Date.now();
+                });
         }, 30000);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeTemperatureChart();
+            setInterval(refreshTemperatureChart, 300000);
+        });
     </script>
 </body>
 </html>

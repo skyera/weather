@@ -389,12 +389,6 @@ def get_random_nature_photo():
         'url': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
         'alt': 'Mountain landscape',
         'author': 'Unsplash',
-        'source': 'Fallback'
-    }
-    return {
-        'url': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
-        'alt': 'Mountain landscape',
-        'author': 'Unsplash',
         'source': 'Unsplash'
     }
 
