@@ -247,6 +247,18 @@
             flex-direction: column;
         }
 
+        @media (max-width: 1200px) {
+            .chart-section {
+                grid-column: span 4;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .chart-section {
+                grid-column: 1 / -1;
+            }
+        }
+
         .chart-header {
             display: flex;
             justify-content: space-between;
@@ -264,6 +276,22 @@
             position: relative;
             height: 300px;
             width: 100%;
+        }
+
+        @media (max-width: 900px) {
+            .chart-container {
+                height: 250px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .chart-container {
+                height: 200px;
+            }
+
+            .chart-header h3 {
+                font-size: 0.9rem;
+            }
         }
 
         .camera-section {
@@ -654,7 +682,8 @@
             .camera-section,
             .system-card,
             .photo-card,
-            .word-card {
+            .word-card,
+            .chart-section {
                 grid-column: 1 / -1 !important;
                 width: 100%;
             }
