@@ -138,8 +138,46 @@ def get_bible_verse():
 
 
 def get_random_word():
-    """Get a random word with definition and example."""
-    words = [
+    """Get a random word with definition and example from dictionary APIs."""
+    try:
+        # Fetch random word from Random Word API
+        word_response = requests.get('https://random-word-api.herokuapp.com/word', timeout=5)
+        if word_response.status_code != 200:
+            return get_fallback_word()
+        
+        word = word_response.json()[0]
+        
+        # Fetch definition from Free Dictionary API
+        def_response = requests.get(f'https://api.dictionaryapi.dev/api/v2/entries/en/{word}', timeout=5)
+        if def_response.status_code != 200:
+            return get_fallback_word()
+        
+        data = def_response.json()[0]
+        
+        # Extract definition and example
+        definition = "No definition available"
+        example = "No example available"
+        
+        if data.get('meanings') and len(data['meanings']) > 0:
+            meaning = data['meanings'][0]
+            if meaning.get('definitions') and len(meaning['definitions']) > 0:
+                definition = meaning['definitions'][0].get('definition', definition)
+                example = meaning['definitions'][0].get('example', example)
+        
+        return {
+            "word": word.capitalize(),
+            "definition": definition,
+            "example": example
+        }
+    
+    except Exception as e:
+        app.logger.warning(f"Failed to fetch random word: {e}")
+        return get_fallback_word()
+
+
+def get_fallback_word():
+    """Return a fallback word when API is unavailable."""
+    fallback_words = [
         {
             "word": "Serendipity",
             "definition": "The occurrence of events by chance in a happy or beneficial way",
@@ -166,31 +204,6 @@ def get_random_word():
             "example": "Smartphones have become ubiquitous in modern society."
         },
         {
-            "word": "Melancholic",
-            "definition": "Feeling or expressing sadness, gloom, or despondency",
-            "example": "The melancholic music touched everyone's heart."
-        },
-        {
-            "word": "Pragmatic",
-            "definition": "Dealing with things in a practical, realistic way based on actual circumstances",
-            "example": "We need a pragmatic approach to solve this budget crisis."
-        },
-        {
-            "word": "Vivacious",
-            "definition": "Lively, animated, and high-spirited",
-            "example": "Her vivacious personality made her the life of the party."
-        },
-        {
-            "word": "Zenith",
-            "definition": "The time at which something is most powerful or successful",
-            "example": "The company reached its zenith during the 1990s."
-        },
-        {
-            "word": "Nostalgia",
-            "definition": "A sentimental longing for the past; a yearning for a period gone by",
-            "example": "Looking at old photos filled her with nostalgia for her childhood."
-        },
-        {
             "word": "Resilient",
             "definition": "Able to withstand or recover quickly from difficult conditions",
             "example": "She proved to be a resilient person despite all her hardships."
@@ -198,51 +211,16 @@ def get_random_word():
         {
             "word": "Aesthetic",
             "definition": "Concerned with beauty or the appreciation of beauty",
-            "example": "The museum's aesthetic design draws visitors from around the world."
+            "example": "The museum's aesthetic design draws visitors around the world."
         },
         {
-            "word": "Candid",
-            "definition": "Truthful and straightforward; frank",
-            "example": "He gave a candid interview about his struggles with addiction."
-        },
-        {
-            "word": "Diligent",
-            "definition": "Having or showing care and effort in one's work or duties",
-            "example": "Her diligent study habits earned her top grades."
-        },
-        {
-            "word": "Ethereal",
-            "definition": "Extremely delicate and light; seeming not of this world",
-            "example": "The ethereal voice of the soprano captivated the audience."
-        },
-        {
-            "word": "Fortuitous",
-            "definition": "Happening by chance in a happy or beneficial way",
-            "example": "Meeting my best friend was a fortuitous accident in college."
-        },
-        {
-            "word": "Gregarious",
-            "definition": "Fond of being in company; sociable",
-            "example": "He's a gregarious person who loves attending social events."
-        },
-        {
-            "word": "Harbinger",
-            "definition": "A person or thing that announces or signals the approach of another",
-            "example": "Dark clouds are often a harbinger of storms."
-        },
-        {
-            "word": "Incisive",
-            "definition": "Intelligently decisive and direct; keen",
-            "example": "The critic gave an incisive analysis of the film's weaknesses."
-        },
-        {
-            "word": "Jubilant",
-            "definition": "Feeling or expressing great happiness and triumph",
-            "example": "The jubilant crowd celebrated their team's victory."
+            "word": "Pragmatic",
+            "definition": "Dealing with things in a practical, realistic way based on actual circumstances",
+            "example": "We need a pragmatic approach to solve this budget crisis."
         }
     ]
     
-    return random.choice(words)
+    return random.choice(fallback_words)
 
 
 def get_sensor_data():
