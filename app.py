@@ -223,6 +223,38 @@ def get_fallback_word():
     return random.choice(fallback_words)
 
 
+def get_random_nature_photo():
+    """Get a random nature/landscape photo URL from Unsplash."""
+    try:
+        response = requests.get(
+            'https://api.unsplash.com/photos/random',
+            params={
+                'query': 'nature landscape',
+                'orientation': 'landscape',
+                'client_id': 'sRJ8pxVzTgC3x3dDJNXxGMkAR7eCwSJvUNMnVPRmBsQ'
+            },
+            timeout=5
+        )
+        if response.status_code == 200:
+            data = response.json()
+            return {
+                'url': data.get('urls', {}).get('regular', ''),
+                'alt': data.get('alt_description', 'Nature photo'),
+                'author': data.get('user', {}).get('name', 'Unknown'),
+                'source': 'Unsplash'
+            }
+    except Exception as e:
+        app.logger.warning(f"Failed to fetch random photo: {e}")
+    
+    # Fallback to a public nature photo URL
+    return {
+        'url': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
+        'alt': 'Mountain landscape',
+        'author': 'Unsplash',
+        'source': 'Unsplash'
+    }
+
+
 def get_sensor_data():
     """Read BME280 sensor data with fallback values."""
     if not BME280_AVAILABLE:
@@ -320,6 +352,7 @@ def index():
         system_info=system_info,
         bible_verse=bible_verse,
         random_word=random_word,
+        nature_photo=get_random_nature_photo(),
         image_exists=IMAGE_PATH.exists()
     )
 

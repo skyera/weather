@@ -413,6 +413,67 @@
             font-style: normal;
         }
 
+        /* Nature Photo Card */
+        .photo-card {
+            grid-column: span 2;
+        }
+
+        .photo-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .photo-header h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .photo-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(200, 200, 200, 0.1);
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: none;
+            border: 1px solid var(--border);
+        }
+
+        .nature-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 2px;
+            border: 1px solid var(--border);
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .photo-credit {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .credit-author {
+            flex: 1;
+        }
+
+        .credit-source {
+            text-align: right;
+        }
+
+
         /* Word of the Day card */
         .word-card {
             grid-column: span 2;
@@ -553,6 +614,19 @@
         </header>
 
         <div class="dashboard">
+            <!-- Random Nature Photo -->
+            <div class="card photo-card">
+                <div class="photo-header">
+                    <div class="photo-icon">🌅</div>
+                    <h3>Nature Photo</h3>
+                </div>
+                <img src="{{ nature_photo.get('url', '') }}" alt="{{ nature_photo.get('alt', '') }}" class="nature-image">
+                <div class="photo-credit">
+                    <span class="credit-author">📸 {{ nature_photo.get('author', 'Unknown') }}</span>
+                    <span class="credit-source">{{ nature_photo.get('source', '') }}</span>
+                </div>
+            </div>
+
             <!-- Bible Verse -->
             <div class="card bible-card">
                 <div class="bible-header">
