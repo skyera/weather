@@ -227,44 +227,44 @@ def get_random_nature_video():
     """Get a random nature/ambient YouTube video."""
     nature_videos = [
         {
-            "id": "gE_E0hWV6KQ",
-            "title": "Hymn: Great Is Thy Faithfulness",
-            "channel": "Hymn Channel"
+            "id": "ZfBSJhztKqQ",
+            "title": "10 Hours of Relaxing Rain Sounds",
+            "channel": "Meditation Relax Club"
         },
         {
-            "id": "k-VZp4lfFgg",
-            "title": "Relaxing Piano Music with Nature Scenes",
-            "channel": "Peaceful Music"
+            "id": "e9nDR5Aaz9E",
+            "title": "Peaceful Piano Music - Sleep & Relaxation",
+            "channel": "Peaceful Piano"
         },
         {
-            "id": "1-l0T5dMCSA",
-            "title": "Calm Rain & Thunder Sounds",
+            "id": "z3wG0tHfP-g",
+            "title": "8 Hour Deep Sleep Music & Rain Sounds",
+            "channel": "Deep Sleep Sounds"
+        },
+        {
+            "id": "WU21WG_a1A0",
+            "title": "Beautiful Nature Scenery with Relaxing Music",
+            "channel": "4K Relaxation"
+        },
+        {
+            "id": "dBq3N0Cojdc",
+            "title": "Sleeping Music for Deep Sleep - Relaxation",
+            "channel": "Golden Waves"
+        },
+        {
+            "id": "5YiQv0jf73I",
+            "title": "Amazing Sky Time Lapse - Clouds & Stars",
+            "channel": "Nature Channel"
+        },
+        {
+            "id": "jqBP7yflx8s",
+            "title": "Morning Birds Singing in Forest",
             "channel": "Nature Sounds"
         },
         {
-            "id": "IlqDmz6t2JQ",
-            "title": "Beautiful Sky and Clouds - Relaxing Video",
-            "channel": "Nature Videos"
-        },
-        {
-            "id": "vvMQWAhYz9Y",
-            "title": "Ambient Piano in Autumn Forest",
-            "channel": "Ambient Music"
-        },
-        {
-            "id": "DCXZ_rKxqws",
-            "title": "Ocean Waves Crashing on Beach",
-            "channel": "Nature Sounds"
-        },
-        {
-            "id": "nFzNCt-vTJE",
-            "title": "Birds Singing - Morning Nature Sounds",
-            "channel": "Nature Sounds"
-        },
-        {
-            "id": "8Jvd5Gqyrkk",
-            "title": "Hymn: Jesus Loves Me",
-            "channel": "Hymn Channel"
+            "id": "JXMfKalJ1jI",
+            "title": "Heavenly Hymns - Relaxing Music",
+            "channel": "Heaven Music"
         }
     ]
     
