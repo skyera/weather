@@ -13,15 +13,15 @@
         }
 
         :root {
-            --primary: #00ff00;
-            --primary-dark: #00cc00;
-            --secondary: #00ff00;
-            --accent: #00ff00;
+            --primary: #d0d0d0;
+            --primary-dark: #a0a0a0;
+            --secondary: #d0d0d0;
+            --accent: #d0d0d0;
             --bg-dark: #000000;
             --bg-card: rgba(20, 20, 20, 0.95);
-            --text-primary: #00ff00;
-            --text-secondary: #00cc00;
-            --border: rgba(0, 255, 0, 0.3);
+            --text-primary: #d0d0d0;
+            --text-secondary: #909090;
+            --border: rgba(200, 200, 200, 0.2);
             --shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
             --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.7);
         }
@@ -50,7 +50,7 @@
             position: absolute;
             width: 4px;
             height: 4px;
-            background: rgba(0, 255, 0, 0.1);
+            background: rgba(200, 200, 200, 0.1);
             border-radius: 50%;
             animation: float 15s infinite;
         }
@@ -89,7 +89,7 @@
             margin-bottom: 0.5rem;
             letter-spacing: 0.05em;
             font-family: 'JetBrains Mono', monospace;
-            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            text-shadow: 0 0 10px rgba(200, 200, 200, 0.3);
         }
 
         .subtitle {
@@ -153,14 +153,14 @@
             justify-content: center;
             font-size: 1.5rem;
             box-shadow: none;
-            background: rgba(0, 255, 0, 0.1);
+            background: rgba(200, 200, 200, 0.1);
             border: 1px solid var(--border);
         }
 
-        .temp-icon { background: rgba(0, 255, 0, 0.15); }
-        .humidity-icon { background: rgba(0, 255, 0, 0.15); }
-        .pressure-icon { background: rgba(0, 255, 0, 0.15); }
-        .altitude-icon { background: rgba(0, 255, 0, 0.15); }
+        .temp-icon { background: rgba(200, 200, 200, 0.15); }
+        .humidity-icon { background: rgba(200, 200, 200, 0.15); }
+        .pressure-icon { background: rgba(200, 200, 200, 0.15); }
+        .altitude-icon { background: rgba(200, 200, 200, 0.15); }
 
         .card-title {
             font-size: 0.75rem;
@@ -209,8 +209,8 @@
         }
 
         @keyframes glow {
-            0%, 100% { text-shadow: 0 0 5px rgba(0, 255, 0, 0.3); }
-            50% { text-shadow: 0 0 20px rgba(0, 255, 0, 0.6); }
+            0%, 100% { text-shadow: 0 0 5px rgba(200, 200, 200, 0.2); }
+            50% { text-shadow: 0 0 20px rgba(200, 200, 200, 0.4); }
         }
 
         .weather-info {
@@ -246,7 +246,7 @@
             display: flex;
             align-items: center;
             gap: 0.6rem;
-            background: rgba(0, 255, 0, 0.1);
+            background: rgba(200, 200, 200, 0.1);
             color: var(--text-primary);
             padding: 0.4rem 0.8rem;
             border-radius: 2px;
@@ -263,7 +263,7 @@
             background: var(--text-primary);
             border-radius: 50%;
             animation: blink 1s ease-in-out infinite;
-            box-shadow: 0 0 4px rgba(0, 255, 0, 0.6);
+            box-shadow: 0 0 4px rgba(200, 200, 200, 0.4);
         }
 
         @keyframes blink {
@@ -328,7 +328,7 @@
         .system-icon {
             width: 36px;
             height: 36px;
-            background: rgba(0, 255, 0, 0.1);
+            background: rgba(200, 200, 200, 0.1);
             border-radius: 2px;
             display: flex;
             align-items: center;
@@ -386,7 +386,7 @@
         .bible-icon {
             width: 36px;
             height: 36px;
-            background: rgba(0, 255, 0, 0.1);
+            background: rgba(200, 200, 200, 0.1);
             border-radius: 2px;
             display: flex;
             align-items: center;
