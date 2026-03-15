@@ -114,72 +114,25 @@ def get_system_info():
 
 
 def get_bible_verse():
-    """Get a random Bible verse with English and Chinese translations."""
-    verse_en = {}
-    verse_zh = {}
-    
+    """Get a random Bible verse from the Bible API."""
     try:
-        # Get random English verse
         response = requests.get("https://bible-api.com/?random=books", timeout=5)
         if response.status_code == 200:
             data = response.json()
-            verse_en = {
+            return {
                 "reference": data.get("reference", ""),
                 "text": data.get("text", "").strip(),
                 "translation": data.get("translation_name", "Web English Bible")
             }
-            
-            # Try to get Chinese translation of the same verse
-            reference = verse_en.get("reference", "John 1:1")
-            try:
-                # Try to get from bible-api with different format or fallback service
-                # For now, create a hardcoded mapping of common verses
-                verse_zh = get_chinese_verse(reference)
-            except:
-                verse_zh = {"text": "仰望耶稣，信心创造者和完成者。"}
     except (requests.RequestException, ValueError, KeyError):
         pass
     
-    if not verse_en:
-        # Fallback verse
-        verse_en = {
-            "reference": "Psalm 23:1",
-            "text": "The Lord is my shepherd; I shall not want.",
-            "translation": "King James Version"
-        }
-        verse_zh = {"text": "耶和华是我的牧者，我必不至缺乏。"}
-    
+    # Fallback verse
     return {
-        "reference": verse_en.get("reference", ""),
-        "text_en": verse_en.get("text", ""),
-        "translation_en": verse_en.get("translation", ""),
-        "text_zh": verse_zh.get("text", "")
+        "reference": "Psalm 23:1",
+        "text": "The Lord is my shepherd; I shall not want.",
+        "translation": "King James Version"
     }
-
-
-def get_chinese_verse(reference):
-    """Get Chinese translation of a Bible verse."""
-    # Hardcoded mapping of common Bible verses
-    verses_map = {
-        "John 1:1": "太初有道，道与神同在，道就是神。",
-        "Psalm 23:1": "耶和华是我的牧者，我必不至缺乏。",
-        "Matthew 5:3": "虚心的人有福了，因为天国是他们的。",
-        "Romans 3:23": "因为世人都犯了罪，亏缺了神的荣耀。",
-        "John 3:16": "神爱世人，甚至将他的独生子赐给他们，叫一切信他的，不至灭亡，反得永生。",
-        "1 John 4:7": "亲爱的弟兄啊，我们应当彼此相爱，因为爱是从神来的。凡有爱心的，都是由神而生，并且认识神。",
-        "Proverbs 3:5": "你要尽心、尽性、尽力爱主你的神。",
-        "Philippians 4:6": "应当一无挂虑，只要凡事借着祷告、祈求，和感谢，将你们所要的告诉神。",
-        "Proverbs 3:6": "你要在你一切所行的事上都认定他，他必指引你的路。",
-        "1 Peter 5:7": "你们要将一切的忧虑卸给神，因为他关心你们。",
-    }
-    
-    # Try to find the verse in the map
-    for key, value in verses_map.items():
-        if key.lower() in reference.lower():
-            return {"text": value}
-    
-    # Default Chinese verse if not found
-    return {"text": "主啊，求你保守我们的心，胜过万物，因为一生的果效，是由心发出的。"}
 
 
 def get_sensor_data():
