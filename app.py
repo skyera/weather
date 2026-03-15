@@ -123,6 +123,39 @@ def get_system_info():
     except (subprocess.TimeoutExpired, FileNotFoundError):
         info["disk"] = "Disk info unavailable"
     
+    # Camera hardware info
+    camera_info = {
+        "picamera": PICAMERA_AVAILABLE,
+        "raspistill": RASPISILL_AVAILABLE,
+        "libcamera": LIBCAMERA_STILL_AVAILABLE
+    }
+    try:
+        if command_exists('vcgencmd'):
+            res = subprocess.run(['vcgencmd', 'get_camera'], capture_output=True, text=True, timeout=3)
+            if res.returncode == 0:
+                camera_info["vcgencmd"] = res.stdout.strip()
+            else:
+                camera_info["vcgencmd"] = "vcgencmd present but command failed"
+        else:
+            camera_info["vcgencmd"] = "vcgencmd not found"
+    except Exception as e:
+        camera_info["vcgencmd"] = f"Error: {e}"
+
+    info["camera"] = camera_info
+
+    # BME280 hardware info
+    try:
+        if BME280_AVAILABLE:
+            try:
+                bme_id = bme.readBME280ID()
+                info["bme280"] = {"present": True, "id": str(bme_id)}
+            except Exception as e:
+                info["bme280"] = {"present": True, "error": str(e)}
+        else:
+            info["bme280"] = {"present": False}
+    except Exception as e:
+        info["bme280"] = {"present": False, "error": str(e)}
+
     return info
 
 
