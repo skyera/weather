@@ -235,29 +235,38 @@ def get_fallback_word():
 
 
 def get_random_nature_photo():
-    """Get a random nature/landscape photo URL from Unsplash."""
+    """Get a random nature/landscape photo URL from Picsum (no API key required).
+
+    Uses the Picsum list API to select a random image id and returns a sized URL.
+    """
     try:
-        response = requests.get(
-            'https://api.unsplash.com/photos/random',
-            params={
-                'query': 'nature landscape',
-                'orientation': 'landscape',
-                'client_id': 'sRJ8pxVzTgC3x3dDJNXxGMkAR7eCwSJvUNMnVPRmBsQ'
-            },
-            timeout=5
-        )
-        if response.status_code == 200:
-            data = response.json()
-            return {
-                'url': data.get('urls', {}).get('regular', ''),
-                'alt': data.get('alt_description', 'Nature photo'),
-                'author': data.get('user', {}).get('name', 'Unknown'),
-                'source': 'Unsplash'
-            }
+        # Request a page of images and pick one at random
+        page = random.randint(1, 10)
+        resp = requests.get('https://picsum.photos/v2/list', params={'page': page, 'limit': 30}, timeout=5)
+        if resp.status_code == 200:
+            items = resp.json()
+            if items:
+                item = random.choice(items)
+                img_id = item.get('id')
+                author = item.get('author', 'Unknown')
+                # Construct a predictable sized URL (Picsum will serve the image)
+                url = f'https://picsum.photos/id/{img_id}/1200/800'
+                return {
+                    'url': url,
+                    'alt': item.get('alt_description', 'Nature photo') if isinstance(item, dict) else 'Nature photo',
+                    'author': author,
+                    'source': 'Picsum'
+                }
     except Exception as e:
-        app.logger.warning(f"Failed to fetch random photo: {e}")
-    
-    # Fallback to a public nature photo URL
+        app.logger.warning(f"Picsum fetch failed: {e}")
+
+    # Final fallback to a public image
+    return {
+        'url': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
+        'alt': 'Mountain landscape',
+        'author': 'Unsplash',
+        'source': 'Fallback'
+    }
     return {
         'url': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
         'alt': 'Mountain landscape',
