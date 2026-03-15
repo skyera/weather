@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>✨ Scripture & Skies</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,28 +13,26 @@
         }
 
         :root {
-            --primary: #00d7d7;
-            --primary-light: #5fffff;
-            --secondary: #5fdf00;
-            --accent: #ffaf00;
-            --bg-dark: #121212;
-            --bg-card: #1c1c1c;
-            --text-primary: #eeeeee;
-            --text-secondary: #8a8a8a;
-            --border: #303030;
-            --glass-border: #3a3a3a;
-            --radius: 4px;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+            --primary: #00a4ef;
+            --secondary: #7fb627;
+            --accent: #ffb900;
+            --bg-dark: #050505;
+            --bg-card: #111111;
+            --bg-hover: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #999999;
+            --border: #222222;
+            --radius: 12px;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
 
         body {
-            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg-dark);
             min-height: 100vh;
             color: var(--text-primary);
             overflow-x: hidden;
-            line-height: 1.4;
+            line-height: 1.6;
         }
 
         .bg-animation {
@@ -45,422 +43,273 @@
             height: 100%;
             pointer-events: none;
             z-index: 0;
-            background: linear-gradient(180deg, #121212 0%, #080808 100%);
-        }
-
-        .bg-animation span {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            background: rgba(0, 215, 215, 0.1);
-            border-radius: 50%;
-            animation: float 25s infinite linear;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(110vh) translateX(0); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-10vh) translateX(100px); opacity: 0; }
+            background: radial-gradient(circle at 50% -20%, #1a1a1a 0%, #050505 100%);
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1300px;
             margin: 0 auto;
             padding: 2rem;
             position: relative;
             z-index: 1;
         }
 
-        @media (max-width: 768px) {
-            .container { padding: 1rem; }
-        }
-
         header {
-            text-align: left;
-            margin-bottom: 2rem;
-            animation: fadeInDown 0.6s ease;
-            border-bottom: 2px solid var(--border);
-            padding-bottom: 1rem;
-        }
-
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
         }
 
         h1 {
-            font-size: 2rem;
-            font-weight: 700;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
             color: var(--primary);
-            margin-bottom: 0.25rem;
-            letter-spacing: -0.01em;
-        }
-
-        @media (max-width: 768px) {
-            h1 { font-size: 1.5rem; }
         }
 
         .subtitle {
             color: var(--text-secondary);
-            font-size: 0.9rem;
-            font-weight: 400;
+            font-size: 0.85rem;
         }
 
-        .dashboard {
+        .portal-layout {
             display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            gap: 1rem;
+            grid-template-columns: 1fr 360px;
+            gap: 2rem;
         }
 
-        @media (max-width: 1024px) {
-            .dashboard { grid-template-columns: repeat(2, 1fr); }
+        @media (max-width: 1100px) {
+            .portal-layout { grid-template-columns: 1fr; }
         }
 
-        @media (max-width: 768px) {
-            .dashboard { grid-template-columns: 1fr; gap: 0.75rem; }
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
         }
 
         .card {
             background: var(--bg-card);
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 1.25rem;
-            box-shadow: none;
-            transition: border-color 0.2s;
-            animation: fadeInUp 0.4s ease backwards;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .card:hover {
-            transform: none;
-            box-shadow: none;
-            border-color: var(--primary);
+            border-color: #333;
+            transform: translateY(-2px);
         }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Grid Spans */
-        .col-12 { grid-column: span 12; }
-        .col-8 { grid-column: span 8; }
-        .col-6 { grid-column: span 6; }
-        .col-4 { grid-column: span 4; }
-        .col-3 { grid-column: span 3; }
-
-        @media (max-width: 1024px) {
-            .col-12, .col-8, .col-6, .col-4, .col-3 { grid-column: span 1; }
-        }
-
-        /* Section Headers */
         .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 0.5rem;
-        }
-
-        .header-title {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .header-icon {
-            width: auto;
-            height: auto;
-            background: none;
-            border-radius: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         h3 {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--primary-light);
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
         }
 
-        /* Metric Styles */
-        .metric-content {
+        /* Hero Image */
+        .hero-card {
+            padding: 0;
+            position: relative;
+            aspect-ratio: 21/9;
+            overflow: hidden;
+            border-radius: var(--radius);
+        }
+
+        .hero-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 2.5rem;
+            background: linear-gradient(transparent, rgba(0,0,0,0.95));
+        }
+
+        /* Metrics */
+        .weather-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .metric-mini {
+            background: #181818;
+            padding: 1.25rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .mini-label {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .mini-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        /* News */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .news-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem;
             display: flex;
             flex-direction: column;
+            gap: 0.75rem;
+            text-decoration: none;
+            transition: background 0.2s;
         }
 
-        .metric-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--secondary);
-            font-family: 'JetBrains Mono', monospace;
-            line-height: 1;
-            margin: 0.5rem 0;
-        }
+        .news-card:hover { background: var(--bg-hover); }
 
-        .metric-unit {
+        .news-title {
             font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.4;
+        }
+
+        .news-meta {
+            font-size: 0.7rem;
             color: var(--text-secondary);
-            font-weight: 400;
-            margin-left: 0.25rem;
-        }
-
-        /* Weather Status Banner */
-        .weather-banner {
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-            background: #181818;
-            border-left: 4px solid var(--primary);
-        }
-
-        @media (max-width: 640px) {
-            .weather-banner { flex-direction: row; text-align: left; gap: 1.5rem; }
-        }
-
-        .weather-icon-large {
-            font-size: 3rem;
-            filter: none;
-            animation: none;
-        }
-
-        .weather-info h2 {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-            color: var(--primary);
-        }
-
-        /* Media Elements */
-        .media-container {
-            width: 100%;
-            border-radius: 2px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            position: relative;
-            background: #000;
             margin-top: auto;
         }
 
-        .aspect-16-9 { aspect-ratio: 16/9; }
+        /* Verse & Word */
+        .verse-box {
+            padding: 1.25rem;
+            background: #181818;
+            border-radius: var(--radius);
+            border-left: 4px solid var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .verse-text {
+            font-size: 1rem;
+            font-weight: 500;
+            line-height: 1.6;
+            margin-bottom: 0.75rem;
+        }
+
+        .verse-ref {
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-weight: 700;
+            text-align: right;
+        }
+
+        /* Camera */
+        .camera-container {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: var(--radius);
+            overflow: hidden;
+            position: relative;
+        }
 
         .media-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: none;
-            opacity: 0.85;
         }
 
-        .card:hover .media-img { transform: none; opacity: 1; }
+        .badge-live {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: #e81123;
+            color: white;
+            padding: 0.25rem 0.6rem;
+            font-size: 0.6rem;
+            font-weight: 900;
+            border-radius: 4px;
+        }
+
+        /* System Info */
+        .system-line {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .system-line:last-child { border: none; }
 
         /* Buttons */
         .icon-btn {
             background: transparent;
             border: 1px solid var(--border);
             color: var(--text-secondary);
-            width: 28px;
-            height: 28px;
-            border-radius: 2px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
         }
 
         .icon-btn:hover {
-            background: var(--primary);
-            color: var(--bg-dark);
-            border-color: var(--primary);
-            transform: none;
-        }
-
-        /* Custom Content */
-        .verse-box {
-            border-left: 2px solid var(--accent);
-            padding-left: 1rem;
-            margin: 0.75rem 0;
-        }
-
-        .verse-text {
-            font-size: 1rem;
-            font-weight: 400;
-            font-style: normal;
-            line-height: 1.5;
-            margin-bottom: 0.5rem;
+            background: var(--bg-hover);
             color: var(--text-primary);
         }
 
-        .verse-ref {
-            color: var(--accent);
-            font-weight: 600;
-            text-align: right;
-            display: block;
-            font-size: 0.85rem;
-        }
+        .chart-wrapper { height: 300px; }
 
-        /* News Styles */
-        .news-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .news-item {
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 0.75rem;
-        }
-
-        .news-item:last-child { border-bottom: none; }
-
-        .news-link {
-            color: var(--text-primary);
-            text-decoration: none;
-            font-size: 0.95rem;
-            display: block;
-            margin-bottom: 0.25rem;
-            font-weight: 600;
-            line-height: 1.4;
-        }
-
-        .news-link:hover {
-            color: var(--primary);
-        }
-
-        .news-date {
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-        }
-
-        .word-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--secondary);
-            margin-bottom: 0.5rem;
-        }
-
-        .data-label {
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-bottom: 0.15rem;
-            display: block;
-        }
-
-        /* System Info Grid */
-        .system-grid {
-            background: #161616;
-            padding: 1rem;
-            border-radius: 2px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-            border: 1px solid var(--border);
-        }
-
-        .sun-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
-        }
-
-        .sun-box {
-            background: #161616;
-            padding: 0.75rem;
-            border-radius: 2px;
-            text-align: center;
-            border: 1px solid var(--border);
-        }
-
-        .uptime-banner {
-            background: transparent;
-            padding: 1rem;
-            border-radius: 2px;
-            border: 1px solid var(--border);
-            border-top: 2px solid var(--secondary);
-            text-align: center;
-        }
-
-        .uptime-val {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--secondary);
-            display: block;
-        }
-
-        /* Charts */
-        .chart-wrapper {
-            height: 250px;
-            margin-top: 0.5rem;
-        }
-
-        /* Badges */
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            padding: 0.15rem 0.5rem;
-            border-radius: 2px;
-            font-size: 0.65rem;
-            font-weight: 700;
-            border: 1px solid var(--border);
-        }
-
-        .badge-live { background: transparent; color: #ff5555; border-color: #ff5555; }
-        .dot { width: 4px; height: 4px; border-radius: 50%; }
-        .dot-red { background: #ff5555; animation: pulse 1.5s infinite; }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.3; }
-            100% { opacity: 1; }
-        }
-
-        /* Overlay */
-        .overlay {
-            position: absolute;
-            bottom: 0.5rem;
-            right: 0.5rem;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 0.25rem 0.5rem;
-            border-radius: 0;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.65rem;
-            border: 1px solid var(--border);
-        }
-
-        /* Footer */
         footer {
-            margin-top: 2rem;
-            padding-bottom: 2rem;
-            text-align: left;
-            color: var(--text-secondary);
+            margin-top: 4rem;
+            padding: 2rem 0;
             border-top: 1px solid var(--border);
-            padding-top: 1rem;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .status-pill {
-            display: inline-flex;
+            display: flex;
             align-items: center;
             gap: 0.5rem;
-            background: transparent;
-            padding: 0;
-            border-radius: 0;
-            font-size: 0.75rem;
-            margin-top: 0.5rem;
         }
 
         .spin {
@@ -473,265 +322,162 @@
         }
 
         @keyframes spinner { to { transform: rotate(360deg); } }
+
+        .word-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div class="bg-animation" id="particles"></div>
+    <div class="bg-animation"></div>
 
     <div class="container">
         <header>
-            <h1>✨ Scripture & Skies</h1>
-            <p class="subtitle">Raspberry Pi Monitoring & Daily Devotional</p>
+            <div>
+                <h1>Scripture & Skies</h1>
+                <p class="subtitle">Raspberry Pi Weather Intelligence Portal</p>
+            </div>
+            <div class="status-pill">
+                <div class="spin"></div>
+                <span id="footer-time">{{curr_time.strftime('%H:%M:%S')}}</span>
+            </div>
         </header>
 
-        <div class="dashboard">
-            <!-- Weather Status Banner -->
-            <div class="card col-12 weather-banner">
-                <div class="weather-icon-large">{{weather_icon}}</div>
-                <div class="weather-info">
-                    <h2>Current Conditions</h2>
-                    <p class="weather-desc">
-                        {% if temperature %}
-                            {% if temperature < 10 %}Chilly{% elif temperature < 25 %}Comfortable{% else %}Warm{% endif %} atmospheric conditions with {{humidity}}% humidity.
-                        {% else %}
-                            Sensor data currently unavailable.
-                        {% endif %}
-                    </p>
-                </div>
-            </div>
-
-            <!-- Metrics -->
-            <div class="card col-3">
-                <div class="section-header">
-                    <div class="header-title">
-                        <div class="header-icon">🌡️</div>
-                        <h3>Temperature</h3>
-                    </div>
-                </div>
-                <div class="metric-content">
-                    <div class="metric-value" id="val-temp">
-                        {% if temperature %}{{temperature}}{% else %}--{% endif %}<span class="metric-unit">°C</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card col-3">
-                <div class="section-header">
-                    <div class="header-title">
-                        <div class="header-icon">💧</div>
-                        <h3>Humidity</h3>
-                    </div>
-                </div>
-                <div class="metric-content">
-                    <div class="metric-value" id="val-humidity">
-                        {% if humidity %}{{humidity}}{% else %}--{% endif %}<span class="metric-unit">%</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card col-3">
-                <div class="section-header">
-                    <div class="header-title">
-                        <div class="header-icon">📊</div>
-                        <h3>Pressure</h3>
-                    </div>
-                </div>
-                <div class="metric-content">
-                    <div class="metric-value" id="val-pressure">
-                        {% if pressure %}{{pressure}}{% else %}--{% endif %}<span class="metric-unit">hPa</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card col-3">
-                <div class="section-header">
-                    <div class="header-title">
-                        <div class="header-icon">⛰️</div>
-                        <h3>Altitude</h3>
-                    </div>
-                </div>
-                <div class="metric-content">
-                    <div class="metric-value" id="val-altitude">
-                        {% if altitude %}{{altitude}}{% else %}--{% endif %}<span class="metric-unit">m</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Nature Photo (Full Width) -->
-            <div class="card col-12">
-                <div class="section-header">
-                    <div class="header-title">
-                        <div class="header-icon">🌅</div>
-                        <h3>Nature Perspective</h3>
-                    </div>
-                    <button class="icon-btn" onclick="refreshPhoto()">🔄</button>
-                </div>
-                <div class="media-container aspect-16-9" style="max-height: 500px;">
+        <div class="portal-layout">
+            <div class="main-content">
+                <!-- Hero Feature -->
+                <div class="hero-card">
                     {% set _sep = '&' if '?' in nature_photo.get('url','') else '?' %}
-                    <img id="nature-photo" src="{{ nature_photo.get('url', '') }}{{ _sep }}cb={{ curr_time.timestamp() }}" alt="{{ nature_photo.get('alt', '') }}" class="media-img">
-                    <div class="overlay">
-                        📸 <span id="photo-author">{{ nature_photo.get('author', 'Unknown') }}</span> via <span id="photo-source">{{ nature_photo.get('source', 'Web') }}</span>
+                    <img src="{{ nature_photo.get('url', '') }}{{ _sep }}cb={{ curr_time.timestamp() }}" alt="Hero" class="hero-img">
+                    <div class="hero-overlay">
+                        <div style="font-size: 0.7rem; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 0.5rem;">Featured Perspective</div>
+                        <h2 style="font-size: 2rem; font-weight: 800; line-height: 1.1;">{{ nature_photo.get('author', 'Daily Inspiration') }}</h2>
+                        <p style="font-size: 0.9rem; color: #ccc;">Sourced via {{ nature_photo.get('source', 'Web') }}</p>
+                    </div>
+                </div>
+
+                <!-- News Grid -->
+                <section>
+                    <div class="section-header">
+                        <h3>Top Stories</h3>
+                    </div>
+                    <div class="news-grid">
+                        {% for item in news_items %}
+                        <a href="{{ item.link }}" target="_blank" class="news-card">
+                            <span class="news-title">{{ item.title }}</span>
+                            <span class="news-meta">{{ item.pubDate }}</span>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </section>
+
+                <!-- Chart -->
+                <div class="card">
+                    <div class="section-header">
+                        <h3>Atmospheric Trends (24h)</h3>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="temperatureChart"></canvas>
                     </div>
                 </div>
             </div>
 
-            <!-- Daily Inspiration Row (3 columns) -->
-            <div class="card col-4">
-                <div class="section-header">
-                    <div class="header-title">
-                        <div class="header-icon">📖</div>
-                        <h3>Daily Verse</h3>
+            <div class="sidebar">
+                <!-- Weather Widget -->
+                <div class="card">
+                    <div class="section-header">
+                        <h3>Current Weather</h3>
+                        <span style="font-size: 1.5rem;">{{weather_icon}}</span>
+                    </div>
+                    <div class="weather-grid">
+                        <div class="metric-mini">
+                            <span class="mini-label">Temp</span>
+                            <div class="mini-value" id="val-temp">{{temperature or '--'}}°</div>
+                        </div>
+                        <div class="metric-mini">
+                            <span class="mini-label">Humidity</span>
+                            <div class="mini-value" id="val-humidity">{{humidity or '--'}}%</div>
+                        </div>
+                        <div class="metric-mini">
+                            <span class="mini-label">Pressure</span>
+                            <div class="mini-value" id="val-pressure">{{pressure or '--'}}</div>
+                        </div>
+                        <div class="metric-mini">
+                            <span class="mini-label">Altitude</span>
+                            <div class="mini-value" id="val-altitude">{{altitude or '--'}}m</div>
+                        </div>
                     </div>
                 </div>
-                <div class="verse-box">
-                    <div class="verse-text">"{{bible_verse.get('text', '')}}"</div>
-                    <div class="verse-ref">— {{bible_verse.get('reference', 'Holy Bible')}}</div>
-                </div>
-                <div style="margin-top: auto;">
-                    <span class="data-label">Translation</span>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary);">{{bible_verse.get('translation', 'WEB')}}</p>
-                </div>
-            </div>
 
-            <div class="card col-4">
-                <div class="section-header">
-                    <div class="header-title">
-                        <div class="header-icon">💡</div>
-                        <h3>Daily Wisdom</h3>
+                <!-- Daily Wisdom -->
+                <div class="card">
+                    <div class="section-header">
+                        <h3>Daily Devotional</h3>
+                    </div>
+                    <div class="verse-box">
+                        <div class="verse-text">"{{bible_verse.get('text', '')}}"</div>
+                        <div class="verse-ref">— {{bible_verse.get('reference', '')}}</div>
+                    </div>
+                    <div class="verse-box" style="border-left-color: var(--secondary);">
+                        <div class="verse-text" style="font-size: 0.9rem; color: var(--secondary);">"{{famous_quote.get('text', '')}}"</div>
+                        <div class="verse-ref" style="color: var(--secondary);">— {{famous_quote.get('author', '')}}</div>
                     </div>
                 </div>
-                <div class="verse-box">
-                    <div class="verse-text" style="color: var(--secondary);">"{{famous_quote.get('text', '')}}"</div>
-                    <div class="verse-ref">— {{famous_quote.get('author', 'Unknown')}}</div>
-                </div>
-                <div style="margin-top: auto;">
-                    <span class="data-label">Source</span>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary);">ZenQuotes API</p>
-                </div>
-            </div>
 
-            <div class="card col-4">
-                <div class="section-header">
-                    <div class="header-title">
-                        <div class="header-icon">📚</div>
+                <!-- Word Discovery -->
+                <div class="card">
+                    <div class="section-header">
                         <h3>Word Discovery</h3>
                     </div>
+                    <div class="word-title">{{random_word.get('word', '')}}</div>
+                    <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">{{random_word.get('definition', '')}}</p>
+                    <p style="font-size: 0.85rem; font-style: italic; color: var(--text-secondary);">"{{random_word.get('example', '')}}"</p>
                 </div>
-                <div class="word-title">{{random_word.get('word', 'Inspiration')}}</div>
-                <div style="margin-bottom: 1.5rem;">
-                    <span class="data-label">Definition</span>
-                    <p style="font-size: 0.95rem;">{{random_word.get('definition', '')}}</p>
-                </div>
-                <div>
-                    <span class="data-label">Example</span>
-                    <p style="font-size: 0.95rem; font-style: italic; color: var(--text-secondary);">"{{random_word.get('example', '')}}"</p>
-                </div>
-            </div>
 
-            <!-- Chart (Full Width) -->
-            <div class="card col-12">
-                <div class="section-header">
-                    <div class="header-title">
-                        <div class="header-icon">📈</div>
-                        <h3>Temperature History (24h)</h3>
+                <!-- Camera -->
+                <div class="card" style="padding: 0;">
+                    <div class="camera-container">
+                        <span class="badge-live">LIVE FEED</span>
+                        {% if image_exists %}
+                            <img src="{{url_for('static', filename='image.jpg')}}?t={{curr_time.timestamp()}}" alt="Camera" id="camera-img" class="media-img">
+                        {% else %}
+                            <div style="height: 100%; display: flex; align-items: center; justify-content: center; color: var(--text-secondary);">No feed</div>
+                        {% endif %}
                     </div>
                 </div>
-                <div class="chart-wrapper">
-                    <canvas id="temperatureChart"></canvas>
-                </div>
-            </div>
 
-            <!-- Camera Feed -->
-            <div class="card col-6">
-                <div class="section-header">
-                    <div class="header-title">
-                        <div class="header-icon">📷</div>
-                        <h3>Live Camera</h3>
-                        <div class="badge badge-live">
-                            <span class="dot dot-red"></span>
-                            LIVE
-                        </div>
+                <!-- System -->
+                <div class="card">
+                    <div class="section-header">
+                        <h3>System Status</h3>
                     </div>
-                    <button class="icon-btn" onclick="refreshCamera()">🔄</button>
-                </div>
-                <div class="media-container aspect-16-9">
-                    {% if image_exists %}
-                        <img src="{{url_for('static', filename='image.jpg')}}?t={{curr_time.timestamp()}}" alt="Weather Camera" id="camera-img" class="media-img">
-                    {% else %}
-                        <div style="height: 100%; display: flex; align-items: center; justify-content: center; color: var(--text-secondary);">
-                            No camera feed available
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Sun & System -->
-            <div class="card col-12">
-                <div class="section-header">
-                    <div class="header-title">
-                        <div class="header-icon">🛰️</div>
-                        <h3>System & Environment</h3>
+                    <div class="system-line">
+                        <span>Uptime</span>
+                        <span style="color: var(--secondary);">{{system_info.get('uptime', 'N/A')}}</span>
+                    </div>
+                    <div class="system-line">
+                        <span>CPU Temp</span>
+                        <span>{{system_info.get('cpu_temp', 'N/A')}}</span>
+                    </div>
+                    <div class="system-line">
+                        <span>Memory</span>
+                        <span>{{system_info.get('memory', 'N/A')}}</span>
+                    </div>
+                    <div class="system-line">
+                        <span>Disk</span>
+                        <span>{{system_info.get('disk', 'N/A')}}</span>
                     </div>
                 </div>
-                
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
-                    <div>
-                        <div class="sun-grid" style="margin-bottom: 1rem;">
-                            <div class="sun-box">
-                                <span class="data-label">Sunrise</span>
-                                <div class="time-value" style="font-size: 1.25rem; font-weight: 700;">{{sunrise_sunset.get('sunrise', 'N/A')}}</div>
-                            </div>
-                            <div class="sun-box">
-                                <span class="data-label">Sunset</span>
-                                <div class="time-value" style="font-size: 1.25rem; font-weight: 700;">{{sunrise_sunset.get('sunset', 'N/A')}}</div>
-                            </div>
-                        </div>
-                        <div class="uptime-banner">
-                            <span class="data-label">System Uptime</span>
-                            <span class="uptime-val">{{system_info.get('uptime', 'N/A')}}</span>
-                            <span style="color: var(--secondary); font-size: 0.75rem; font-weight: 700;">● STABLE</span>
-                        </div>
-                    </div>
-
-                    <div class="system-grid">
-                        <div style="display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 1rem;">
-                            <span style="color: var(--text-secondary);">Model:</span> <span>{{system_info.get('model', 'N/A')}}</span>
-                            <span style="color: var(--text-secondary);">Memory:</span> <span>{{system_info.get('memory', 'N/A')}}</span>
-                            <span style="color: var(--text-secondary);">CPU:</span> <span>{{system_info.get('cpu_temp', 'N/A')}}</span>
-                            <span style="color: var(--text-secondary);">Disk:</span> <span>{{system_info.get('disk', 'N/A')}}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Global News Section -->
-            <div class="card col-12">
-                <div class="section-header">
-                    <div class="header-title">
-                        <div class="header-icon">🌐</div>
-                        <h3>Global Intelligence</h3>
-                    </div>
-                </div>
-                <ul class="news-list">
-                    {% for item in news_items %}
-                    <li class="news-item">
-                        <a href="{{ item.link }}" target="_blank" class="news-link">{{ item.title }}</a>
-                        <span class="news-date">{{ item.pubDate }}</span>
-                    </li>
-                    {% else %}
-                    <li style="color: var(--text-secondary);">No news headlines available at the moment.</li>
-                    {% endfor %}
-                </ul>
             </div>
         </div>
 
         <footer>
-            <p>© 2026 Scripture & Skies • Raspberry Pi Weather Station</p>
-            <div class="status-pill">
-                <div class="spin"></div>
-                <span>Auto-updating • Last sync: <span id="footer-time">{{curr_time.strftime('%H:%M:%S')}}</span></span>
-            </div>
+            <p>© 2026 Scripture & Skies Intelligence</p>
+            <p>Powered by Raspberry Pi & Python</p>
         </footer>
     </div>
 
@@ -756,14 +502,13 @@
                         datasets: [{
                             label: 'Temperature',
                             data: temperatures,
-                            borderColor: '#00d7d7',
-                            backgroundColor: 'rgba(0, 215, 215, 0.05)',
+                            borderColor: '#00a4ef',
+                            backgroundColor: 'rgba(0, 164, 239, 0.05)',
                             borderWidth: 2,
                             fill: true,
-                            tension: 0.1,
+                            tension: 0.4,
                             pointRadius: 0,
                             pointHoverRadius: 4,
-                            pointBackgroundColor: '#00d7d7'
                         }]
                     },
                     options: {
@@ -771,8 +516,8 @@
                         maintainAspectRatio: false,
                         plugins: { legend: { display: false } },
                         scales: {
-                            y: { grid: { color: '#303030' }, ticks: { color: '#8a8a8a', font: { family: 'JetBrains Mono' } } },
-                            x: { grid: { display: false }, ticks: { color: '#8a8a8a', font: { family: 'JetBrains Mono' } } }
+                            y: { grid: { color: '#222' }, ticks: { color: '#666', font: { family: 'Inter' } } },
+                            x: { grid: { display: false }, ticks: { color: '#666', font: { family: 'Inter' } } }
                         }
                     }
                 });
@@ -791,49 +536,16 @@
             } catch (error) { console.error('Chart refresh failed:', error); }
         }
 
-        async function refreshPhoto() {
-            try {
-                const response = await fetch('/api/photo');
-                const data = await response.json();
-                const img = document.getElementById('nature-photo');
-                img.src = data.url + (data.url.includes('?') ? '&' : '?') + 'cb=' + Date.now();
-                document.getElementById('photo-author').textContent = data.author || 'Unknown';
-                document.getElementById('photo-source').textContent = data.source || 'Web';
-            } catch (error) { console.error('Photo refresh failed:', error); }
-        }
-
-        async function refreshCamera() {
-            try {
-                const resp = await fetch('/api/capture', { method: 'POST' });
-                const data = await resp.json();
-                if (data.url) {
-                    const img = document.getElementById('camera-img');
-                    img.src = data.url + (data.url.includes('?') ? '&' : '?') + 'cb=' + Date.now();
-                }
-            } catch (e) { console.error('Camera refresh failed:', e); }
-        }
-
-        const particlesContainer = document.getElementById('particles');
-        for (let i = 0; i < 40; i++) {
-            const span = document.createElement('span');
-            span.style.left = Math.random() * 100 + '%';
-            span.style.top = Math.random() * 100 + '%';
-            span.style.animationDelay = Math.random() * 20 + 's';
-            span.style.animationDuration = (15 + Math.random() * 15) + 's';
-            particlesContainer.appendChild(span);
-        }
-
         setInterval(() => {
             fetch('/api/data')
                 .then(r => r.json())
                 .then(data => {
-                    if (data.temperature) document.getElementById('val-temp').innerHTML = data.temperature + '<span class="metric-unit">°C</span>';
-                    if (data.humidity) document.getElementById('val-humidity').innerHTML = data.humidity + '<span class="metric-unit">%</span>';
-                    if (data.pressure) document.getElementById('val-pressure').innerHTML = data.pressure + '<span class="metric-unit">hPa</span>';
-                    if (data.altitude) document.getElementById('val-altitude').innerHTML = data.altitude + '<span class="metric-unit">m</span>';
+                    if (data.temperature) document.getElementById('val-temp').textContent = data.temperature + '°';
+                    if (data.humidity) document.getElementById('val-humidity').textContent = data.humidity + '%';
+                    if (data.pressure) document.getElementById('val-pressure').textContent = data.pressure;
+                    if (data.altitude) document.getElementById('val-altitude').textContent = data.altitude + 'm';
                     
-                    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                    document.getElementById('footer-time').textContent = timeStr;
+                    document.getElementById('footer-time').textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
                     
                     const camImg = document.getElementById('camera-img');
                     if (camImg) camImg.src = camImg.src.split('?')[0] + '?t=' + Date.now();
