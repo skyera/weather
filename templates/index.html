@@ -413,6 +413,29 @@
             font-style: normal;
         }
 
+        .verse-section {
+            margin-bottom: 1rem;
+        }
+
+        .verse-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .verse-lang {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .verse-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 1rem 0;
+        }
+
         /* Footer */
         footer {
             text-align: center;
@@ -497,8 +520,16 @@
                     <div class="bible-icon">📖</div>
                     <h3>Daily Verse</h3>
                 </div>
-                <div class="verse-text">"{{bible_verse.get('text', '')}}"</div>
-                <div class="verse-reference">— {{bible_verse.get('reference', 'Bible')}}</div>
+                <div class="verse-section">
+                    <div class="verse-lang">English</div>
+                    <div class="verse-text">"{{bible_verse.get('text_en', '')}}"</div>
+                    <div class="verse-reference">— {{bible_verse.get('reference', 'Bible')}} ({{bible_verse.get('translation_en', '')}})</div>
+                </div>
+                <div class="verse-divider"></div>
+                <div class="verse-section">
+                    <div class="verse-lang">中文</div>
+                    <div class="verse-text">"{{bible_verse.get('text_zh', '')}}"</div>
+                </div>
             </div>
 
             <!-- Weather Status -->
