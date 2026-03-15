@@ -103,7 +103,7 @@
         /* Main grid */
         .dashboard {
             display: grid;
-            grid-template-columns: repeat(4, minmax(240px, 1fr));
+            grid-template-columns: 1fr;
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
@@ -192,7 +192,6 @@
 
         /* Weather status card */
         .weather-status {
-            grid-column: span 2;
             display: flex;
             align-items: center;
             justify-content: space-around;
@@ -238,26 +237,14 @@
 
         /* Camera feed */
         .camera-section {
-            grid-column: span 2;
         }
 
         .chart-section {
-            grid-column: span 2;
             display: flex;
             flex-direction: column;
         }
 
         @media (max-width: 1200px) {
-            .chart-section {
-                grid-column: span 4;
-            }
-        }
-
-        @media (max-width: 900px) {
-            .chart-section {
-                grid-column: 1 / -1;
-            }
-        }
 
         .chart-header {
             display: flex;
@@ -371,7 +358,6 @@
 
         /* System info */
         .system-card {
-            grid-column: span 2;
         }
 
         .system-header {
@@ -422,7 +408,6 @@
 
         /* Bible verse card */
         .bible-card {
-            grid-column: span 2;
             background: var(--bg-card);
             position: relative;
             overflow: hidden;
@@ -479,7 +464,6 @@
 
         /* Nature Photo Card */
         .photo-card {
-            grid-column: span 2;
         }
 
         .photo-header {
@@ -573,7 +557,6 @@
 
         /* Word of the Day card */
         .word-card {
-            grid-column: span 2;
         }
 
         .word-header {
@@ -674,20 +657,9 @@
             h1 { font-size: 1.6rem; }
             .subtitle { font-size: 0.8rem; }
             .container { padding: 0.75rem; }
-            .dashboard { grid-template-columns: 1fr; gap: 1rem; }
+            .dashboard { gap: 1rem; }
 
-            /* Force important dashboard cards to occupy full width */
-            .bible-card,
-            .weather-status,
-            .camera-section,
-            .system-card,
-            .photo-card,
-            .word-card,
-            .chart-section {
-                grid-column: 1 / -1 !important;
-                width: 100%;
-            }
-
+            /* Responsive adjustments */
             .weather-status {
                 flex-direction: column;
                 text-align: center;
