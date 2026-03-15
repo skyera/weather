@@ -352,11 +352,16 @@
                 <!-- Hero Feature -->
                 <div class="hero-card">
                     {% set _sep = '&' if '?' in nature_photo.get('url','') else '?' %}
-                    <img src="{{ nature_photo.get('url', '') }}{{ _sep }}cb={{ curr_time.timestamp() }}" alt="Hero" class="hero-img">
+                    <img id="nature-photo" src="{{ nature_photo.get('url', '') }}{{ _sep }}cb={{ curr_time.timestamp() }}" alt="Hero" class="hero-img">
                     <div class="hero-overlay">
-                        <div style="font-size: 0.7rem; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 0.5rem;">Featured Perspective</div>
-                        <h2 style="font-size: 2rem; font-weight: 800; line-height: 1.1;">{{ nature_photo.get('author', 'Daily Inspiration') }}</h2>
-                        <p style="font-size: 0.9rem; color: #ccc;">Sourced via {{ nature_photo.get('source', 'Web') }}</p>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <div style="font-size: 0.7rem; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 0.5rem;">Featured Perspective</div>
+                                <h2 id="photo-author" style="font-size: 2rem; font-weight: 800; line-height: 1.1;">{{ nature_photo.get('author', 'Daily Inspiration') }}</h2>
+                                <p id="photo-source" style="font-size: 0.9rem; color: #ccc;">Sourced via {{ nature_photo.get('source', 'Web') }}</p>
+                            </div>
+                            <button class="icon-btn" style="background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.2); color: white;" onclick="refreshPhoto()">🔄</button>
+                        </div>
                     </div>
                 </div>
 
@@ -439,7 +444,11 @@
                 </div>
 
                 <!-- Camera -->
-                <div class="card" style="padding: 0;">
+                <div class="card">
+                    <div class="section-header">
+                        <h3>Live Camera</h3>
+                        <button class="icon-btn" onclick="refreshCamera()">🔄</button>
+                    </div>
                     <div class="camera-container">
                         <span class="badge-live">LIVE FEED</span>
                         {% if image_exists %}
@@ -534,6 +543,28 @@
                 temperatureChart.data.datasets[0].data = data.map(d => d.temperature);
                 temperatureChart.update();
             } catch (error) { console.error('Chart refresh failed:', error); }
+        }
+
+        async function refreshPhoto() {
+            try {
+                const response = await fetch('/api/photo');
+                const data = await response.json();
+                const img = document.getElementById('nature-photo');
+                img.src = data.url + (data.url.includes('?') ? '&' : '?') + 'cb=' + Date.now();
+                document.getElementById('photo-author').textContent = data.author || 'Unknown';
+                document.getElementById('photo-source').textContent = 'Sourced via ' + (data.source || 'Web');
+            } catch (error) { console.error('Photo refresh failed:', error); }
+        }
+
+        async function refreshCamera() {
+            try {
+                const resp = await fetch('/api/capture', { method: 'POST' });
+                const data = await resp.json();
+                if (data.url) {
+                    const img = document.getElementById('camera-img');
+                    img.src = data.url + (data.url.includes('?') ? '&' : '?') + 'cb=' + Date.now();
+                }
+            } catch (e) { console.error('Camera refresh failed:', e); }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
