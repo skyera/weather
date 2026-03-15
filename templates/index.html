@@ -421,8 +421,15 @@
         .photo-header {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 1rem;
             margin-bottom: 1rem;
+        }
+
+        .photo-header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
 
         .photo-header h3 {
@@ -431,6 +438,31 @@
             font-family: 'JetBrains Mono', monospace;
             text-transform: uppercase;
             letter-spacing: 0.1em;
+        }
+
+        .refresh-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            width: 32px;
+            height: 32px;
+            border-radius: 2px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .refresh-btn:hover {
+            background: rgba(200, 200, 200, 0.1);
+            color: var(--text-primary);
+            border-color: var(--text-primary);
+        }
+
+        .refresh-btn:active {
+            transform: scale(0.95);
         }
 
         .photo-icon {
@@ -617,13 +649,16 @@
             <!-- Random Nature Photo -->
             <div class="card photo-card">
                 <div class="photo-header">
-                    <div class="photo-icon">🌅</div>
-                    <h3>Nature Photo</h3>
+                    <div class="photo-header-left">
+                        <div class="photo-icon">🌅</div>
+                        <h3>Nature Photo</h3>
+                    </div>
+                    <button class="refresh-btn" onclick="refreshPhoto()">🔄</button>
                 </div>
-                <img src="{{ nature_photo.get('url', '') }}" alt="{{ nature_photo.get('alt', '') }}" class="nature-image">
+                <img id="nature-photo" src="{{ nature_photo.get('url', '') }}" alt="{{ nature_photo.get('alt', '') }}" class="nature-image">
                 <div class="photo-credit">
-                    <span class="credit-author">📸 {{ nature_photo.get('author', 'Unknown') }}</span>
-                    <span class="credit-source">{{ nature_photo.get('source', '') }}</span>
+                    <span class="credit-author">📸 <span id="photo-author">{{ nature_photo.get('author', 'Unknown') }}</span></span>
+                    <span class="credit-source" id="photo-source">{{ nature_photo.get('source', '') }}</span>
                 </div>
             </div>
 
@@ -774,6 +809,34 @@ Disk: {{system_info.get('disk', 'N/A')}}</pre>
     </div>
 
     <script>
+        // Refresh nature photo
+        async function refreshPhoto() {
+            try {
+                const response = await fetch(window.location.href);
+                const html = await response.text();
+                const parser = new DOMParser();
+                const newDoc = parser.parseFromString(html, 'text/html');
+                
+                const newPhotoUrl = newDoc.getElementById('nature-photo').src;
+                const newAuthor = newDoc.getElementById('photo-author').textContent;
+                const newSource = newDoc.getElementById('photo-source').textContent;
+                
+                const photoImg = document.getElementById('nature-photo');
+                const authorSpan = document.getElementById('photo-author');
+                const sourceSpan = document.getElementById('photo-source');
+                
+                photoImg.src = newPhotoUrl;
+                authorSpan.textContent = newAuthor;
+                sourceSpan.textContent = newSource;
+                
+                // Add visual feedback
+                const btn = event.target.closest('.refresh-btn');
+                btn.style.transform = 'rotate(180deg)';
+                setTimeout(() => { btn.style.transform = 'rotate(0deg)'; }, 300);
+            } catch (error) {
+                console.error('Failed to refresh photo:', error);
+            }
+        }
         // Create floating particles
         const particlesContainer = document.getElementById('particles');
         for (let i = 0; i < 50; i++) {
