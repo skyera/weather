@@ -364,6 +364,64 @@
             color: #94a3b8;
         }
 
+        /* Bible verse card */
+        .bible-card {
+            grid-column: span 2;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(6, 182, 212, 0.2));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bible-card::before {
+            content: '✨';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            font-size: 8rem;
+            opacity: 0.05;
+        }
+
+        .bible-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .bible-header h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .bible-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .verse-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            font-style: italic;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            padding: 0;
+        }
+
+        .verse-reference {
+            text-align: right;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            font-style: normal;
+        }
+
         /* Footer */
         footer {
             text-align: center;
@@ -549,6 +607,16 @@ Memory: {{system_info.get('memory', 'N/A')}}
 CPU Temp: {{system_info.get('cpu_temp', 'N/A')}}
 Disk: {{system_info.get('disk', 'N/A')}}</pre>
                 </div>
+            </div>
+
+            <!-- Bible Verse -->
+            <div class="card bible-card">
+                <div class="bible-header">
+                    <div class="bible-icon">📖</div>
+                    <h3>Daily Verse</h3>
+                </div>
+                <div class="verse-text">"{{bible_verse.get('text', '')}}"</div>
+                <div class="verse-reference">— {{bible_verse.get('reference', 'Bible')}}</div>
             </div>
         </div>
 

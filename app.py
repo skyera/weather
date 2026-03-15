@@ -5,6 +5,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+import requests
 from flask import Flask, render_template, jsonify
 
 try:
@@ -112,6 +113,28 @@ def get_system_info():
     return info
 
 
+def get_bible_verse():
+    """Get a random Bible verse from the Bible API."""
+    try:
+        response = requests.get("https://bible-api.com/?random=books", timeout=5)
+        if response.status_code == 200:
+            data = response.json()
+            return {
+                "reference": data.get("reference", ""),
+                "text": data.get("text", "").strip(),
+                "translation": data.get("translation_name", "Web English Bible")
+            }
+    except (requests.RequestException, ValueError, KeyError):
+        pass
+    
+    # Fallback verse
+    return {
+        "reference": "Psalm 23:1",
+        "text": "The Lord is my shepherd; I shall not want.",
+        "translation": "King James Version"
+    }
+
+
 def get_sensor_data():
     """Read BME280 sensor data with fallback values."""
     if not BME280_AVAILABLE:
@@ -191,6 +214,7 @@ def index():
     capture_image()
     sensor_data = get_sensor_data()
     system_info = get_system_info()
+    bible_verse = get_bible_verse()
 
     return render_template(
         "index.html",
@@ -201,6 +225,7 @@ def index():
         altitude=sensor_data.get("altitude"),
         weather_icon=get_weather_icon(sensor_data.get("temperature")),
         system_info=system_info,
+        bible_verse=bible_verse,
         image_exists=IMAGE_PATH.exists()
     )
 
