@@ -35,16 +35,7 @@ try:
 except ImportError:
     BME280_AVAILABLE = False
 
-app = Flask(__name__, static_url_path="/static")
-
-BASE_DIR = Path(__file__).parent.resolve()
-STATIC_DIR = BASE_DIR / "static"
-IMAGE_PATH = STATIC_DIR / "image.jpg"
-IMAGE_FOLDER = Path.home() / "Pictures"
-
-STATIC_DIR.mkdir(exist_ok=True)
-IMAGE_FOLDER.mkdir(exist_ok=True)
-
+from PIL import Image, ImageDraw, ImageFont
 
 app = Flask(__name__, static_url_path="/static")
 
@@ -461,6 +452,59 @@ def get_sensor_data():
     return data
 
 
+def add_timestamp_to_image(image_path):
+    """Add a terminal-style timestamp overlay to the image."""
+    try:
+        # Get Pacific timezone
+        tz_pacific = pytz.timezone('US/Pacific')
+        now_pacific = datetime.now(tz_pacific)
+        timestamp_text = now_pacific.strftime("%Y-%m-%d %H:%M:%S %Z")
+
+        # Open the captured image
+        with Image.open(image_path) as img:
+            draw = ImageDraw.Draw(img)
+            
+            # Try to load a monospaced font
+            font_paths = [
+                "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf",
+                "/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf",
+                "/usr/share/fonts/truetype/liberation/LiberationMono-Bold.ttf"
+            ]
+            font = None
+            for path in font_paths:
+                if os.path.exists(path):
+                    font = ImageFont.truetype(path, 24)
+                    break
+            if not font:
+                font = ImageFont.load_default()
+
+            # Background rectangle for better readability (terminal feel)
+            # Position: bottom right
+            text_bbox = draw.textbbox((0, 0), timestamp_text, font=font)
+            text_width = text_bbox[2] - text_bbox[0]
+            text_height = text_bbox[3] - text_bbox[1]
+            
+            margin = 20
+            x = img.width - text_width - margin - 10
+            y = img.height - text_height - margin - 10
+            
+            # Draw semi-transparent background box
+            rect_padding = 5
+            draw.rectangle(
+                [x - rect_padding, y - rect_padding, x + text_width + rect_padding, y + text_height + rect_padding],
+                fill=(0, 0, 0, 160)
+            )
+            
+            # Draw the text in Cyan (cheat.sh style)
+            draw.text((x, y), timestamp_text, font=font, fill=(0, 215, 215))
+            
+            img.save(image_path, quality=95)
+        return True
+    except Exception as e:
+        app.logger.error(f"Error adding timestamp to image: {e}")
+        return False
+
+
 def capture_image():
     """Capture image using the available camera method.
 
@@ -482,6 +526,7 @@ def capture_image():
         app.logger.info("No camera method available; skipping capture.")
         return False
 
+    success = False
     try:
         if IMAGE_PATH.exists():
             shutil.copy(IMAGE_PATH, backup_path)
@@ -491,19 +536,16 @@ def capture_image():
             try:
                 with PiCamera() as camera:
                     camera.resolution = (1280, 720)
-                    camera.annotate_text_size = 24
-                    camera.annotate_foreground = 0xFF0000
-                    camera.annotate_text = now_pacific.strftime("%Y-%m-%d %H:%M:%S %Z")
                     camera.start_preview()
                     time.sleep(1)
                     camera.capture(str(IMAGE_PATH))
                     camera.stop_preview()
-                return True
+                success = True
             except Exception as e:
                 app.logger.warning(f"picamera capture failed: {e}")
 
         # Next try raspistill (legacy)
-        if RASPISILL_AVAILABLE:
+        if not success and RASPISILL_AVAILABLE:
             try:
                 cmd = [
                     'raspistill',
@@ -514,12 +556,12 @@ def capture_image():
                     '-q', '85'
                 ]
                 subprocess.run(cmd, check=True, timeout=10)
-                return True
+                success = True
             except Exception as e:
                 app.logger.warning(f"raspistill capture failed: {e}")
 
         # Finally try libcamera-still
-        if LIBCAMERA_STILL_AVAILABLE:
+        if not success and LIBCAMERA_STILL_AVAILABLE:
             try:
                 cmd = [
                     'libcamera-still',
@@ -529,9 +571,16 @@ def capture_image():
                     '--height', '720'
                 ]
                 subprocess.run(cmd, check=True, timeout=15)
-                return True
+                success = True
             except Exception as e:
                 app.logger.warning(f"libcamera-still capture failed: {e}")
+
+        # Add timestamp overlay using PIL for consistency
+        if success and IMAGE_PATH.exists():
+            add_timestamp_to_image(IMAGE_PATH)
+            # Also update the backup with the timestamped version
+            shutil.copy(IMAGE_PATH, backup_path)
+            return True
 
         return False
 
