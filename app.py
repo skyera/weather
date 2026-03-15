@@ -612,6 +612,27 @@ def api_capture():
         return jsonify({'ok': False, 'error': str(e)}), 500
 
 
+def get_famous_quote():
+    """Get a random famous quote from the ZenQuotes API."""
+    try:
+        response = requests.get("https://zenquotes.io/api/random", timeout=5)
+        if response.status_code == 200:
+            data = response.json()
+            if data and isinstance(data, list):
+                return {
+                    "text": data[0].get("q", ""),
+                    "author": data[0].get("a", "Unknown")
+                }
+    except (requests.RequestException, ValueError, KeyError):
+        pass
+    
+    # Fallback quote
+    return {
+        "text": "The only way to do great work is to love what you do.",
+        "author": "Steve Jobs"
+    }
+
+
 def get_weather_icon(temp):
     """Return appropriate weather icon based on temperature."""
     if temp is None:
@@ -636,6 +657,7 @@ def index():
     bible_verse = get_bible_verse()
     random_word = get_random_word()
     sunrise_sunset = get_sunrise_sunset()
+    famous_quote = get_famous_quote()
 
     return render_template(
         "index.html",
@@ -650,6 +672,7 @@ def index():
         random_word=random_word,
         sunrise_sunset=sunrise_sunset,
         nature_photo=get_random_nature_photo(),
+        famous_quote=famous_quote,
         image_exists=IMAGE_PATH.exists()
     )
 
