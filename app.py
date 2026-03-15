@@ -10,11 +10,22 @@ import pytz
 import requests
 from flask import Flask, render_template, jsonify
 
+# Camera availability detection
+PICAMERA_AVAILABLE = False
 try:
     from picamera import PiCamera
     PICAMERA_AVAILABLE = True
-except ImportError:
+except Exception:
     PICAMERA_AVAILABLE = False
+
+# We'll also detect if raspistill (legacy) or libcamera-still (new API) are available
+def command_exists(cmd):
+    from shutil import which
+    return which(cmd) is not None
+
+RASPISILL_AVAILABLE = command_exists('raspistill')
+LIBCAMERA_STILL_AVAILABLE = command_exists('libcamera-still')
+
 
 try:
     import bme280 as bme
@@ -287,33 +298,81 @@ def get_sensor_data():
 
 
 def capture_image():
-    """Capture image from PiCamera with timestamp overlay in Pacific time."""
-    if not PICAMERA_AVAILABLE:
-        return False
+    """Capture image using the available camera method.
 
+    Order of preference:
+      1. picamera (PiCamera)
+      2. raspistill (legacy stack)
+      3. libcamera-still (modern stack)
+
+    Saves to static/image.jpg and creates timestamped backups.
+    """
     # Get Pacific timezone
     tz_pacific = pytz.timezone('US/Pacific')
     now_pacific = datetime.now(tz_pacific)
-    
     timestamp = now_pacific.strftime("%Y-%m-%d_%H-%M-%S")
     backup_path = IMAGE_FOLDER / f"{timestamp}.jpg"
+
+    # If no camera capabilities detected, skip
+    if not (PICAMERA_AVAILABLE or RASPISILL_AVAILABLE or LIBCAMERA_STILL_AVAILABLE):
+        app.logger.info("No camera method available; skipping capture.")
+        return False
 
     try:
         if IMAGE_PATH.exists():
             shutil.copy(IMAGE_PATH, backup_path)
 
-        with PiCamera() as camera:
-            camera.resolution = (1280, 720)
-            camera.annotate_text_size = 24
-            camera.annotate_foreground = 0xFF0000
-            camera.annotate_text = now_pacific.strftime("%Y-%m-%d %H:%M:%S %Z")
-            camera.start_preview()
-            time.sleep(1)
-            camera.capture(IMAGE_PATH)
-            camera.stop_preview()
-        return True
+        # Try picamera first
+        if PICAMERA_AVAILABLE:
+            try:
+                with PiCamera() as camera:
+                    camera.resolution = (1280, 720)
+                    camera.annotate_text_size = 24
+                    camera.annotate_foreground = 0xFF0000
+                    camera.annotate_text = now_pacific.strftime("%Y-%m-%d %H:%M:%S %Z")
+                    camera.start_preview()
+                    time.sleep(1)
+                    camera.capture(str(IMAGE_PATH))
+                    camera.stop_preview()
+                return True
+            except Exception as e:
+                app.logger.warning(f"picamera capture failed: {e}")
+
+        # Next try raspistill (legacy)
+        if RASPISILL_AVAILABLE:
+            try:
+                cmd = [
+                    'raspistill',
+                    '-o', str(IMAGE_PATH),
+                    '-t', '1000',
+                    '-w', '1280',
+                    '-h', '720',
+                    '-q', '85'
+                ]
+                subprocess.run(cmd, check=True, timeout=10)
+                return True
+            except Exception as e:
+                app.logger.warning(f"raspistill capture failed: {e}")
+
+        # Finally try libcamera-still
+        if LIBCAMERA_STILL_AVAILABLE:
+            try:
+                cmd = [
+                    'libcamera-still',
+                    '-o', str(IMAGE_PATH),
+                    '--timeout', '1000',
+                    '--width', '1280',
+                    '--height', '720'
+                ]
+                subprocess.run(cmd, check=True, timeout=15)
+                return True
+            except Exception as e:
+                app.logger.warning(f"libcamera-still capture failed: {e}")
+
+        return False
+
     except Exception as e:
-        app.logger.error(f"Camera error: {e}")
+        app.logger.error(f"Camera overall error: {e}")
         return False
 
 
