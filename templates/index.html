@@ -13,22 +13,22 @@
         }
 
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary: #ec4899;
-            --accent: #06b6d4;
-            --bg-dark: #0f172a;
-            --bg-card: rgba(30, 41, 59, 0.8);
-            --text-primary: #f8fafc;
-            --text-secondary: #cbd5e1;
-            --border: rgba(255, 255, 255, 0.15);
+            --primary: #0891b2;
+            --primary-dark: #0e7490;
+            --secondary: #10b981;
+            --accent: #06d6a0;
+            --bg-dark: #0f2f3f;
+            --bg-card: rgba(15, 47, 63, 0.8);
+            --text-primary: #f0f9ff;
+            --text-secondary: #a8d5d9;
+            --border: rgba(255, 255, 255, 0.12);
             --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.4);
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+            background: linear-gradient(135deg, #0f2f3f 0%, #1a4d5c 50%, #164e63 100%);
             min-height: 100vh;
             color: var(--text-primary);
             overflow-x: hidden;
@@ -154,10 +154,10 @@
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
         }
 
-        .temp-icon { background: linear-gradient(135deg, #f97316, #ea580c); }
-        .humidity-icon { background: linear-gradient(135deg, #06b6d4, #0891b2); }
-        .pressure-icon { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
-        .altitude-icon { background: linear-gradient(135deg, #10b981, #059669); }
+        .temp-icon { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .humidity-icon { background: linear-gradient(135deg, #06d6a0, #10b981); }
+        .pressure-icon { background: linear-gradient(135deg, #10b981, #059669); }
+        .altitude-icon { background: linear-gradient(135deg, #0891b2, #0e7490); }
 
         .card-title {
             font-size: 0.8rem;
@@ -188,7 +188,7 @@
             align-items: center;
             justify-content: space-around;
             gap: 2rem;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(236, 72, 153, 0.25));
+            background: linear-gradient(135deg, rgba(8, 145, 178, 0.25), rgba(16, 185, 129, 0.25));
             position: relative;
             overflow: hidden;
         }
@@ -200,7 +200,7 @@
             right: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(6, 214, 160, 0.1) 0%, transparent 70%);
             animation: glow 8s ease-in-out infinite;
         }
 
@@ -259,13 +259,13 @@
             display: flex;
             align-items: center;
             gap: 0.6rem;
-            background: rgba(239, 68, 68, 0.15);
-            color: #fca5a5;
+            background: rgba(6, 214, 160, 0.15);
+            color: #7ee8c7;
             padding: 0.4rem 1rem;
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 700;
-            border: 1px solid rgba(239, 68, 68, 0.3);
+            border: 1px solid rgba(6, 214, 160, 0.3);
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
@@ -273,10 +273,10 @@
         .live-dot {
             width: 8px;
             height: 8px;
-            background: #ef4444;
+            background: #06d6a0;
             border-radius: 50%;
             animation: blink 1s ease-in-out infinite;
-            box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+            box-shadow: 0 0 8px rgba(6, 214, 160, 0.6);
         }
 
         @keyframes blink {
@@ -337,17 +337,17 @@
         .system-icon {
             width: 48px;
             height: 48px;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            background: linear-gradient(135deg, #0891b2, #10b981);
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.4rem;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 4px 12px rgba(8, 145, 178, 0.3);
         }
 
         .system-content {
-            background: rgba(15, 23, 42, 0.8);
+            background: rgba(15, 47, 63, 0.8);
             border-radius: 14px;
             padding: 1.5rem;
             font-family: 'JetBrains Mono', monospace;
@@ -367,7 +367,7 @@
         /* Bible verse card */
         .bible-card {
             grid-column: span 2;
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(6, 182, 212, 0.2));
+            background: linear-gradient(135deg, rgba(8, 145, 178, 0.2), rgba(16, 185, 129, 0.2));
             position: relative;
             overflow: hidden;
         }
@@ -396,13 +396,13 @@
         .bible-icon {
             width: 48px;
             height: 48px;
-            background: linear-gradient(135deg, #f59e0b, #d97706);
+            background: linear-gradient(135deg, #10b981, #06d6a0);
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.4rem;
-            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
         .verse-text {
