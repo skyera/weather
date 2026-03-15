@@ -310,6 +310,41 @@
             font-size: 0.85rem;
         }
 
+        /* News Styles */
+        .news-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .news-item {
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.75rem;
+        }
+
+        .news-item:last-child { border-bottom: none; }
+
+        .news-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            display: block;
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .news-link:hover {
+            color: var(--primary);
+        }
+
+        .news-date {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
         .word-title {
             font-size: 1.5rem;
             font-weight: 700;
@@ -632,7 +667,7 @@
             </div>
 
             <!-- Sun & System -->
-            <div class="card col-6">
+            <div class="card col-12">
                 <div class="section-header">
                     <div class="header-title">
                         <div class="header-icon">🛰️</div>
@@ -640,31 +675,54 @@
                     </div>
                 </div>
                 
-                <div class="sun-grid" style="margin-bottom: 1.5rem;">
-                    <div class="sun-box">
-                        <span class="data-label">Sunrise</span>
-                        <div class="time-value" style="font-size: 1.25rem; font-weight: 700;">{{sunrise_sunset.get('sunrise', 'N/A')}}</div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                    <div>
+                        <div class="sun-grid" style="margin-bottom: 1rem;">
+                            <div class="sun-box">
+                                <span class="data-label">Sunrise</span>
+                                <div class="time-value" style="font-size: 1.25rem; font-weight: 700;">{{sunrise_sunset.get('sunrise', 'N/A')}}</div>
+                            </div>
+                            <div class="sun-box">
+                                <span class="data-label">Sunset</span>
+                                <div class="time-value" style="font-size: 1.25rem; font-weight: 700;">{{sunrise_sunset.get('sunset', 'N/A')}}</div>
+                            </div>
+                        </div>
+                        <div class="uptime-banner">
+                            <span class="data-label">System Uptime</span>
+                            <span class="uptime-val">{{system_info.get('uptime', 'N/A')}}</span>
+                            <span style="color: var(--secondary); font-size: 0.75rem; font-weight: 700;">● STABLE</span>
+                        </div>
                     </div>
-                    <div class="sun-box">
-                        <span class="data-label">Sunset</span>
-                        <div class="time-value" style="font-size: 1.25rem; font-weight: 700;">{{sunrise_sunset.get('sunset', 'N/A')}}</div>
-                    </div>
-                </div>
 
-                <div class="uptime-banner" style="margin-bottom: 1.5rem;">
-                    <span class="data-label">System Uptime</span>
-                    <span class="uptime-val">{{system_info.get('uptime', 'N/A')}}</span>
-                    <span style="color: var(--secondary); font-size: 0.75rem; font-weight: 700;">● STABLE</span>
-                </div>
-
-                <div class="system-grid">
-                    <div style="display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 1rem;">
-                        <span style="color: var(--text-secondary);">Model:</span> <span>{{system_info.get('model', 'N/A')}}</span>
-                        <span style="color: var(--text-secondary);">Memory:</span> <span>{{system_info.get('memory', 'N/A')}}</span>
-                        <span style="color: var(--text-secondary);">CPU:</span> <span>{{system_info.get('cpu_temp', 'N/A')}}</span>
-                        <span style="color: var(--text-secondary);">Disk:</span> <span>{{system_info.get('disk', 'N/A')}}</span>
+                    <div class="system-grid">
+                        <div style="display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 1rem;">
+                            <span style="color: var(--text-secondary);">Model:</span> <span>{{system_info.get('model', 'N/A')}}</span>
+                            <span style="color: var(--text-secondary);">Memory:</span> <span>{{system_info.get('memory', 'N/A')}}</span>
+                            <span style="color: var(--text-secondary);">CPU:</span> <span>{{system_info.get('cpu_temp', 'N/A')}}</span>
+                            <span style="color: var(--text-secondary);">Disk:</span> <span>{{system_info.get('disk', 'N/A')}}</span>
+                        </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Global News Section -->
+            <div class="card col-12">
+                <div class="section-header">
+                    <div class="header-title">
+                        <div class="header-icon">🌐</div>
+                        <h3>Global Intelligence</h3>
+                    </div>
+                </div>
+                <ul class="news-list">
+                    {% for item in news_items %}
+                    <li class="news-item">
+                        <a href="{{ item.link }}" target="_blank" class="news-link">{{ item.title }}</a>
+                        <span class="news-date">{{ item.pubDate }}</span>
+                    </li>
+                    {% else %}
+                    <li style="color: var(--text-secondary);">No news headlines available at the moment.</li>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
 

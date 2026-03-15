@@ -612,6 +612,28 @@ def api_capture():
         return jsonify({'ok': False, 'error': str(e)}), 500
 
 
+import xml.etree.ElementTree as ET
+
+def get_news():
+    """Get top news headlines from Google News RSS."""
+    try:
+        response = requests.get("https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en", timeout=5)
+        if response.status_code == 200:
+            root = ET.fromstring(response.content)
+            news_items = []
+            for item in root.findall('.//item')[:5]:
+                news_items.append({
+                    "title": item.find('title').text,
+                    "link": item.find('link').text,
+                    "pubDate": item.find('pubDate').text
+                })
+            return news_items
+    except Exception as e:
+        app.logger.warning(f"Failed to fetch news: {e}")
+    
+    return []
+
+
 def get_famous_quote():
     """Get a random famous quote from the ZenQuotes API."""
     try:
@@ -658,6 +680,7 @@ def index():
     random_word = get_random_word()
     sunrise_sunset = get_sunrise_sunset()
     famous_quote = get_famous_quote()
+    news_items = get_news()
 
     return render_template(
         "index.html",
@@ -673,6 +696,7 @@ def index():
         sunrise_sunset=sunrise_sunset,
         nature_photo=get_random_nature_photo(),
         famous_quote=famous_quote,
+        news_items=news_items,
         image_exists=IMAGE_PATH.exists()
     )
 
