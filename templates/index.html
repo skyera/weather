@@ -616,91 +616,6 @@
             letter-spacing: 0.05em;
         }
 
-        /* Constellation card */
-        .constellation-card {
-        }
-
-        .constellation-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .constellation-header h3 {
-            font-size: 0.9rem;
-            font-weight: 600;
-            font-family: 'JetBrains Mono', monospace;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        .constellation-icon {
-            width: 36px;
-            height: 36px;
-            background: rgba(200, 200, 200, 0.1);
-            border: 1px solid var(--border);
-            border-radius: 2px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
-
-        .constellation-name {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-            letter-spacing: 0.05em;
-        }
-
-        .constellation-season {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 0.8rem;
-            padding-bottom: 0.8rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .constellation-section {
-            margin-bottom: 1rem;
-        }
-
-        .constellation-label {
-            color: var(--text-secondary);
-            font-weight: 600;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            display: block;
-            margin-bottom: 0.4rem;
-        }
-
-        .constellation-text {
-            font-size: 0.9rem;
-            line-height: 1.5;
-            color: var(--text-primary);
-        }
-
-        .bright-stars {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 0.4rem;
-        }
-
-        .star-badge {
-            background: rgba(208, 208, 208, 0.1);
-            border: 1px solid var(--border);
-            padding: 0.3rem 0.6rem;
-            border-radius: 2px;
-            font-size: 0.8rem;
-            color: var(--text-primary);
-        }
-
         /* Footer */
         footer {
             text-align: center;
@@ -842,39 +757,6 @@
                 <div class="word-example">
                     <span class="label">Example:</span> "{{random_word.get('example', '')}}"
                 </div>
-            </div>
-
-            <!-- Constellation Info -->
-            <div class="card constellation-card">
-                <div class="constellation-header">
-                    <div class="constellation-icon">⭐</div>
-                    <h3>Constellation of the Month</h3>
-                </div>
-                {% if constellation_info.featured %}
-                <div class="constellation-name">{{constellation_info.featured.get('name', 'Unknown')}}</div>
-                <div class="constellation-season">{{constellation_info.season.title()}} • {{constellation_info.month}}</div>
-
-                <div class="constellation-section">
-                    <span class="constellation-label">Description</span>
-                    <div class="constellation-text">{{constellation_info.featured.get('description', '')}}</div>
-                </div>
-
-                <div class="constellation-section">
-                    <span class="constellation-label">Bright Stars</span>
-                    <div class="bright-stars">
-                        {% for star in constellation_info.featured.get('bright_stars', []) %}
-                        <span class="star-badge">{{star}}</span>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <div class="constellation-section">
-                    <span class="constellation-label">Mythology</span>
-                    <div class="constellation-text">{{constellation_info.featured.get('mythology', '')}}</div>
-                </div>
-                {% else %}
-                <div class="constellation-text">No constellation data available</div>
-                {% endif %}
             </div>
 
             <!-- Weather Status -->
