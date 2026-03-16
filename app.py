@@ -148,9 +148,9 @@ def run_speedtest_task():
             for row in reader:
                 try:
                     # Values are in bytes/second, convert to Mbps
-                    download = float(row.get('Download', 0)) / 1_000_000
-                    upload = float(row.get('Upload', 0)) / 1_000_000
-                    ping = float(row.get('Ping', 0))
+                    download = float(row.get('download', 0)) / 1_000_000
+                    upload = float(row.get('upload', 0)) / 1_000_000
+                    ping = float(row.get('idle latency', 0))
                     
                     with DB_LOCK:
                         conn = sqlite3.connect(str(DB_PATH))
