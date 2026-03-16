@@ -615,7 +615,7 @@ def api_capture():
 import xml.etree.ElementTree as ET
 
 def get_news():
-    """Get top news headlines from Google News RSS."""
+    """Get top general news headlines from Google News RSS."""
     try:
         response = requests.get("https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en", timeout=5)
         if response.status_code == 200:
@@ -630,6 +630,29 @@ def get_news():
             return news_items
     except Exception as e:
         app.logger.warning(f"Failed to fetch news: {e}")
+    
+    return []
+
+
+def get_ai_news():
+    """Get AI-related news (Claude, Gemini, etc.) from Google News RSS."""
+    try:
+        # Searching specifically for AI, Claude, Gemini, GPT
+        query = "Artificial Intelligence OR Claude AI OR Gemini AI OR OpenAI"
+        url = f"https://news.google.com/rss/search?q={query}&hl=en-US&gl=US&ceid=US:en"
+        response = requests.get(url, timeout=5)
+        if response.status_code == 200:
+            root = ET.fromstring(response.content)
+            news_items = []
+            for item in root.findall('.//item')[:5]:
+                news_items.append({
+                    "title": item.find('title').text,
+                    "link": item.find('link').text,
+                    "pubDate": item.find('pubDate').text
+                })
+            return news_items
+    except Exception as e:
+        app.logger.warning(f"Failed to fetch AI news: {e}")
     
     return []
 
@@ -681,6 +704,7 @@ def index():
     sunrise_sunset = get_sunrise_sunset()
     famous_quote = get_famous_quote()
     news_items = get_news()
+    ai_news = get_ai_news()
 
     return render_template(
         "index.html",
@@ -697,6 +721,7 @@ def index():
         nature_photo=get_random_nature_photo(),
         famous_quote=famous_quote,
         news_items=news_items,
+        ai_news=ai_news,
         image_exists=IMAGE_PATH.exists()
     )
 

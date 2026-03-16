@@ -365,20 +365,38 @@
                     </div>
                 </div>
 
-                <!-- News Grid -->
-                <section>
-                    <div class="section-header">
-                        <h3>Top Stories</h3>
-                    </div>
-                    <div class="news-grid">
-                        {% for item in news_items %}
-                        <a href="{{ item.link }}" target="_blank" class="news-card">
-                            <span class="news-title">{{ item.title }}</span>
-                            <span class="news-meta">{{ item.pubDate }}</span>
-                        </a>
-                        {% endfor %}
-                    </div>
-                </section>
+                <!-- News Sections -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                    <!-- General News -->
+                    <section>
+                        <div class="section-header">
+                            <h3>Top Stories</h3>
+                        </div>
+                        <div class="news-list">
+                            {% for item in news_items %}
+                            <a href="{{ item.link }}" target="_blank" class="news-card" style="margin-bottom: 1rem;">
+                                <span class="news-title" style="font-size: 0.95rem;">{{ item.title }}</span>
+                                <span class="news-meta">{{ item.pubDate }}</span>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </section>
+
+                    <!-- AI Intelligence -->
+                    <section>
+                        <div class="section-header">
+                            <h3>AI Intelligence</h3>
+                        </div>
+                        <div class="news-list">
+                            {% for item in ai_news %}
+                            <a href="{{ item.link }}" target="_blank" class="news-card" style="margin-bottom: 1rem; border-left: 3px solid var(--primary);">
+                                <span class="news-title" style="font-size: 0.95rem;">{{ item.title }}</span>
+                                <span class="news-meta">{{ item.pubDate }}</span>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </section>
+                </div>
 
                 <!-- Chart -->
                 <div class="card">
