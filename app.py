@@ -138,24 +138,37 @@ def run_speedtest_task():
     """Background task to run speedtest and record results."""
     app.logger.info("Starting background speedtest...")
     try:
-        # Run speedtest with JSON output
-        result = subprocess.run(['speedtest', '--json', '--single'], capture_output=True, text=True, timeout=300)
+        import re
+        # Run speedtest with simple output (easy to parse)
+        result = subprocess.run(['speedtest', '--simple'], capture_output=True, text=True, timeout=300)
         if result.returncode == 0:
-            data = json.loads(result.stdout)
-            download = data.get('download', 0) / 1_000_000 # Convert to Mbps
-            upload = data.get('upload', 0) / 1_000_000     # Convert to Mbps
-            ping = data.get('ping', 0)
+            # Parse simple format: "Ping: X ms\nDownload: X Mbit/s\nUpload: X Mbit/s"
+            lines = result.stdout.strip().split('\n')
+            ping = None
+            download = None
+            upload = None
             
-            with DB_LOCK:
-                conn = sqlite3.connect(str(DB_PATH))
-                cursor = conn.cursor()
-                cursor.execute(
-                    'INSERT INTO speed_tests (download, upload, ping) VALUES (?, ?, ?)',
-                    (download, upload, ping)
-                )
-                conn.commit()
-                conn.close()
-            app.logger.info(f"Speedtest complete: {download:.2f} Mbps down, {upload:.2f} Mbps up, {ping:.1f} ms ping")
+            for line in lines:
+                if 'Ping:' in line:
+                    ping = float(re.search(r'[\d.]+', line).group())
+                elif 'Download:' in line:
+                    download = float(re.search(r'[\d.]+', line).group())
+                elif 'Upload:' in line:
+                    upload = float(re.search(r'[\d.]+', line).group())
+            
+            if download is not None and upload is not None and ping is not None:
+                with DB_LOCK:
+                    conn = sqlite3.connect(str(DB_PATH))
+                    cursor = conn.cursor()
+                    cursor.execute(
+                        'INSERT INTO speed_tests (download, upload, ping) VALUES (?, ?, ?)',
+                        (download, upload, ping)
+                    )
+                    conn.commit()
+                    conn.close()
+                app.logger.info(f"Speedtest complete: {download:.2f} Mbps down, {upload:.2f} Mbps up, {ping:.1f} ms ping")
+            else:
+                app.logger.error(f"Failed to parse speedtest output: {result.stdout}")
         else:
             app.logger.error(f"Speedtest failed: {result.stderr}")
     except Exception as e:
