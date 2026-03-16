@@ -67,6 +67,16 @@ def init_db():
             )
         ''')
         cursor.execute('CREATE INDEX IF NOT EXISTS idx_timestamp ON temperature_readings(timestamp)')
+        
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS speed_tests (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                download REAL,
+                upload REAL,
+                ping REAL
+            )
+        ''')
         conn.commit()
         conn.close()
 
@@ -120,6 +130,57 @@ def get_temperature_history(hours=24):
 
 # Initialize database on startup
 init_db()
+
+
+import json
+
+def run_speedtest_task():
+    """Background task to run speedtest-cli and record results."""
+    app.logger.info("Starting background speedtest...")
+    try:
+        # Run speedtest-cli --json
+        result = subprocess.run(['speedtest-cli', '--json'], capture_output=True, text=True, timeout=120)
+        if result.returncode == 0:
+            data = json.loads(result.stdout)
+            download = data.get('download', 0) / 1_000_000 # Convert to Mbps
+            upload = data.get('upload', 0) / 1_000_000     # Convert to Mbps
+            ping = data.get('ping', 0)
+            
+            with DB_LOCK:
+                conn = sqlite3.connect(str(DB_PATH))
+                cursor = conn.cursor()
+                cursor.execute(
+                    'INSERT INTO speed_tests (download, upload, ping) VALUES (?, ?, ?)',
+                    (download, upload, ping)
+                )
+                conn.commit()
+                conn.close()
+            app.logger.info(f"Speedtest complete: {download:.2f} Mbps down, {upload:.2f} Mbps up")
+        else:
+            app.logger.error(f"Speedtest-cli failed: {result.stderr}")
+    except Exception as e:
+        app.logger.error(f"Background speedtest error: {e}")
+
+
+def get_latest_speedtest():
+    """Get the most recent speedtest result from the database."""
+    with DB_LOCK:
+        try:
+            conn = sqlite3.connect(str(DB_PATH))
+            cursor = conn.cursor()
+            cursor.execute('SELECT download, upload, ping, timestamp FROM speed_tests ORDER BY timestamp DESC LIMIT 1')
+            row = cursor.fetchone()
+            conn.close()
+            if row:
+                return {
+                    "download": round(row[0], 2),
+                    "upload": round(row[1], 2),
+                    "ping": round(row[2], 1),
+                    "timestamp": row[3]
+                }
+        except Exception as e:
+            app.logger.error(f"Error getting speedtest result: {e}")
+    return None
 
 
 def get_system_info():
@@ -705,6 +766,7 @@ def index():
     famous_quote = get_famous_quote()
     news_items = get_news()
     ai_news = get_ai_news()
+    latest_speed = get_latest_speedtest()
 
     return render_template(
         "index.html",
@@ -722,8 +784,18 @@ def index():
         famous_quote=famous_quote,
         news_items=news_items,
         ai_news=ai_news,
+        speedtest=latest_speed,
         image_exists=IMAGE_PATH.exists()
     )
+
+
+@app.route("/api/speedtest", methods=['POST'])
+def api_speedtest():
+    """Trigger a background speedtest."""
+    thread = threading.Thread(target=run_speedtest_task)
+    thread.daemon = True
+    thread.start()
+    return jsonify({"status": "Speedtest started in background"})
 
 
 @app.route("/api/data")
@@ -734,7 +806,8 @@ def api_data():
     return jsonify({
         "timestamp": datetime.now().isoformat(),
         **sensor_data,
-        "weather_icon": get_weather_icon(sensor_data.get("temperature"))
+        "weather_icon": get_weather_icon(sensor_data.get("temperature")),
+        "speedtest": get_latest_speedtest()
     })
 
 

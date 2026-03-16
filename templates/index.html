@@ -321,6 +321,10 @@
             animation: spinner 1s linear infinite;
         }
 
+        .spinning {
+            animation: spinner 1s linear infinite;
+        }
+
         @keyframes spinner { to { transform: rotate(360deg); } }
 
         .word-title {
@@ -477,6 +481,28 @@
                     </div>
                 </div>
 
+                <!-- Network Speed -->
+                <div class="card">
+                    <div class="section-header">
+                        <h3>Network Speed</h3>
+                        <button class="icon-btn" id="speedtest-btn" onclick="refreshSpeedtest()">🔄</button>
+                    </div>
+                    <div class="weather-grid">
+                        <div class="metric-mini">
+                            <span class="mini-label">Download</span>
+                            <div class="mini-value" id="val-download" style="color: var(--secondary);">{{speedtest.download if speedtest else '--'}} <span style="font-size: 0.6rem; color: var(--text-secondary);">Mbps</span></div>
+                        </div>
+                        <div class="metric-mini">
+                            <span class="mini-label">Upload</span>
+                            <div class="mini-value" id="val-upload" style="color: var(--primary);">{{speedtest.upload if speedtest else '--'}} <span style="font-size: 0.6rem; color: var(--text-secondary);">Mbps</span></div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1rem; font-size: 0.7rem; color: var(--text-secondary); display: flex; justify-content: space-between;">
+                        <span>Ping: <span id="val-ping">{{speedtest.ping if speedtest else '--'}}</span>ms</span>
+                        <span id="speedtest-time">{{speedtest.timestamp[11:16] if speedtest else 'No data'}}</span>
+                    </div>
+                </div>
+
                 <!-- System -->
                 <div class="card">
                     <div class="section-header">
@@ -583,6 +609,35 @@
                     img.src = data.url + (data.url.includes('?') ? '&' : '?') + 'cb=' + Date.now();
                 }
             } catch (e) { console.error('Camera refresh failed:', e); }
+        }
+
+        async function refreshSpeedtest() {
+            const btn = document.getElementById('speedtest-btn');
+            btn.classList.add('spinning');
+            try {
+                await fetch('/api/speedtest', { method: 'POST' });
+                // Check for results every 5 seconds for up to 1 minute
+                let checks = 0;
+                const interval = setInterval(async () => {
+                    const resp = await fetch('/api/data');
+                    const data = await resp.json();
+                    if (data.speedtest) {
+                        document.getElementById('val-download').innerHTML = data.speedtest.download + ' <span style="font-size: 0.6rem; color: var(--text-secondary);">Mbps</span>';
+                        document.getElementById('val-upload').innerHTML = data.speedtest.upload + ' <span style="font-size: 0.6rem; color: var(--text-secondary);">Mbps</span>';
+                        document.getElementById('val-ping').textContent = data.speedtest.ping;
+                        document.getElementById('speedtest-time').textContent = data.speedtest.timestamp.split('T')[1].substring(0, 5);
+                        btn.classList.remove('spinning');
+                        clearInterval(interval);
+                    }
+                    if (++checks > 12) {
+                        btn.classList.remove('spinning');
+                        clearInterval(interval);
+                    }
+                }, 5000);
+            } catch (e) { 
+                console.error('Speedtest failed:', e); 
+                btn.classList.remove('spinning');
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
