@@ -135,11 +135,11 @@ init_db()
 import json
 
 def run_speedtest_task():
-    """Background task to run speedtest-cli and record results."""
+    """Background task to run speedtest and record results."""
     app.logger.info("Starting background speedtest...")
     try:
-        # Run speedtest-cli --json
-        result = subprocess.run(['speedtest-cli', '--json'], capture_output=True, text=True, timeout=120)
+        # Run speedtest with JSON output
+        result = subprocess.run(['speedtest', '--json', '--single'], capture_output=True, text=True, timeout=300)
         if result.returncode == 0:
             data = json.loads(result.stdout)
             download = data.get('download', 0) / 1_000_000 # Convert to Mbps
@@ -155,9 +155,9 @@ def run_speedtest_task():
                 )
                 conn.commit()
                 conn.close()
-            app.logger.info(f"Speedtest complete: {download:.2f} Mbps down, {upload:.2f} Mbps up")
+            app.logger.info(f"Speedtest complete: {download:.2f} Mbps down, {upload:.2f} Mbps up, {ping:.1f} ms ping")
         else:
-            app.logger.error(f"Speedtest-cli failed: {result.stderr}")
+            app.logger.error(f"Speedtest failed: {result.stderr}")
     except Exception as e:
         app.logger.error(f"Background speedtest error: {e}")
 
