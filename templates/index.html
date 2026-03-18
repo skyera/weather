@@ -481,6 +481,23 @@
                     </div>
                 </div>
 
+                <!-- Holidays -->
+                <div class="card">
+                    <div class="section-header">
+                        <h3>Upcoming Holidays</h3>
+                    </div>
+                    {% if holidays %}
+                        {% for holiday in holidays %}
+                        <div class="system-line">
+                            <span style="font-weight: 600;">{{ holiday.name }}</span>
+                            <span style="color: var(--accent); font-size: 0.75rem;">{{ holiday.date }}</span>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p style="font-size: 0.85rem; color: var(--text-secondary);">No upcoming holidays found.</p>
+                    {% endif %}
+                </div>
+
                 <!-- System -->
                 <div class="card">
                     <div class="section-header">

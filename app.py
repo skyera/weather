@@ -764,6 +764,18 @@ def get_weather_icon(temp):
         return "🔥"
 
 
+def get_upcoming_holidays(country_code="US"):
+    """Get upcoming public holidays using the Nager.Date API."""
+    try:
+        response = requests.get(f"https://date.nager.at/api/v3/NextPublicHolidays/{country_code}", timeout=5)
+        if response.status_code == 200:
+            holidays = response.json()
+            return holidays[:3]  # Return the next 3 holidays
+    except Exception as e:
+        app.logger.warning(f"Failed to fetch holidays: {e}")
+    return []
+
+
 @app.route("/")
 def index():
     capture_image()
@@ -776,6 +788,7 @@ def index():
     news_items = get_news()
     ai_news = get_ai_news()
     latest_speed = get_latest_speedtest()
+    holidays = get_upcoming_holidays()
 
     return render_template(
         "index.html",
@@ -794,6 +807,7 @@ def index():
         news_items=news_items,
         ai_news=ai_news,
         speedtest=latest_speed,
+        holidays=holidays,
         image_exists=IMAGE_PATH.exists()
     )
 
