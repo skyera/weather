@@ -878,24 +878,6 @@ def get_cpp_tip():
 
 
 
-def get_nasa_apod():
-    """Get NASA Picture of the Day (APOD)."""
-    try:
-        # Using DEMO_KEY (limited rate) - for production, use a personal API key
-        response = requests.get("https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY", timeout=5)
-        if response.status_code == 200:
-            return response.json()
-    except Exception as e:
-        app.logger.warning(f"Failed to fetch NASA APOD: {e}")
-    
-    return {
-        "title": "NASA APOD Unavailable",
-        "url": "https://www.nasa.gov/wp-content/uploads/2023/03/placeholder.jpg",
-        "explanation": "Could not retrieve the NASA Picture of the Day at this time.",
-        "hdurl": "https://www.nasa.gov/multimedia/imagegallery/index.html"
-    }
-
-
 @app.route("/")
 def index():
     capture_image()
@@ -911,7 +893,6 @@ def index():
     holidays = get_upcoming_holidays()
     random_movie = get_random_movie()
     cpp_tip = get_cpp_tip()
-    nasa_apod = get_nasa_apod()
 
     return render_template(
         "index.html",
@@ -933,7 +914,6 @@ def index():
         holidays=holidays,
         random_movie=random_movie,
         cpp_tip=cpp_tip,
-        nasa_apod=nasa_apod,
         image_exists=IMAGE_PATH.exists()
     )
 

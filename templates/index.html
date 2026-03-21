@@ -527,27 +527,6 @@
                     <p style="font-size: 0.85rem; font-style: italic; color: var(--text-secondary);">"{{random_word.get('example', '')}}"</p>
                 </div>
 
-                <!-- NASA Picture of the Day -->
-                <div class="card">
-                    <div class="section-header">
-                        <h3>🚀 NASA Picture of the Day</h3>
-                        <a href="{{ nasa_apod.get('hdurl', nasa_apod.get('url')) }}" target="_blank" class="icon-btn" style="text-decoration: none;">🔗</a>
-                    </div>
-                    <div style="margin-bottom: 1rem; border-radius: 8px; overflow: hidden; border: 1px solid var(--border);">
-                        {% if nasa_apod.get('media_type') == 'video' %}
-                            <div style="aspect-ratio: 16/9; background: #000; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: var(--text-secondary);">
-                                Video Content: <a href="{{ nasa_apod.get('url') }}" target="_blank" style="color: var(--primary); margin-left: 5px;">View on YouTube</a>
-                            </div>
-                        {% else %}
-                            <img src="{{ nasa_apod.get('url') }}" alt="NASA APOD" style="width: 100%; height: auto; display: block;">
-                        {% endif %}
-                    </div>
-                    <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--primary);">{{ nasa_apod.get('title', 'NASA APOD') }}</div>
-                    <p style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;">
-                        {{ nasa_apod.get('explanation', '') }}
-                    </p>
-                </div>
-
                 <!-- Movie of the Day -->
                 <div class="card">
                     <div class="section-header">
