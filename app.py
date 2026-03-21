@@ -776,6 +776,57 @@ def get_upcoming_holidays(country_code="US"):
     return []
 
 
+def get_random_movie():
+    """Get a random Hollywood movie with title, poster, and year."""
+    movies = [
+        {"title": "The Shawshank Redemption", "year": 1994, "poster": "https://m.media-amazon.com/images/M/MV5BMDFlYTk5MDctZDZkMC00YmI2LWFmZTQtOTNlYjlhN2E1ZThjXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg"},
+        {"title": "The Godfather", "year": 1972, "poster": "https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNC00MTMyLWFwM2MtMjc0Njg1NGE2NjVkXkEyXkFqcGdeQXVyNzU1NzE3OTc@._V1_SX300.jpg"},
+        {"title": "The Dark Knight", "year": 2008, "poster": "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_SX300.jpg"},
+        {"title": "Pulp Fiction", "year": 1994, "poster": "https://m.media-amazon.com/images/M/MV5BNGNhMDIzZTUtNTBlZi00MTRlLWFjM2ItMDJlM2RlMTY4OWVkXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg"},
+        {"title": "Forrest Gump", "year": 1994, "poster": "https://m.media-amazon.com/images/M/MV5BNWIwODRlYTAtY2M3ZS00MWYxLWIyNmUtZDJmYWIyMzgyODZlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg"},
+        {"title": "Inception", "year": 2010, "poster": "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg"},
+        {"title": "The Matrix", "year": 1999, "poster": "https://m.media-amazon.com/images/M/MV5BNzQzOTk3OTAtNDQ0ZC00ZWQwLTljM2ItOWJmNmRjMmQ0MjBhXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg"},
+        {"title": "Titanic", "year": 1997, "poster": "https://m.media-amazon.com/images/M/MV5BMDMwZDhkNmUtZDAxYi00ZWQwLWJlNjctYzc1MWI5Mzg0MjhlXkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SX300.jpg"},
+        {"title": "Avatar", "year": 2009, "poster": "https://m.media-amazon.com/images/M/MV5BMTYwOTEwNjAzMl5BMl5BanBnXkFtZTcwODc5MTUwMw@@._V1_SX300.jpg"},
+        {"title": "Interstellar", "year": 2014, "poster": "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDAtMmE0YS00ZDQ4LWE3NGEtNjZlYTQ0YzZhMzAyXkEyXkFqcGdeQXVyMzQ0MjM5NjU@._V1_SX300.jpg"},
+        {"title": "The Avengers", "year": 2012, "poster": "https://m.media-amazon.com/images/M/MV5BNDYxNjQyMjAtNTdiOS00NGYwLWFmNTAtNTA2OWM0OTc0NzA1XkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg"},
+        {"title": "Gladiator", "year": 2000, "poster": "https://m.media-amazon.com/images/M/MV5BMDliMmNhNDEtODg0NC00ZTI4LWIyNmUtZDJmYWIyMzgyODZlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg"},
+        {"title": "Jurassic Park", "year": 1993, "poster": "https://m.media-amazon.com/images/M/MV5BMjM2MDgxNTYtN2FmYS00YzMyLWE3ZmItZjQwMzQwMjMyNTQ4XkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg"},
+        {"title": "The Lion King", "year": 1994, "poster": "https://m.media-amazon.com/images/M/MV5BYzc3OTQ1YTAtYjU3ZC00MzYxLWE5ODAtZTBmYWM4YjNhNmUyXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg"},
+        {"title": "Back to the Future", "year": 1985, "poster": "https://m.media-amazon.com/images/M/MV5BZmU0M2Y1OGEtZjIzLTg5ZjgtMzljNmYwMzQ0MjMwXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg"},
+        {"title": "The Silence of the Lambs", "year": 1991, "poster": "https://m.media-amazon.com/images/M/MV5BNjNhZTk0YWUtYjU4ZS00ZWY3LTk0MmUtZTAwMmM3ZjBkY2YwXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg"},
+        {"title": "Schindler's List", "year": 1993, "poster": "https://m.media-amazon.com/images/M/MV5BNDE4OTMxMTctNmRhYy00NWE2LTg3YzItYTk3M2FkZGJlNTY5XkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg"},
+        {"title": "Saving Private Ryan", "year": 1998, "poster": "https://m.media-amazon.com/images/M/MV5BZjhkMDM4MWItZTVjOC00ZDRhLWI1MmUtNzVlNzg3MjUyZjA4XkEyXkFqcGdeQXVyNDYyMDk5NTA@._V1_SX300.jpg"},
+        {"title": "The Departed", "year": 2006, "poster": "https://m.media-amazon.com/images/M/MV5BMTI1MTY2OTIxNV5BMl5BanBnXkFtZTYwNjkwMTg3._V1_SX300.jpg"},
+        {"title": "Fight Club", "year": 1999, "poster": "https://m.media-amazon.com/images/M/MV5BMjJmYTozOWItZDQwYS00ZmUyLWEwN2UtN2ZlYjg4YzRlMDAwXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg"},
+        {"title": "The Sixth Sense", "year": 1999, "poster": "https://m.media-amazon.com/images/M/MV5BYWM4MzAxMGEtMzE0ZC00OWY5LTg0N2EtYzg3MzY1MGVmMzg4XkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg"},
+        {"title": "The Usual Suspects", "year": 1995, "poster": "https://m.media-amazon.com/images/M/MV5BYTViNjMyNmUtYzYwZC00MzE1LWI1MmYtZDdhNDExNGM0ZjAxXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg"},
+        {"title": "Goodfellas", "year": 1990, "poster": "https://m.media-amazon.com/images/M/MV5BY2NkZjE1ZmMtYzlkNS00YWZkLWE5MGEtZmE4MDJlZjI2ZTBhXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg"},
+        {"title": "The Shining", "year": 1980, "poster": "https://m.media-amazon.com/images/M/MV5BZWFlYmY2NmUtZjVmNi00ZDI5LWE3NGEtN2ZlYTQ0YzZhMzAyXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg"},
+        {"title": "Jaws", "year": 1975, "poster": "https://m.media-amazon.com/images/M/MV5BMmVmYjE1YzgtZDc3Ny00MzFkLWE5MDktMTc0ZGZkYTcyNmE3XkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg"},
+        {"title": "E.T.", "year": 1982, "poster": "https://m.media-amazon.com/images/M/MV5BNDYyNmQ0OTYtYjY0ZC00YjkwLWE0NDMtYzlhMjI0ZWYzYThjXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg"},
+        {"title": "Raiders of the Lost Ark", "year": 1981, "poster": "https://m.media-amazon.com/images/M/MV5BYWMwMDExYjUtNTg3ZC00YmU4LWEwNTAtMDA2YTk0YzI1ZjBhXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg"},
+        {"title": "The Lord of the Rings", "year": 2001, "poster": "https://m.media-amazon.com/images/M/MV5BN2EyZjM3NzUtNWUzMi00MTgxLWI0NTctMzY4M2VlOTdjZWRiXkEyXkFqcGdeQXVyNDUyOTg3Njg@._V1_SX300.jpg"},
+        {"title": "Harry Potter", "year": 2001, "poster": "https://m.media-amazon.com/images/M/MV5BNjQ3NWNlNmQtY2MwZC00YTcyLWE4NmYtYzlkMTEzMGY0ZTBhXkEyXkFqcGdeQXVyMzQ0MjM5NjU@._V1_SX300.jpg"},
+        {"title": "Dune", "year": 2021, "poster": "https://m.media-amazon.com/images/M/MV5BN2FjNmEwNWMtMGUxMC00ZDJmLWE1ZmEtOWMwOWVlYTZmNDZkXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg"},
+        {"title": "Oppenheimer", "year": 2023, "poster": "https://m.media-amazon.com/images/M/MV5BMDBmYTZjNjUtN2M1MS00MTQ2LWE3N2UtNDI4ZGUzNGExZTdjXkEyXkFqcGdeQXVyNzI1NzMxNzM@._V1_SX300.jpg"},
+        {"title": "Barbie", "year": 2023, "poster": "https://m.media-amazon.com/images/M/MV5BNjU3N2QxNzYtMjk0MC00MTA5LWI4ZTItZTFkNTY0ZWFkNTdjXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg"},
+        {"title": "The Prestige", "year": 2006, "poster": "https://m.media-amazon.com/images/M/MV5BMjA4NzMyNzAxOV5BMl5BanBnXkFtZTcwMzI2OTg1MQ@@._V1_SX300.jpg"},
+        {"title": "Memento", "year": 2000, "poster": "https://m.media-amazon.com/images/M/MV5BN2M0NGEyNzQtNjU5YS00OTQyLWE0NGQtYzlhMzE2ZWU4YWYzXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg"},
+        {"title": "The Hangover", "year": 2009, "poster": "https://m.media-amazon.com/images/M/MV5BMTU1MjgyNDk1MF5BMl5BanBnXkFtZTcwOTYzNTk1Mg@@._V1_SX300.jpg"},
+        {"title": "Superbad", "year": 2007, "poster": "https://m.media-amazon.com/images/M/MV5BOTg5MzI2ODAtNzlmZC00ZGFjLWJhMGUtNzc5OGJlMGY0N2Q5XkEyXkFqcGdeQXVyNzU1NzE3OTc@._V1_SX300.jpg"},
+        {"title": "Juno", "year": 2007, "poster": "https://m.media-amazon.com/images/M/MV5BMjA0YmQyYWYtZTkwNS00MzAzLTkxOTAtZGQ0MWQwMDJhMzQ4XkEyXkFqcGdeQXVyNzU1NzE3OTc@._V1_SX300.jpg"},
+        {"title": "Whiplash", "year": 2014, "poster": "https://m.media-amazon.com/images/M/MV5BNzc4ZTZlNWUtZjkzOC00ZWQ0LWE1NDUtYTAxMDkwODYzMGY2XkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg"},
+        {"title": "La La Land", "year": 2016, "poster": "https://m.media-amazon.com/images/M/MV5BMzA2NDkwODMtN2NkYy00ZDcwLTkwNTgtYzlhNGZlNzA1ZTdhXkEyXkFqcGdeQXVyNzQ1ODk3OTc@._V1_SX300.jpg"},
+        {"title": "Parasite", "year": 2019, "poster": "https://m.media-amazon.com/images/M/MV5BOTdmNzFsNmUtZTAwZS00ZjQwLWFmZTUtOWQ1ZTk0ZmI2YTAxXkEyXkFqcGdeQXVyNzg5OTk2OA@@._V1_SX300.jpg"},
+        {"title": "Knives Out", "year": 2019, "poster": "https://m.media-amazon.com/images/M/MV5BYzg2YWJlNjAtMDQzOC00YjM0LTk3ZDAtY2ZhN2U3MmNlYmY3XkEyXkFqcGdeQXVyNzg5OTk2OA@@._V1_SX300.jpg"},
+        {"title": "Moonlight", "year": 2016, "poster": "https://m.media-amazon.com/images/M/MV5BMzY3NjU5MzItMTcxMS00MzI0LThjYmEtNzQ5MzNiYWM2OGY4XkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg"},
+        {"title": "Her", "year": 2013, "poster": "https://m.media-amazon.com/images/M/MV5BMjA1Nzk0OTYtOTZmYS00ZjNhLWE4MjAtYTMwODk0MzMyN2Q0XkEyXkFqcGdeQXVyNzg5OTk2OA@@._V1_SX300.jpg"},
+    ]
+    
+    return random.choice(movies)
+
+
 @app.route("/")
 def index():
     capture_image()
@@ -789,6 +840,7 @@ def index():
     ai_news = get_ai_news()
     latest_speed = get_latest_speedtest()
     holidays = get_upcoming_holidays()
+    random_movie = get_random_movie()
 
     return render_template(
         "index.html",
@@ -808,6 +860,7 @@ def index():
         ai_news=ai_news,
         speedtest=latest_speed,
         holidays=holidays,
+        random_movie=random_movie,
         image_exists=IMAGE_PATH.exists()
     )
 

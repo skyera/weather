@@ -235,6 +235,44 @@
             text-align: right;
         }
 
+        /* Movie Card */
+        .movie-card {
+            background: #181818;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 164, 239, 0.15);
+        }
+
+        .movie-poster {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #1a1a1a, #222222);
+        }
+
+        .movie-info {
+            padding: 1.25rem;
+        }
+
+        .movie-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .movie-year {
+            font-size: 0.9rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
         /* Camera */
         .camera-container {
             width: 100%;
@@ -463,6 +501,21 @@
                     <div class="word-title">{{random_word.get('word', '')}}</div>
                     <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">{{random_word.get('definition', '')}}</p>
                     <p style="font-size: 0.85rem; font-style: italic; color: var(--text-secondary);">"{{random_word.get('example', '')}}"</p>
+                </div>
+
+                <!-- Movie of the Day -->
+                <div class="card">
+                    <div class="section-header">
+                        <h3>🎬 Movie Pick</h3>
+                        <button class="icon-btn" onclick="location.reload()">🔄</button>
+                    </div>
+                    <div class="movie-card">
+                        <img src="{{random_movie.get('poster', '')}}" alt="{{random_movie.get('title', '')}}" class="movie-poster" onerror="this.src='https://via.placeholder.com/300x400?text=Movie+Poster'">
+                        <div class="movie-info">
+                            <div class="movie-title">{{random_movie.get('title', 'Unknown Movie')}}</div>
+                            <div class="movie-year">📅 {{random_movie.get('year', 'N/A')}}</div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Camera -->
