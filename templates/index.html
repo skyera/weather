@@ -271,6 +271,14 @@
             font-size: 0.9rem;
             color: var(--primary);
             font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .movie-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            font-style: italic;
         }
 
         /* Camera */
@@ -510,10 +518,10 @@
                         <button class="icon-btn" onclick="refreshMovie()">🔄</button>
                     </div>
                     <div class="movie-card" id="movie-card">
-                        <img src="{{random_movie.get('poster', '')}}" alt="{{random_movie.get('title', '')}}" class="movie-poster" onerror="this.src='https://via.placeholder.com/300x400?text=Movie+Poster'">
                         <div class="movie-info">
                             <div class="movie-title" id="movie-title">{{random_movie.get('title', 'Unknown Movie')}}</div>
                             <div class="movie-year" id="movie-year">📅 {{random_movie.get('year', 'N/A')}}</div>
+                            <div class="movie-description" id="movie-description">{{random_movie.get('description', 'No description available')}}</div>
                         </div>
                     </div>
                 </div>
@@ -666,8 +674,7 @@
                 if (data.title) {
                     document.getElementById('movie-title').textContent = data.title;
                     document.getElementById('movie-year').textContent = '📅 ' + data.year;
-                    const img = document.querySelector('#movie-card img');
-                    img.src = data.poster;
+                    document.getElementById('movie-description').textContent = data.description || 'No description available';
                 }
             } catch (e) { console.error('Movie refresh failed:', e); }
         }
