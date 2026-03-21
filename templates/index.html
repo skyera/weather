@@ -281,6 +281,22 @@
             font-style: italic;
         }
 
+        /* C++ Tip */
+        .cpp-tip-box {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            border-left: 4px solid #00d4ff;
+        }
+
+        .cpp-tip-box p {
+            font-size: 0.95rem;
+            color: #e0e0e0;
+            line-height: 1.6;
+            margin: 0;
+            font-family: 'Courier New', monospace;
+        }
+
         /* Camera */
         .camera-container {
             width: 100%;
@@ -526,6 +542,17 @@
                     </div>
                 </div>
 
+                <!-- C++ Tip of the Day -->
+                <div class="card">
+                    <div class="section-header">
+                        <h3>💡 C++ Tip</h3>
+                        <button class="icon-btn" onclick="refreshCppTip()">🔄</button>
+                    </div>
+                    <div class="cpp-tip-box" id="cpp-tip-box">
+                        <p id="cpp-tip">{{cpp_tip}}</p>
+                    </div>
+                </div>
+
                 <!-- Camera -->
                 <div class="card">
                     <div class="section-header">
@@ -677,6 +704,16 @@
                     document.getElementById('movie-description').textContent = data.description || 'No description available';
                 }
             } catch (e) { console.error('Movie refresh failed:', e); }
+        }
+
+        async function refreshCppTip() {
+            try {
+                const resp = await fetch('/api/cpp-tip');
+                const data = await resp.json();
+                if (data.tip) {
+                    document.getElementById('cpp-tip').textContent = data.tip;
+                }
+            } catch (e) { console.error('C++ tip refresh failed:', e); }
         }
 
 

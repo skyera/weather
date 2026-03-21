@@ -689,6 +689,13 @@ def api_movie():
     return jsonify(movie)
 
 
+@app.route('/api/cpp-tip')
+def api_cpp_tip():
+    """Return a random C++ best practice tip."""
+    tip = get_cpp_tip()
+    return jsonify({"tip": tip})
+
+
 import xml.etree.ElementTree as ET
 
 def get_news():
@@ -833,6 +840,43 @@ def get_random_movie():
     
     return random.choice(movies)
 
+def get_cpp_tip():
+    """Get a random C++ best practice tip."""
+    tips = [
+        "Use const correctness: mark functions and variables const when they shouldn't change.",
+        "Prefer smart pointers (std::unique_ptr, std::shared_ptr) over raw pointers for memory safety.",
+        "Use RAII (Resource Acquisition Is Initialization) to manage resources automatically.",
+        "Avoid using goto; use proper control flow structures like loops and conditions.",
+        "Use std::vector instead of raw C-style arrays for dynamic memory management.",
+        "Prefer pass-by-const-reference over pass-by-value for large objects.",
+        "Use nullptr instead of NULL or 0 for null pointer checks.",
+        "Avoid global variables; use proper scoping and namespaces.",
+        "Use auto for type deduction to reduce verbosity and errors.",
+        "Initialize variables at declaration point, not later in code.",
+        "Use enum classes instead of unscoped enums to avoid name conflicts.",
+        "Prefer std::string over char* for string handling.",
+        "Use constexpr for compile-time constant expressions when possible.",
+        "Avoid multiple inheritance; use composition or interfaces instead.",
+        "Use noexcept for functions that don't throw exceptions.",
+        "Prefer move semantics over copying for better performance.",
+        "Use std::array for fixed-size arrays instead of C-style arrays.",
+        "Avoid using using namespace std; use explicit std:: or specific using declarations.",
+        "Use override keyword when overriding virtual functions in derived classes.",
+        "Prefer range-based for loops over traditional for loops.",
+        "Use std::make_unique and std::make_shared for safer pointer creation.",
+        "Avoid implicit type conversions; use explicit constructors.",
+        "Use final keyword to prevent further derivation if not intended.",
+        "Prefer algorithms in <algorithm> over manual loops.",
+        "Use std::optional for optional return values instead of pointers or out-parameters.",
+        "Mark single-argument constructors explicit to avoid accidental conversions.",
+        "Avoid exceptions in destructors; they can cause program termination.",
+        "Use static_assert for compile-time checks instead of runtime assertions.",
+        "Prefer lvalues; move semantics are for optimization, not for daily use.",
+        "Use std::tuple or structured bindings for returning multiple values.",
+    ]
+    return random.choice(tips)
+
+
 
 @app.route("/")
 def index():
@@ -848,6 +892,7 @@ def index():
     latest_speed = get_latest_speedtest()
     holidays = get_upcoming_holidays()
     random_movie = get_random_movie()
+    cpp_tip = get_cpp_tip()
 
     return render_template(
         "index.html",
@@ -868,6 +913,7 @@ def index():
         speedtest=latest_speed,
         holidays=holidays,
         random_movie=random_movie,
+        cpp_tip=cpp_tip,
         image_exists=IMAGE_PATH.exists()
     )
 
