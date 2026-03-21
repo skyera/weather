@@ -507,13 +507,13 @@
                 <div class="card">
                     <div class="section-header">
                         <h3>🎬 Movie Pick</h3>
-                        <button class="icon-btn" onclick="location.reload()">🔄</button>
+                        <button class="icon-btn" onclick="refreshMovie()">🔄</button>
                     </div>
-                    <div class="movie-card">
+                    <div class="movie-card" id="movie-card">
                         <img src="{{random_movie.get('poster', '')}}" alt="{{random_movie.get('title', '')}}" class="movie-poster" onerror="this.src='https://via.placeholder.com/300x400?text=Movie+Poster'">
                         <div class="movie-info">
-                            <div class="movie-title">{{random_movie.get('title', 'Unknown Movie')}}</div>
-                            <div class="movie-year">📅 {{random_movie.get('year', 'N/A')}}</div>
+                            <div class="movie-title" id="movie-title">{{random_movie.get('title', 'Unknown Movie')}}</div>
+                            <div class="movie-year" id="movie-year">📅 {{random_movie.get('year', 'N/A')}}</div>
                         </div>
                     </div>
                 </div>
@@ -657,6 +657,19 @@
                     img.src = data.url + (data.url.includes('?') ? '&' : '?') + 'cb=' + Date.now();
                 }
             } catch (e) { console.error('Camera refresh failed:', e); }
+        }
+
+        async function refreshMovie() {
+            try {
+                const resp = await fetch('/api/movie');
+                const data = await resp.json();
+                if (data.title) {
+                    document.getElementById('movie-title').textContent = data.title;
+                    document.getElementById('movie-year').textContent = '📅 ' + data.year;
+                    const img = document.querySelector('#movie-card img');
+                    img.src = data.poster;
+                }
+            } catch (e) { console.error('Movie refresh failed:', e); }
         }
 
 
