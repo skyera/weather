@@ -519,17 +519,11 @@
                         <h3>🏛️ Historical Figure</h3>
                         <button class="icon-btn" onclick="fetchFigure()">🔄</button>
                     </div>
-                    <div style="display: flex; gap: 1rem; align-items: flex-start;">
-                        <img id="figure-photo" class="skeleton" referrerpolicy="no-referrer" style="width: 80px; height: 100px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border);" 
-                             onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'; this.classList.remove('skeleton');" />
-                        <div style="flex: 1;">
-                            <div id="figure-name" class="skeleton skeleton-title" style="width: 80%;"></div>
-                            <p id="figure-title" class="skeleton skeleton-p" style="margin-bottom: 0.8rem; width: 90%;"></p>
-                            <a id="figure-link" href="#" target="_blank" class="skeleton skeleton-text" style="font-size: 0.85rem; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 4px; width: 100px;">
-                                Wikipedia 🔗
-                            </a>
-                        </div>
-                    </div>
+                    <div id="figure-name" class="skeleton skeleton-title" style="width: 80%;"></div>
+                    <p id="figure-title" class="skeleton skeleton-p" style="margin-bottom: 0.8rem; width: 90%;"></p>
+                    <a id="figure-link" href="#" target="_blank" class="skeleton skeleton-text" style="font-size: 0.85rem; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 4px; width: 100px;">
+                        Wikipedia 🔗
+                    </a>
                 </div>
 
                 <!-- Movie of the Day -->
@@ -713,12 +707,6 @@
             const nameEl = document.getElementById('figure-name');
             const titleEl = document.getElementById('figure-title');
             const linkEl = document.getElementById('figure-link');
-            const photoEl = document.getElementById('figure-photo');
-            
-            // Add skeleton back before setting src to show loading state if refreshed
-            photoEl.classList.add('skeleton');
-            photoEl.src = data.photo || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
-            photoEl.onload = () => photoEl.classList.remove('skeleton');
             
             nameEl.textContent = data.name;
             nameEl.classList.remove('skeleton', 'skeleton-title');
