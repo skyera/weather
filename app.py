@@ -454,35 +454,7 @@ def get_random_nature_photo():
     }
 
 
-def get_sunrise_sunset():
-    """Get sunrise and sunset times using the sunrise-sunset.org API."""
-    try:
-        # Use a default location (San Francisco). Can be customized or detected.
-        response = requests.get(
-            'https://api.sunrise-sunset.org/json',
-            params={'lat': 37.7749, 'lng': -122.4194},
-            timeout=5
-        )
-        if response.status_code == 200:
-            data = response.json()
-            if data.get('status') == 'OK':
-                results = data.get('results', {})
-                return {
-                    'sunrise': results.get('sunrise', 'N/A'),
-                    'sunset': results.get('sunset', 'N/A'),
-                    'civil_twilight_begin': results.get('civil_twilight_begin', 'N/A'),
-                    'civil_twilight_end': results.get('civil_twilight_end', 'N/A'),
-                }
-    except (requests.RequestException, ValueError, KeyError):
-        pass
-    
-    # Fallback values
-    return {
-        'sunrise': '6:30 AM',
-        'sunset': '6:45 PM',
-        'civil_twilight_begin': '6:00 AM',
-        'civil_twilight_end': '7:15 PM',
-    }
+
 
 
 def get_sensor_data():
@@ -791,131 +763,68 @@ def get_upcoming_holidays(country_code="US"):
 
 
 def get_random_movie():
-    """Get a random Hollywood movie with title, poster, year, and description."""
-    movies = [
-        {"title": "The Shawshank Redemption", "year": 1994, "poster": "https://images.justwatch.com/poster/306009282/s332", "description": "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency."},
-        {"title": "The Godfather", "year": 1972, "poster": "https://images.justwatch.com/poster/8371214/s332", "description": "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his youngest and most reluctant son."},
-        {"title": "The Dark Knight", "year": 2008, "poster": "https://images.justwatch.com/poster/8869150/s332", "description": "When the menace known as the Joker wreaks havoc on Gotham, Batman must accept one of the greatest tests to fight injustice."},
-        {"title": "Pulp Fiction", "year": 1994, "poster": "https://images.justwatch.com/poster/8747456/s332", "description": "The lives of two mob hitmen, a boxer, a gangster and his wife intertwine in four tales of violence and redemption."},
-        {"title": "Forrest Gump", "year": 1994, "poster": "https://images.justwatch.com/poster/8398938/s332", "description": "The presidencies of Kennedy and Johnson unfold through the perspective of an Alabama man with an IQ of 75."},
-        {"title": "Inception", "year": 2010, "poster": "https://images.justwatch.com/poster/8395954/s332", "description": "A thief who steals corporate secrets through dream-sharing technology is given the inverse task of planting an idea."},
-        {"title": "The Matrix", "year": 1999, "poster": "https://images.justwatch.com/poster/8379526/s332", "description": "A computer programmer discovers that reality as he knows it is a simulation created by machines."},
-        {"title": "Titanic", "year": 1997, "poster": "https://images.justwatch.com/poster/8362883/s332", "description": "A seventeen-year-old aristocrat falls in love with a kind but poor artist aboard the luxurious, ill-fated R.M.S. Titanic."},
-        {"title": "Avatar", "year": 2009, "poster": "https://images.justwatch.com/poster/8399152/s332", "description": "A paraplegic Marine dispatched to the moon Pandora on a unique mission becomes torn between following his orders and protecting the world."},
-        {"title": "Interstellar", "year": 2014, "poster": "https://images.justwatch.com/poster/8688012/s332", "description": "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival."},
-        {"title": "The Avengers", "year": 2012, "poster": "https://images.justwatch.com/poster/8585598/s332", "description": "Earth's mightiest heroes must come together and learn to fight as a team to save the world from destruction."},
-        {"title": "Gladiator", "year": 2000, "poster": "https://images.justwatch.com/poster/8365640/s332", "description": "A former Roman General sets out to exact vengeance against the corrupt emperor who murdered his family."},
-        {"title": "Jurassic Park", "year": 1993, "poster": "https://images.justwatch.com/poster/8401346/s332", "description": "A pragmatic paleontologist tours an almost complete theme park is tasked with protecting a couple of kids."},
-        {"title": "The Lion King", "year": 1994, "poster": "https://images.justwatch.com/poster/8406268/s332", "description": "Lion prince Simba and his father are targeted by his bitter uncle, who wants to ascend the throne himself."},
-        {"title": "Back to the Future", "year": 1985, "poster": "https://images.justwatch.com/poster/8367688/s332", "description": "A teenager is accidentally sent 30 years into the past in a time-traveling DeLorean and must ensure his parents fall in love."},
-        {"title": "The Silence of the Lambs", "year": 1991, "poster": "https://images.justwatch.com/poster/8379636/s332", "description": "A young FBI cadet must receive the help of an incarcerated cannibal killer to catch another serial killer."},
-        {"title": "Schindler's List", "year": 1993, "poster": "https://images.justwatch.com/poster/8354513/s332", "description": "In German-occupied Poland during WWII, industrialist Oskar Schindler gradually becomes concerned for his workforce."},
-        {"title": "Saving Private Ryan", "year": 1998, "poster": "https://images.justwatch.com/poster/8362899/s332", "description": "Following the Normandy Landings, a group of U.S. soldiers go behind enemy lines to retrieve a paratrooper."},
-        {"title": "The Departed", "year": 2006, "poster": "https://images.justwatch.com/poster/8620394/s332", "description": "An undercover cop and a mole in the police attempt to identify each other while infiltrating an Irish gang in Boston."},
-        {"title": "Fight Club", "year": 1999, "poster": "https://images.justwatch.com/poster/8379534/s332", "description": "An insomniac office worker and a devil-may-care soapmaker form an underground fight club that evolves into something much more."},
-        {"title": "The Sixth Sense", "year": 1999, "poster": "https://images.justwatch.com/poster/8378946/s332", "description": "A frightened, withdrawn Philadelphia boy who communicates with spirits seeks the help of a disheartened child psychologist."},
-        {"title": "The Usual Suspects", "year": 1995, "poster": "https://images.justwatch.com/poster/8376446/s332", "description": "A sole survivor tells of the twisty events leading up to a horrific gun battle on a boat."},
-        {"title": "Goodfellas", "year": 1990, "poster": "https://images.justwatch.com/poster/8379530/s332", "description": "The story of Henry Hill and his life in the mob, covering his relationship with his wife Karen Hill and his mob partners."},
-        {"title": "The Shining", "year": 1980, "poster": "https://images.justwatch.com/poster/8362819/s332", "description": "A family isolated by heavy snowfall in a remote hotel descends into madness and violence."},
-        {"title": "Jaws", "year": 1975, "poster": "https://images.justwatch.com/poster/8373644/s332", "description": "When a young woman is killed by a shark, it's up to a grizzled shark hunter to protect the town's residents."},
-        {"title": "E.T. the Extra-Terrestrial", "year": 1982, "poster": "https://images.justwatch.com/poster/8363347/s332", "description": "A boy befriends an alien who landed on Earth and attempts to help it return home before authorities find it."},
-        {"title": "Raiders of the Lost Ark", "year": 1981, "poster": "https://images.justwatch.com/poster/8372784/s332", "description": "In 1936, archaeologist and adventurer Indiana Jones is hired by the U.S. government to find the Ark of the Covenant."},
-        {"title": "The Lord of the Rings", "year": 2001, "poster": "https://images.justwatch.com/poster/8389455/s332", "description": "A hobbit is tasked with destroying a powerful ring in the fires of Mount Doom to save Middle-earth."},
-        {"title": "Harry Potter", "year": 2001, "poster": "https://images.justwatch.com/poster/8390185/s332", "description": "A young wizard attends a school for magic and discovers he is the chosen one to stop an evil sorcerer."},
-        {"title": "Dune", "year": 2021, "poster": "https://images.justwatch.com/poster/241854308/s332", "description": "Paul Atreides, a brilliant young man, must travel to the dangerous planet Dune to ensure the future of his family."},
-        {"title": "Oppenheimer", "year": 2023, "poster": "https://images.justwatch.com/poster/302269436/s332", "description": "The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb."},
-        {"title": "Barbie", "year": 2023, "poster": "https://images.justwatch.com/poster/302051814/s332", "description": "Barbie's perfect life in the Barbie world is interrupted when she has a chance to go to the real world."},
-        {"title": "The Prestige", "year": 2006, "poster": "https://images.justwatch.com/poster/8620142/s332", "description": "After a tragic accident, two stage magicians engage in a battle to create the ultimate illusion."},
-        {"title": "Memento", "year": 2000, "poster": "https://images.justwatch.com/poster/8379544/s332", "description": "A man with short-term memory loss attempts to track down his wife's murderer using notes and Polaroid pictures."},
-        {"title": "The Hangover", "year": 2009, "poster": "https://images.justwatch.com/poster/8406480/s332", "description": "Three buddies wake up from a wild bachelor party in Vegas with no memory of the previous night."},
-        {"title": "Superbad", "year": 2007, "poster": "https://images.justwatch.com/poster/8384370/s332", "description": "Two socially awkward teens attempt to throw a party while dealing with high school and friendship drama."},
-        {"title": "Juno", "year": 2007, "poster": "https://images.justwatch.com/poster/8384294/s332", "description": "A teen becomes pregnant and faces challenging decisions about her future and the unborn child."},
-        {"title": "Whiplash", "year": 2014, "poster": "https://images.justwatch.com/poster/8688192/s332", "description": "A promising young drummer is pushed to his limits by his abusive conductor at an elite music conservatory."},
-        {"title": "La La Land", "year": 2016, "poster": "https://images.justwatch.com/poster/8835638/s332", "description": "While navigating their careers in Los Angeles, a pianist and an actress fall in love while pursuing their dreams."},
-        {"title": "Parasite", "year": 2019, "poster": "https://images.justwatch.com/poster/8987846/s332", "description": "A poor family schemes to become employed by a wealthy household by infiltrating their lives in unexpected ways."},
-        {"title": "Knives Out", "year": 2019, "poster": "https://images.justwatch.com/poster/9029226/s332", "description": "A detective investigates the death of a wealthy novelist among a dysfunctional family of suspects."},
-        {"title": "Moonlight", "year": 2016, "poster": "https://images.justwatch.com/poster/8836034/s332", "description": "The life of a Black man is explored in three chapters spanning his childhood, adolescence, and adulthood."},
-        {"title": "Her", "year": 2013, "poster": "https://images.justwatch.com/poster/8620568/s332", "description": "A lonely writer falls in love with an artificial intelligence operating system designed to meet his needs."},
-    ]
-    
-    return random.choice(movies)
+    """Get a random Hollywood movie from the JSON file."""
+    try:
+        with open(BASE_DIR / 'movies.json', 'r') as f:
+            movies = json.load(f)
+        return random.choice(movies)
+    except (IOError, json.JSONDecodeError, IndexError) as e:
+        app.logger.error(f"Error reading or parsing movies.json: {e}")
+        return {"title": "Error", "year": "N/A", "description": "Could not load movie data."}
 
 def get_cpp_tip():
-    """Get a random C++ best practice tip."""
-    tips = [
-        "Use const correctness: mark functions and variables const when they shouldn't change.",
-        "Prefer smart pointers (std::unique_ptr, std::shared_ptr) over raw pointers for memory safety.",
-        "Use RAII (Resource Acquisition Is Initialization) to manage resources automatically.",
-        "Avoid using goto; use proper control flow structures like loops and conditions.",
-        "Use std::vector instead of raw C-style arrays for dynamic memory management.",
-        "Prefer pass-by-const-reference over pass-by-value for large objects.",
-        "Use nullptr instead of NULL or 0 for null pointer checks.",
-        "Avoid global variables; use proper scoping and namespaces.",
-        "Use auto for type deduction to reduce verbosity and errors.",
-        "Initialize variables at declaration point, not later in code.",
-        "Use enum classes instead of unscoped enums to avoid name conflicts.",
-        "Prefer std::string over char* for string handling.",
-        "Use constexpr for compile-time constant expressions when possible.",
-        "Avoid multiple inheritance; use composition or interfaces instead.",
-        "Use noexcept for functions that don't throw exceptions.",
-        "Prefer move semantics over copying for better performance.",
-        "Use std::array for fixed-size arrays instead of C-style arrays.",
-        "Avoid using using namespace std; use explicit std:: or specific using declarations.",
-        "Use override keyword when overriding virtual functions in derived classes.",
-        "Prefer range-based for loops over traditional for loops.",
-        "Use std::make_unique and std::make_shared for safer pointer creation.",
-        "Avoid implicit type conversions; use explicit constructors.",
-        "Use final keyword to prevent further derivation if not intended.",
-        "Prefer algorithms in <algorithm> over manual loops.",
-        "Use std::optional for optional return values instead of pointers or out-parameters.",
-        "Mark single-argument constructors explicit to avoid accidental conversions.",
-        "Avoid exceptions in destructors; they can cause program termination.",
-        "Use static_assert for compile-time checks instead of runtime assertions.",
-        "Prefer lvalues; move semantics are for optimization, not for daily use.",
-        "Use std::tuple or structured bindings for returning multiple values.",
-    ]
-    return random.choice(tips)
+    """Get a random C++ best practice tip from the JSON file."""
+    try:
+        with open(BASE_DIR / 'cpp_tips.json', 'r') as f:
+            tips = json.load(f)
+        return random.choice(tips)
+    except (IOError, json.JSONDecodeError, IndexError) as e:
+        app.logger.error(f"Error reading or parsing cpp_tips.json: {e}")
+        return "Error: Could not load C++ tips."
 
 
 
 @app.route("/")
 def index():
-    capture_image()
-    sensor_data = get_sensor_data()
-    system_info = get_system_info()
-    bible_verse = get_bible_verse()
-    random_word = get_random_word()
-    sunrise_sunset = get_sunrise_sunset()
-    famous_quote = get_famous_quote()
-    news_items = get_news()
-    ai_news = get_ai_news()
-    latest_speed = get_latest_speedtest()
-    holidays = get_upcoming_holidays()
-    random_movie = get_random_movie()
-    cpp_tip = get_cpp_tip()
-
+    # This route is now very lightweight. It just renders the shell.
+    # All data will be loaded by JavaScript on the client side.
     return render_template(
         "index.html",
         curr_time=datetime.now(),
-        temperature=sensor_data.get("temperature"),
-        pressure=sensor_data.get("pressure"),
-        humidity=sensor_data.get("humidity"),
-        altitude=sensor_data.get("altitude"),
-        weather_icon=get_weather_icon(sensor_data.get("temperature")),
-        system_info=system_info,
-        bible_verse=bible_verse,
-        random_word=random_word,
-        sunrise_sunset=sunrise_sunset,
-        nature_photo=get_random_nature_photo(),
-        famous_quote=famous_quote,
-        news_items=news_items,
-        ai_news=ai_news,
-        speedtest=latest_speed,
-        holidays=holidays,
-        random_movie=random_movie,
-        cpp_tip=cpp_tip,
         image_exists=IMAGE_PATH.exists()
     )
+
+
+@app.route("/api/holidays")
+def api_holidays():
+    """API endpoint for upcoming holidays."""
+    holidays = get_upcoming_holidays()
+    return jsonify(holidays)
+
+
+@app.route("/api/news")
+def api_news():
+    """API endpoint for news."""
+    return jsonify({
+        "top_stories": get_news(),
+        "ai_news": get_ai_news()
+    })
+
+
+@app.route("/api/wisdom")
+def api_wisdom():
+    """API endpoint for wisdom (verse, quote, word)."""
+    return jsonify({
+        "bible_verse": get_bible_verse(),
+        "famous_quote": get_famous_quote(),
+        "random_word": get_random_word(),
+    })
+
+
+@app.route("/api/system")
+def api_system():
+    """API endpoint for system info."""
+    return jsonify(get_system_info())
 
 
 @app.route("/api/speedtest", methods=['POST'])

@@ -124,13 +124,13 @@
             color: var(--text-secondary);
         }
 
-        /* Hero Image */
         .hero-card {
             padding: 0;
             position: relative;
             aspect-ratio: 21/9;
             overflow: hidden;
             border-radius: var(--radius);
+            background-color: var(--bg-hover);
         }
 
         .hero-img {
@@ -148,7 +148,6 @@
             background: linear-gradient(transparent, rgba(0,0,0,0.95));
         }
 
-        /* Metrics */
         .weather-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -178,13 +177,6 @@
             color: var(--text-primary);
         }
 
-        /* News */
-        .news-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-
         .news-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -212,7 +204,6 @@
             margin-top: auto;
         }
 
-        /* Verse & Word */
         .verse-box {
             padding: 1.25rem;
             background: #181818;
@@ -235,7 +226,6 @@
             text-align: right;
         }
 
-        /* Movie Card */
         .movie-card {
             background: #181818;
             border-radius: var(--radius);
@@ -251,29 +241,24 @@
 
         .movie-poster {
             width: 100%;
-            height: 280px;
+            height: 180px;
             object-fit: cover;
             background: linear-gradient(135deg, #1a1a1a, #222222);
         }
 
-        .movie-info {
-            padding: 1.25rem;
-        }
-
+        .movie-info { padding: 1.25rem; }
         .movie-title {
             font-size: 1.1rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
             color: var(--text-primary);
         }
-
         .movie-year {
             font-size: 0.9rem;
             color: var(--primary);
             font-weight: 600;
             margin-bottom: 0.75rem;
         }
-
         .movie-description {
             font-size: 0.9rem;
             color: var(--text-secondary);
@@ -281,7 +266,6 @@
             font-style: italic;
         }
 
-        /* C++ Tip */
         .cpp-tip-box {
             background: linear-gradient(135deg, #1a1a2e, #16213e);
             padding: 1.5rem;
@@ -297,7 +281,6 @@
             font-family: 'Courier New', monospace;
         }
 
-        /* Camera */
         .camera-container {
             width: 100%;
             aspect-ratio: 16/9;
@@ -325,18 +308,30 @@
             border-radius: 4px;
         }
 
-        /* System Info */
         .system-line {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             font-size: 0.8rem;
             padding: 0.5rem 0;
             border-bottom: 1px solid var(--border);
         }
-
         .system-line:last-child { border: none; }
 
-        /* Buttons */
+        .progress-bar {
+            width: 60%;
+            background-color: var(--border);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-bar-inner {
+            height: 100%;
+            background-color: var(--secondary);
+            transition: width 0.5s ease;
+        }
+
+
         .icon-btn {
             background: transparent;
             border: 1px solid var(--border);
@@ -349,14 +344,12 @@
             align-items: center;
             justify-content: center;
         }
-
         .icon-btn:hover {
             background: var(--bg-hover);
             color: var(--text-primary);
         }
 
         .chart-wrapper { height: 300px; }
-
         footer {
             margin-top: 4rem;
             padding: 2rem 0;
@@ -383,17 +376,36 @@
             animation: spinner 1s linear infinite;
         }
 
-        .spinning {
-            animation: spinner 1s linear infinite;
-        }
-
-        @keyframes spinner { to { transform: rotate(360deg); } }
-
         .word-title {
             font-size: 1.25rem;
             font-weight: 700;
             color: var(--secondary);
             margin-bottom: 0.5rem;
+        }
+
+        /* Skeleton Loader */
+        .skeleton {
+            background-color: var(--bg-hover);
+            border-radius: 4px;
+            animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            50% { opacity: 0.5; }
+        }
+        .skeleton-text {
+            height: 1em;
+            margin-bottom: 0.5rem;
+        }
+        .skeleton-text:last-child { margin-bottom: 0; }
+        .skeleton-title {
+            width: 60%;
+            height: 1.5em;
+            margin-bottom: 1rem;
+        }
+        .skeleton-p {
+             width: 100%;
+             height: 1em;
+             margin-bottom: 0.5rem;
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -409,7 +421,7 @@
             </div>
             <div class="status-pill">
                 <div class="spin"></div>
-                <span id="footer-time">{{curr_time.strftime('%H:%M:%S')}}</span>
+                <span id="live-clock">--:--:--</span>
             </div>
         </header>
 
@@ -417,14 +429,13 @@
             <div class="main-content">
                 <!-- Hero Feature -->
                 <div class="hero-card">
-                    {% set _sep = '&' if '?' in nature_photo.get('url','') else '?' %}
-                    <img id="nature-photo" src="{{ nature_photo.get('url', '') }}{{ _sep }}cb={{ curr_time.timestamp() }}" alt="Hero" class="hero-img">
+                    <img id="nature-photo" src="" alt="Hero" class="hero-img skeleton">
                     <div class="hero-overlay">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                             <div>
                                 <div style="font-size: 0.7rem; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 0.5rem;">Featured Perspective</div>
-                                <h2 id="photo-author" style="font-size: 2rem; font-weight: 800; line-height: 1.1;">{{ nature_photo.get('author', 'Daily Inspiration') }}</h2>
-                                <p id="photo-source" style="font-size: 0.9rem; color: #ccc;">Sourced via {{ nature_photo.get('source', 'Web') }}</p>
+                                <h2 id="photo-author" style="font-size: 2rem; font-weight: 800; line-height: 1.1;">Loading...</h2>
+                                <p id="photo-source" style="font-size: 0.9rem; color: #ccc;">Sourced via Web</p>
                             </div>
                             <button class="icon-btn" style="background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.2); color: white;" onclick="refreshPhoto()">🔄</button>
                         </div>
@@ -433,33 +444,25 @@
 
                 <!-- News Sections -->
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
-                    <!-- General News -->
                     <section>
                         <div class="section-header">
                             <h3>Top Stories</h3>
+                            <button class="icon-btn" onclick="fetchNews()">🔄</button>
                         </div>
-                        <div class="news-list">
-                            {% for item in news_items %}
-                            <a href="{{ item.link }}" target="_blank" class="news-card" style="margin-bottom: 1rem;">
-                                <span class="news-title" style="font-size: 0.95rem;">{{ item.title }}</span>
-                                <span class="news-meta">{{ item.pubDate }}</span>
-                            </a>
-                            {% endfor %}
+                        <div id="news-list-top" class="news-list">
+                            <!-- Skeleton -->
+                            <div class="news-card" style="margin-bottom: 1rem;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div></div>
+                            <div class="news-card" style="margin-bottom: 1rem;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div></div>
                         </div>
                     </section>
-
-                    <!-- AI Intelligence -->
                     <section>
                         <div class="section-header">
                             <h3>AI Intelligence</h3>
                         </div>
-                        <div class="news-list">
-                            {% for item in ai_news %}
-                            <a href="{{ item.link }}" target="_blank" class="news-card" style="margin-bottom: 1rem; border-left: 3px solid var(--primary);">
-                                <span class="news-title" style="font-size: 0.95rem;">{{ item.title }}</span>
-                                <span class="news-meta">{{ item.pubDate }}</span>
-                            </a>
-                            {% endfor %}
+                        <div id="news-list-ai" class="news-list">
+                            <!-- Skeleton -->
+                            <div class="news-card" style="margin-bottom: 1rem;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div></div>
+                            <div class="news-card" style="margin-bottom: 1rem;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div></div>
                         </div>
                     </section>
                 </div>
@@ -467,7 +470,12 @@
                 <!-- Chart -->
                 <div class="card">
                     <div class="section-header">
-                        <h3>Atmospheric Trends (24h)</h3>
+                        <h3>Atmospheric Trends</h3>
+                        <div>
+                            <button class="icon-btn" onclick="refreshTemperatureChart(24)">24h</button>
+                            <button class="icon-btn" onclick="refreshTemperatureChart(72)">3d</button>
+                            <button class="icon-btn" onclick="refreshTemperatureChart(168)">7d</button>
+                        </div>
                     </div>
                     <div class="chart-wrapper">
                         <canvas id="temperatureChart"></canvas>
@@ -476,136 +484,88 @@
             </div>
 
             <div class="sidebar">
-                <!-- Weather Widget -->
-                <div class="card">
+                 <!-- Weather Widget -->
+                <div class="card" id="weather-card">
                     <div class="section-header">
                         <h3>Current Weather</h3>
-                        <span style="font-size: 1.5rem;">{{weather_icon}}</span>
+                        <span style="font-size: 1.5rem;" id="weather-icon"></span>
                     </div>
                     <div class="weather-grid">
-                        <div class="metric-mini">
-                            <span class="mini-label">Temp</span>
-                            <div class="mini-value" id="val-temp">{{temperature or '--'}}°</div>
-                        </div>
-                        <div class="metric-mini">
-                            <span class="mini-label">Humidity</span>
-                            <div class="mini-value" id="val-humidity">{{humidity or '--'}}%</div>
-                        </div>
-                        <div class="metric-mini">
-                            <span class="mini-label">Pressure</span>
-                            <div class="mini-value" id="val-pressure">{{pressure or '--'}}</div>
-                        </div>
-                        <div class="metric-mini">
-                            <span class="mini-label">Altitude</span>
-                            <div class="mini-value" id="val-altitude">{{altitude or '--'}}m</div>
-                        </div>
+                        <div class="metric-mini"><span class="mini-label">Temp</span><div class="mini-value" id="val-temp">--°</div></div>
+                        <div class="metric-mini"><span class="mini-label">Humidity</span><div class="mini-value" id="val-humidity">--%</div></div>
+                        <div class="metric-mini"><span class="mini-label">Pressure</span><div class="mini-value" id="val-pressure">--</div></div>
+                        <div class="metric-mini"><span class="mini-label">Altitude</span><div class="mini-value" id="val-altitude">--m</div></div>
                     </div>
                 </div>
 
                 <!-- Daily Wisdom -->
-                <div class="card">
-                    <div class="section-header">
-                        <h3>Daily Devotional</h3>
-                    </div>
-                    <div class="verse-box">
-                        <div class="verse-text">"{{bible_verse.get('text', '')}}"</div>
-                        <div class="verse-ref">— {{bible_verse.get('reference', '')}}</div>
-                    </div>
-                    <div class="verse-box" style="border-left-color: var(--secondary);">
-                        <div class="verse-text" style="font-size: 0.9rem; color: var(--secondary);">"{{famous_quote.get('text', '')}}"</div>
-                        <div class="verse-ref" style="color: var(--secondary);">— {{famous_quote.get('author', '')}}</div>
-                    </div>
+                <div class="card" id="wisdom-card">
+                    <div class="section-header"><h3>Daily Devotional</h3></div>
+                    <div class="verse-box" id="bible-verse-box"><div class="skeleton skeleton-text" style="width: 90%;"></div><div class="skeleton skeleton-text" style="width: 100%;"></div><div class="skeleton skeleton-text" style="width: 40%; float: right;"></div></div>
+                    <div class="verse-box" id="quote-box" style="border-left-color: var(--secondary);"><div class="skeleton skeleton-text" style="width: 100%;"></div><div class="skeleton skeleton-text" style="width: 60%;"></div><div class="skeleton skeleton-text" style="width: 30%; float: right;"></div></div>
                 </div>
 
                 <!-- Word Discovery -->
-                <div class="card">
-                    <div class="section-header">
-                        <h3>Word Discovery</h3>
-                    </div>
-                    <div class="word-title">{{random_word.get('word', '')}}</div>
-                    <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">{{random_word.get('definition', '')}}</p>
-                    <p style="font-size: 0.85rem; font-style: italic; color: var(--text-secondary);">"{{random_word.get('example', '')}}"</p>
+                <div class="card" id="word-card">
+                    <div class="section-header"><h3>Word Discovery</h3></div>
+                    <div class="skeleton skeleton-title" style="width: 50%;"></div>
+                    <div class="skeleton skeleton-p"></div>
+                    <div class="skeleton skeleton-p" style="width: 80%;"></div>
                 </div>
 
                 <!-- Movie of the Day -->
                 <div class="card">
                     <div class="section-header">
                         <h3>🎬 Movie Pick</h3>
-                        <button class="icon-btn" onclick="refreshMovie()">🔄</button>
+                        <button class="icon-btn" onclick="fetchMovie()">🔄</button>
                     </div>
                     <div class="movie-card" id="movie-card">
+                        <img id="movie-poster" class="movie-poster skeleton" />
                         <div class="movie-info">
-                            <div class="movie-title" id="movie-title">{{random_movie.get('title', 'Unknown Movie')}}</div>
-                            <div class="movie-year" id="movie-year">📅 {{random_movie.get('year', 'N/A')}}</div>
-                            <div class="movie-description" id="movie-description">{{random_movie.get('description', 'No description available')}}</div>
+                            <div class="movie-title" id="movie-title"><div class="skeleton skeleton-title"></div></div>
+                            <div class="movie-year" id="movie-year"><div class="skeleton skeleton-text" style="width: 30%"></div></div>
+                            <div class="movie-description" id="movie-description"><div class="skeleton skeleton-p"></div><div class="skeleton skeleton-p"></div></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- C++ Tip of the Day -->
+                <!-- C++ Tip -->
                 <div class="card">
-                    <div class="section-header">
-                        <h3>💡 C++ Tip</h3>
-                        <button class="icon-btn" onclick="refreshCppTip()">🔄</button>
-                    </div>
-                    <div class="cpp-tip-box" id="cpp-tip-box">
-                        <p id="cpp-tip">{{cpp_tip}}</p>
-                    </div>
+                    <div class="section-header"><h3>💡 C++ Tip</h3><button class="icon-btn" onclick="fetchCppTip()">🔄</button></div>
+                    <div class="cpp-tip-box" id="cpp-tip-box"><p id="cpp-tip" class="skeleton skeleton-text"></p></div>
                 </div>
 
                 <!-- Camera -->
                 <div class="card">
-                    <div class="section-header">
-                        <h3>Live Camera</h3>
-                        <button class="icon-btn" onclick="refreshCamera()">🔄</button>
-                    </div>
+                    <div class="section-header"><h3>Live Camera</h3><button class="icon-btn" onclick="refreshCamera()">🔄</button></div>
                     <div class="camera-container">
-                        <span class="badge-live">LIVE FEED</span>
+                        <span class="badge-live">LIVE</span>
                         {% if image_exists %}
                             <img src="{{url_for('static', filename='image.jpg')}}?t={{curr_time.timestamp()}}" alt="Camera" id="camera-img" class="media-img">
                         {% else %}
-                            <div style="height: 100%; display: flex; align-items: center; justify-content: center; color: var(--text-secondary);">No feed</div>
+                            <div style="height: 100%; display: flex; align-items: center; justify-content: center; color: var(--text-secondary);">No feed available</div>
                         {% endif %}
                     </div>
                 </div>
 
                 <!-- Holidays -->
-                <div class="card">
-                    <div class="section-header">
-                        <h3>Upcoming Holidays</h3>
+                <div class="card" id="holidays-card">
+                    <div class="section-header"><h3>Upcoming Holidays</h3></div>
+                    <div id="holidays-list">
+                        <div class="system-line"><div class="skeleton skeleton-text" style="width: 100%"></div></div>
+                        <div class="system-line"><div class="skeleton skeleton-text" style="width: 100%"></div></div>
+                        <div class="system-line"><div class="skeleton skeleton-text" style="width: 100%"></div></div>
                     </div>
-                    {% if holidays %}
-                        {% for holiday in holidays %}
-                        <div class="system-line">
-                            <span style="font-weight: 600;">{{ holiday.name }}</span>
-                            <span style="color: var(--accent); font-size: 0.75rem;">{{ holiday.date }}</span>
-                        </div>
-                        {% endfor %}
-                    {% else %}
-                        <p style="font-size: 0.85rem; color: var(--text-secondary);">No upcoming holidays found.</p>
-                    {% endif %}
                 </div>
 
                 <!-- System -->
-                <div class="card">
-                    <div class="section-header">
-                        <h3>System Status</h3>
-                    </div>
-                    <div class="system-line">
-                        <span>Uptime</span>
-                        <span style="color: var(--secondary);">{{system_info.get('uptime', 'N/A')}}</span>
-                    </div>
-                    <div class="system-line">
-                        <span>CPU Temp</span>
-                        <span>{{system_info.get('cpu_temp', 'N/A')}}</span>
-                    </div>
-                    <div class="system-line">
-                        <span>Memory</span>
-                        <span>{{system_info.get('memory', 'N/A')}}</span>
-                    </div>
-                    <div class="system-line">
-                        <span>Disk</span>
-                        <span>{{system_info.get('disk', 'N/A')}}</span>
+                <div class="card" id="system-card">
+                    <div class="section-header"><h3>System Status</h3></div>
+                    <div id="system-list">
+                        <div class="system-line"><span>Uptime</span><span class="skeleton skeleton-text" style="width: 40%"></span></div>
+                        <div class="system-line"><span>CPU Temp</span><span class="skeleton skeleton-text" style="width: 30%"></span></div>
+                        <div class="system-line"><span>Memory</span><span class="skeleton skeleton-text" style="width: 50%"></span></div>
+                        <div class="system-line"><span>Disk</span><span class="skeleton skeleton-text" style="width: 50%"></span></div>
                     </div>
                 </div>
             </div>
@@ -620,68 +580,141 @@
     <script>
         let temperatureChart = null;
 
-        async function initializeTemperatureChart() {
+        const fetchAndRender = async (url, renderer, containerId) => {
             try {
-                const response = await fetch('/api/temperature-history?hours=24');
-                const result = await response.json();
-                const data = result.data || [];
-                if (data.length === 0) return;
-
-                const labels = data.map(d => new Date(d.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }));
-                const temperatures = data.map(d => d.temperature);
-
-                const ctx = document.getElementById('temperatureChart').getContext('2d');
-                temperatureChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Temperature',
-                            data: temperatures,
-                            borderColor: '#00a4ef',
-                            backgroundColor: 'rgba(0, 164, 239, 0.05)',
-                            borderWidth: 2,
-                            fill: true,
-                            tension: 0.4,
-                            pointRadius: 0,
-                            pointHoverRadius: 4,
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            y: { grid: { color: '#222' }, ticks: { color: '#666', font: { family: 'Inter' } } },
-                            x: { grid: { display: false }, ticks: { color: '#666', font: { family: 'Inter' } } }
-                        }
-                    }
-                });
-            } catch (error) { console.error('Chart init failed:', error); }
-        }
-
-        async function refreshTemperatureChart() {
-            try {
-                const response = await fetch('/api/temperature-history?hours=24');
-                const result = await response.json();
-                const data = result.data || [];
-                if (!temperatureChart || data.length === 0) return;
-                temperatureChart.data.labels = data.map(d => new Date(d.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }));
-                temperatureChart.data.datasets[0].data = data.map(d => d.temperature);
-                temperatureChart.update();
-            } catch (error) { console.error('Chart refresh failed:', error); }
-        }
-
-        async function refreshPhoto() {
-            try {
-                const response = await fetch('/api/photo');
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 const data = await response.json();
-                const img = document.getElementById('nature-photo');
-                img.src = data.url + (data.url.includes('?') ? '&' : '?') + 'cb=' + Date.now();
-                document.getElementById('photo-author').textContent = data.author || 'Unknown';
-                document.getElementById('photo-source').textContent = 'Sourced via ' + (data.source || 'Web');
-            } catch (error) { console.error('Photo refresh failed:', error); }
+                renderer(data);
+            } catch (error) {
+                console.error(`Failed to fetch from ${url}:`, error);
+                if (containerId) {
+                    document.getElementById(containerId).innerHTML = `<p style="color: var(--accent);">Error loading data.</p>`;
+                }
+            }
+        };
+        
+        // --- RENDER FUNCTIONS ---
+
+        function renderWisdom(data) {
+            const { bible_verse, famous_quote, random_word } = data;
+            
+            const verseBox = document.getElementById('bible-verse-box');
+            verseBox.innerHTML = `<div class="verse-text">"${bible_verse.text}"</div><div class="verse-ref">— ${bible_verse.reference}</div>`;
+
+            const quoteBox = document.getElementById('quote-box');
+            quoteBox.innerHTML = `<div class="verse-text" style="font-size: 0.9rem; color: var(--secondary);">"${famous_quote.text}"</div><div class="verse-ref" style="color: var(--secondary);">— ${famous_quote.author}</div>`;
+            
+            const wordCard = document.getElementById('word-card');
+            wordCard.innerHTML = `
+                <div class="section-header"><h3>Word Discovery</h3></div>
+                <div class="word-title">${random_word.word}</div>
+                <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">${random_word.definition}</p>
+                <p style="font-size: 0.85rem; font-style: italic; color: var(--text-secondary);">"${random_word.example}"</p>
+            `;
         }
+
+        function renderNews(data) {
+            const { top_stories, ai_news } = data;
+            const topList = document.getElementById('news-list-top');
+            topList.innerHTML = top_stories.map(item => `
+                <a href="${item.link}" target="_blank" class="news-card" style="margin-bottom: 1rem;">
+                    <span class="news-title" style="font-size: 0.95rem;">${item.title}</span>
+                    <span class="news-meta">${item.pubDate}</span>
+                </a>
+            `).join('');
+
+            const aiList = document.getElementById('news-list-ai');
+            aiList.innerHTML = ai_news.map(item => `
+                <a href="${item.link}" target="_blank" class="news-card" style="margin-bottom: 1rem; border-left: 3px solid var(--primary);">
+                    <span class="news-title" style="font-size: 0.95rem;">${item.title}</span>
+                    <span class="news-meta">${item.pubDate}</span>
+                </a>
+            `).join('');
+        }
+
+        function renderHolidays(data) {
+            const list = document.getElementById('holidays-list');
+            if (data && data.length > 0) {
+                list.innerHTML = data.map(holiday => `
+                    <div class="system-line">
+                        <span style="font-weight: 600;">${holiday.name}</span>
+                        <span style="color: var(--accent); font-size: 0.75rem;">${holiday.date}</span>
+                    </div>
+                `).join('');
+            } else {
+                list.innerHTML = `<p style="font-size: 0.85rem; color: var(--text-secondary);">No upcoming holidays found.</p>`;
+            }
+        }
+        
+        function parseUsage(usageStr) {
+            // Example: "Used: 1.2G / 7.7G (Free: 6.5G)" or "1.2G / 7.7G (85%)"
+            const match = usageStr.match(/(\d+\.?\d*)\w*\s\/\s(\d+\.?\d*)\w*.*\((\d+)%\)/) || usageStr.match(/Used: (\d+\.?\d*)\w* \/ (\d+\.?\d*)\w*/);
+            if (match && match.length >= 3) {
+                const used = parseFloat(match[1]);
+                const total = parseFloat(match[2]);
+                const percent = match[3] ? parseInt(match[3], 10) : Math.round((used / total) * 100);
+                return { text: usageStr, percent: percent };
+            }
+            return { text: usageStr, percent: 0 };
+        }
+
+        function renderSystemInfo(data) {
+            const mem = parseUsage(data.memory || "");
+            const disk = parseUsage(data.disk || "");
+            const list = document.getElementById('system-list');
+            list.innerHTML = `
+                <div class="system-line"><span>Uptime</span><span style="color: var(--secondary);">${data.uptime || 'N/A'}</span></div>
+                <div class="system-line"><span>CPU Temp</span><span>${data.cpu_temp || 'N/A'}</span></div>
+                <div class="system-line">
+                    <span>Memory</span>
+                    <div class="progress-bar" title="${mem.text}"><div class="progress-bar-inner" style="width: ${mem.percent}%;"></div></div>
+                </div>
+                <div class="system-line">
+                    <span>Disk</span>
+                    <div class="progress-bar" title="${disk.text}"><div class="progress-bar-inner" style="width: ${disk.percent}%;"></div></div>
+                </div>
+            `;
+        }
+        
+        function renderMovie(data) {
+            document.getElementById('movie-poster').src = data.poster;
+            document.getElementById('movie-poster').classList.remove('skeleton');
+            document.getElementById('movie-title').innerHTML = data.title;
+            document.getElementById('movie-year').innerHTML = `📅 ${data.year}`;
+            document.getElementById('movie-description').innerHTML = data.description;
+        }
+
+        function renderCppTip(data) {
+            document.getElementById('cpp-tip').textContent = data.tip;
+            document.getElementById('cpp-tip').classList.remove('skeleton', 'skeleton-text');
+        }
+
+        function renderPhoto(data) {
+            const img = document.getElementById('nature-photo');
+            img.src = data.url + (data.url.includes('?') ? '&' : '?') + 'cb=' + Date.now();
+            img.classList.remove('skeleton');
+            document.getElementById('photo-author').textContent = data.author || 'Unknown';
+            document.getElementById('photo-source').textContent = 'Sourced via ' + (data.source || 'Web');
+        }
+        
+        function renderWeatherData(data) {
+            document.getElementById('val-temp').textContent = `${data.temperature || '--'}°`;
+            document.getElementById('val-humidity').textContent = `${data.humidity || '--'}%`;
+            document.getElementById('val-pressure').textContent = `${data.pressure || '--'}`;
+            document.getElementById('val-altitude').textContent = `${data.altitude || '--'}m`;
+            document.getElementById('weather-icon').textContent = data.weather_icon || '❓';
+        }
+
+        // --- FETCH & REFRESH ---
+        const fetchWisdom = () => fetchAndRender('/api/wisdom', renderWisdom, 'wisdom-card');
+        const fetchNews = () => fetchAndRender('/api/news', renderNews, 'news-list-top');
+        const fetchHolidays = () => fetchAndRender('/api/holidays', renderHolidays, 'holidays-card');
+        const fetchSystemInfo = () => fetchAndRender('/api/system', renderSystemInfo, 'system-card');
+        const fetchMovie = () => fetchAndRender('/api/movie', renderMovie);
+        const fetchCppTip = () => fetchAndRender('/api/cpp-tip', renderCppTip);
+        const refreshPhoto = () => fetchAndRender('/api/photo', renderPhoto);
+        const fetchWeatherData = () => fetchAndRender('/api/data', renderWeatherData);
 
         async function refreshCamera() {
             try {
@@ -689,36 +722,71 @@
                 const data = await resp.json();
                 if (data.url) {
                     const img = document.getElementById('camera-img');
-                    img.src = data.url + (data.url.includes('?') ? '&' : '?') + 'cb=' + Date.now();
+                    img.src = data.url + '?cb=' + Date.now();
                 }
             } catch (e) { console.error('Camera refresh failed:', e); }
         }
 
-        async function refreshMovie() {
-            try {
-                const resp = await fetch('/api/movie');
-                const data = await resp.json();
-                if (data.title) {
-                    document.getElementById('movie-title').textContent = data.title;
-                    document.getElementById('movie-year').textContent = '📅 ' + data.year;
-                    document.getElementById('movie-description').textContent = data.description || 'No description available';
+        async function initializeTemperatureChart() {
+            const ctx = document.getElementById('temperatureChart').getContext('2d');
+            temperatureChart = new Chart(ctx, {
+                type: 'line',
+                data: { labels: [], datasets: [{
+                    label: 'Temperature', data: [],
+                    borderColor: '#00a4ef', backgroundColor: 'rgba(0, 164, 239, 0.05)',
+                    borderWidth: 2, fill: true, tension: 0.4,
+                    pointRadius: 0, pointHoverRadius: 4,
+                }]},
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: '#222' }, ticks: { color: '#666', font: { family: 'Inter' } } },
+                        x: { grid: { display: false }, ticks: { color: '#666', font: { family: 'Inter' }, maxTicksLimit: 12 } }
+                    }
                 }
-            } catch (e) { console.error('Movie refresh failed:', e); }
+            });
+            await refreshTemperatureChart(24);
+        }
+        
+        async function refreshTemperatureChart(hours = 24) {
+            try {
+                const response = await fetch(`/api/temperature-history?hours=${hours}`);
+                const result = await response.json();
+                const data = result.data || [];
+                if (!temperatureChart || data.length === 0) return;
+                
+                temperatureChart.data.labels = data.map(d => new Date(d.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }));
+                temperatureChart.data.datasets[0].data = data.map(d => d.temperature);
+                temperatureChart.update();
+            } catch (error) { console.error('Chart refresh failed:', error); }
+        }
+        
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { hour12: false });
+            document.getElementById('live-clock').textContent = timeString;
         }
 
-        async function refreshCppTip() {
-            try {
-                const resp = await fetch('/api/cpp-tip');
-                const data = await resp.json();
-                if (data.tip) {
-                    document.getElementById('cpp-tip').textContent = data.tip;
-                }
-            } catch (e) { console.error('C++ tip refresh failed:', e); }
-        }
-
-
+        // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
+            // Initial data load
+            fetchWisdom();
+            fetchNews();
+            fetchHolidays();
+            fetchSystemInfo();
+            fetchMovie();
+            fetchCppTip();
+            refreshPhoto();
+            fetchWeatherData();
+            
             initializeTemperatureChart();
+
+            // Set up intervals
+            setInterval(fetchWeatherData, 60 * 1000); // every 60 seconds
+            setInterval(fetchSystemInfo, 30 * 1000); // every 30 seconds
+            updateClock();
+            setInterval(updateClock, 1000);
         });
     </script>
 </body>
