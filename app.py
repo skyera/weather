@@ -784,6 +784,28 @@ def get_cpp_tip():
 
 
 
+def get_historical_figure():
+    """Get a random historical figure with a Wikipedia link."""
+    figures = [
+        {"name": "Leonardo da Vinci", "title": "Polymath of the Renaissance", "link": "https://en.wikipedia.org/wiki/Leonardo_da_Vinci"},
+        {"name": "Marie Curie", "title": "Pioneer in Radioactivity", "link": "https://en.wikipedia.org/wiki/Marie_Curie"},
+        {"name": "Albert Einstein", "title": "Theoretical Physicist", "link": "https://en.wikipedia.org/wiki/Albert_Einstein"},
+        {"name": "Ada Lovelace", "title": "First Computer Programmer", "link": "https://en.wikipedia.org/wiki/Ada_Lovelace"},
+        {"name": "Nelson Mandela", "title": "Anti-apartheid Revolutionary", "link": "https://en.wikipedia.org/wiki/Nelson_Mandela"},
+        {"name": "Cleopatra", "title": "Last Active Ruler of Ptolemaic Egypt", "link": "https://en.wikipedia.org/wiki/Cleopatra"},
+        {"name": "Mahatma Gandhi", "title": "Leader of Indian Independence", "link": "https://en.wikipedia.org/wiki/Mahatma_Gandhi"},
+        {"name": "Abraham Lincoln", "title": "16th U.S. President", "link": "https://en.wikipedia.org/wiki/Abraham_Lincoln"},
+        {"name": "Joan of Arc", "title": "Heroine of France", "link": "https://en.wikipedia.org/wiki/Joan_of_Arc"},
+        {"name": "Nikola Tesla", "title": "Inventor and Electrical Engineer", "link": "https://en.wikipedia.org/wiki/Nikola_Tesla"},
+        {"name": "Galileo Galilei", "title": "Father of Modern Observational Astronomy", "link": "https://en.wikipedia.org/wiki/Galileo_Galilei"},
+        {"name": "Winston Churchill", "title": "Prime Minister of the United Kingdom", "link": "https://en.wikipedia.org/wiki/Winston_Churchill"},
+        {"name": "Hypatia", "title": "Philosopher, Astronomer, and Mathematician", "link": "https://en.wikipedia.org/wiki/Hypatia"},
+        {"name": "Alan Turing", "title": "Father of Theoretical Computer Science", "link": "https://en.wikipedia.org/wiki/Alan_Turing"},
+        {"name": "Rosa Parks", "title": "Mother of the Civil Rights Movement", "link": "https://en.wikipedia.org/wiki/Rosa_Parks"}
+    ]
+    return random.choice(figures)
+
+
 @app.route("/")
 def index():
     # This route is now very lightweight. It just renders the shell.
@@ -793,6 +815,12 @@ def index():
         curr_time=datetime.now(),
         image_exists=IMAGE_PATH.exists()
     )
+
+
+@app.route("/api/historical-figure")
+def api_historical_figure():
+    """API endpoint for a random historical figure."""
+    return jsonify(get_historical_figure())
 
 
 @app.route("/api/holidays")
