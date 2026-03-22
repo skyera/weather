@@ -520,7 +520,8 @@
                         <button class="icon-btn" onclick="fetchFigure()">🔄</button>
                     </div>
                     <div style="display: flex; gap: 1rem; align-items: flex-start;">
-                        <img id="figure-photo" class="skeleton" style="width: 80px; height: 100px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border);" />
+                        <img id="figure-photo" class="skeleton" referrerpolicy="no-referrer" style="width: 80px; height: 100px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border);" 
+                             onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'; this.classList.remove('skeleton');" />
                         <div style="flex: 1;">
                             <div id="figure-name" class="skeleton skeleton-title" style="width: 80%;"></div>
                             <p id="figure-title" class="skeleton skeleton-p" style="margin-bottom: 0.8rem; width: 90%;"></p>
@@ -714,8 +715,10 @@
             const linkEl = document.getElementById('figure-link');
             const photoEl = document.getElementById('figure-photo');
             
-            photoEl.src = data.photo || "";
-            photoEl.classList.remove('skeleton');
+            // Add skeleton back before setting src to show loading state if refreshed
+            photoEl.classList.add('skeleton');
+            photoEl.src = data.photo || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
+            photoEl.onload = () => photoEl.classList.remove('skeleton');
             
             nameEl.textContent = data.name;
             nameEl.classList.remove('skeleton', 'skeleton-title');
