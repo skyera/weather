@@ -787,21 +787,21 @@ def get_cpp_tip():
 def get_historical_figure():
     """Get a random historical figure with a Wikipedia link."""
     figures = [
-        {"name": "Leonardo da Vinci", "title": "Polymath of the Renaissance", "link": "https://en.wikipedia.org/wiki/Leonardo_da_Vinci"},
-        {"name": "Marie Curie", "title": "Pioneer in Radioactivity", "link": "https://en.wikipedia.org/wiki/Marie_Curie"},
-        {"name": "Albert Einstein", "title": "Theoretical Physicist", "link": "https://en.wikipedia.org/wiki/Albert_Einstein"},
-        {"name": "Ada Lovelace", "title": "First Computer Programmer", "link": "https://en.wikipedia.org/wiki/Ada_Lovelace"},
-        {"name": "Nelson Mandela", "title": "Anti-apartheid Revolutionary", "link": "https://en.wikipedia.org/wiki/Nelson_Mandela"},
-        {"name": "Cleopatra", "title": "Last Active Ruler of Ptolemaic Egypt", "link": "https://en.wikipedia.org/wiki/Cleopatra"},
-        {"name": "Mahatma Gandhi", "title": "Leader of Indian Independence", "link": "https://en.wikipedia.org/wiki/Mahatma_Gandhi"},
-        {"name": "Abraham Lincoln", "title": "16th U.S. President", "link": "https://en.wikipedia.org/wiki/Abraham_Lincoln"},
-        {"name": "Joan of Arc", "title": "Heroine of France", "link": "https://en.wikipedia.org/wiki/Joan_of_Arc"},
-        {"name": "Nikola Tesla", "title": "Inventor and Electrical Engineer", "link": "https://en.wikipedia.org/wiki/Nikola_Tesla"},
-        {"name": "Galileo Galilei", "title": "Father of Modern Observational Astronomy", "link": "https://en.wikipedia.org/wiki/Galileo_Galilei"},
-        {"name": "Winston Churchill", "title": "Prime Minister of the United Kingdom", "link": "https://en.wikipedia.org/wiki/Winston_Churchill"},
-        {"name": "Hypatia", "title": "Philosopher, Astronomer, and Mathematician", "link": "https://en.wikipedia.org/wiki/Hypatia"},
-        {"name": "Alan Turing", "title": "Father of Theoretical Computer Science", "link": "https://en.wikipedia.org/wiki/Alan_Turing"},
-        {"name": "Rosa Parks", "title": "Mother of the Civil Rights Movement", "link": "https://en.wikipedia.org/wiki/Rosa_Parks"}
+        {"name": "Leonardo da Vinci", "title": "Polymath of the Renaissance", "link": "https://en.wikipedia.org/wiki/Leonardo_da_Vinci", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Francesco_Melzi_-_Portrait_of_Leonardo.png/440px-Francesco_Melzi_-_Portrait_of_Leonardo.png"},
+        {"name": "Marie Curie", "title": "Pioneer in Radioactivity", "link": "https://en.wikipedia.org/wiki/Marie_Curie", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Marie_Curie_1903.jpg/440px-Marie_Curie_1903.jpg"},
+        {"name": "Albert Einstein", "title": "Theoretical Physicist", "link": "https://en.wikipedia.org/wiki/Albert_Einstein", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Albert_Einstein_Head.jpg/440px-Albert_Einstein_Head.jpg"},
+        {"name": "Ada Lovelace", "title": "First Computer Programmer", "link": "https://en.wikipedia.org/wiki/Ada_Lovelace", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Ada_Byron_daguerreotype_by_Antoine_Claudet_1843_or_1850_-_crop.png/440px-Ada_Byron_daguerreotype_by_Antoine_Claudet_1843_or_1850_-_crop.png"},
+        {"name": "Nelson Mandela", "title": "Anti-apartheid Revolutionary", "link": "https://en.wikipedia.org/wiki/Nelson_Mandela", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Nelson_Mandela_1994.jpg/440px-Nelson_Mandela_1994.jpg"},
+        {"name": "Cleopatra", "title": "Last Active Ruler of Ptolemaic Egypt", "link": "https://en.wikipedia.org/wiki/Cleopatra", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Kleopatra-VII.-Altes-Museum-Berlin1.jpg/440px-Kleopatra-VII.-Altes-Museum-Berlin1.jpg"},
+        {"name": "Mahatma Gandhi", "title": "Leader of Indian Independence", "link": "https://en.wikipedia.org/wiki/Mahatma_Gandhi", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Mahatma-Gandhi%2C_studio%2C_1931.jpg/440px-Mahatma-Gandhi%2C_studio%2C_1931.jpg"},
+        {"name": "Abraham Lincoln", "title": "16th U.S. President", "link": "https://en.wikipedia.org/wiki/Abraham_Lincoln", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Abraham_Lincoln_O-77_matte_collodion_print.jpg/440px-Abraham_Lincoln_O-77_matte_collodion_print.jpg"},
+        {"name": "Joan of Arc", "json": "Heroine of France", "link": "https://en.wikipedia.org/wiki/Joan_of_Arc", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Joan_of_arc_miniature_graded.jpg/440px-Joan_of_arc_miniature_graded.jpg"},
+        {"name": "Nikola Tesla", "title": "Inventor and Electrical Engineer", "link": "https://en.wikipedia.org/wiki/Nikola_Tesla", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Tesla_circa_1890.jpeg/440px-Tesla_circa_1890.jpeg"},
+        {"name": "Galileo Galilei", "title": "Father of Modern Observational Astronomy", "link": "https://en.wikipedia.org/wiki/Galileo_Galilei", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Justus_Sustermans_-_Portrait_of_Galileo_Galilei%2C_1636.jpg/440px-Justus_Sustermans_-_Portrait_of_Galileo_Galilei%2C_1636.jpg"},
+        {"name": "Winston Churchill", "title": "Prime Minister of the United Kingdom", "link": "https://en.wikipedia.org/wiki/Winston_Churchill", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Sir_Winston_Churchill_1941_Statesman.jpg/440px-Sir_Winston_Churchill_1941_Statesman.jpg"},
+        {"name": "Hypatia", "title": "Philosopher, Astronomer, and Mathematician", "link": "https://en.wikipedia.org/wiki/Hypatia", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Hypatia_by_Charles_William_Mitchell.jpg/440px-Hypatia_by_Charles_William_Mitchell.jpg"},
+        {"name": "Alan Turing", "title": "Father of Theoretical Computer Science", "link": "https://en.wikipedia.org/wiki/Alan_Turing", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Alan_Turing_Aged_16.jpg/440px-Alan_Turing_Aged_16.jpg"},
+        {"name": "Rosa Parks", "title": "Mother of the Civil Rights Movement", "link": "https://en.wikipedia.org/wiki/Rosa_Parks", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Rosa_Parks_2.jpg/440px-Rosa_Parks_2.jpg"}
     ]
     return random.choice(figures)
 
