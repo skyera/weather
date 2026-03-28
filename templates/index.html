@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>✨ Scripture & Skies</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         * {
             margin: 0;
@@ -14,16 +15,17 @@
 
         :root {
             --primary: #00a4ef;
+            --primary-glow: rgba(0, 164, 239, 0.4);
             --secondary: #7fb627;
             --accent: #ffb900;
             --bg-dark: #050505;
-            --bg-card: #111111;
-            --bg-hover: #1a1a1a;
+            --bg-card: rgba(17, 17, 17, 0.7);
+            --bg-hover: rgba(26, 26, 26, 0.8);
             --text-primary: #ffffff;
-            --text-secondary: #999999;
-            --border: #222222;
-            --radius: 12px;
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --text-secondary: #a0a0a0;
+            --border: rgba(255, 255, 255, 0.1);
+            --radius: 16px;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
         }
 
         body {
@@ -43,13 +45,16 @@
             height: 100%;
             pointer-events: none;
             z-index: 0;
-            background: radial-gradient(circle at 50% -20%, #1a1a1a 0%, #050505 100%);
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(0, 164, 239, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(127, 182, 39, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 50% -20%, #1a1a1a 0%, #050505 100%);
         }
 
         .container {
             max-width: 1300px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 2.5rem 1.5rem;
             position: relative;
             z-index: 1;
         }
@@ -57,26 +62,31 @@
         header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2.5rem;
+            align-items: flex-end;
+            margin-bottom: 3.5rem;
         }
 
         h1 {
-            font-size: 1.5rem;
+            font-size: 2rem;
             font-weight: 800;
-            letter-spacing: -0.02em;
-            color: var(--primary);
+            letter-spacing: -0.04em;
+            background: linear-gradient(to right, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.25rem;
         }
 
         .subtitle {
             color: var(--text-secondary);
-            font-size: 0.85rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
         }
 
         .portal-layout {
             display: grid;
-            grid-template-columns: 1fr 360px;
-            gap: 2rem;
+            grid-template-columns: 1fr 380px;
+            gap: 2.5rem;
         }
 
         @media (max-width: 1100px) {
@@ -86,42 +96,54 @@
         .main-content {
             display: flex;
             flex-direction: column;
-            gap: 2rem;
+            gap: 2.5rem;
         }
 
         .sidebar {
             display: flex;
             flex-direction: column;
-            gap: 2rem;
+            gap: 2.5rem;
         }
 
         .card {
             background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 1.5rem;
+            padding: 1.75rem;
             box-shadow: var(--shadow);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .card:hover {
-            border-color: #333;
-            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8);
         }
 
         .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.75rem;
         }
 
         h3 {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.15em;
             color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        h3 i {
+            color: var(--primary);
+            width: 16px;
+            height: 16px;
         }
 
         .hero-card {
@@ -131,12 +153,18 @@
             overflow: hidden;
             border-radius: var(--radius);
             background-color: var(--bg-hover);
+            border: 1px solid var(--border);
         }
 
         .hero-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .hero-card:hover .hero-img {
+            transform: scale(1.05);
         }
 
         .hero-overlay {
@@ -144,111 +172,147 @@
             bottom: 0;
             left: 0;
             right: 0;
-            padding: 2.5rem;
-            background: linear-gradient(transparent, rgba(0,0,0,0.95));
+            padding: 3rem;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
         }
 
         .weather-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
+            gap: 1.25rem;
         }
 
         .metric-mini {
-            background: #181818;
-            padding: 1.25rem;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1.5rem;
             border-radius: var(--radius);
             border: 1px solid var(--border);
-            text-align: center;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-mini::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent, rgba(255,255,255,0.02));
+            pointer-events: none;
         }
 
         .mini-label {
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             color: var(--text-secondary);
             font-weight: 700;
             text-transform: uppercase;
-            margin-bottom: 0.5rem;
-            display: block;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .mini-value {
-            font-size: 1.5rem;
+            font-size: 1.75rem;
             font-weight: 800;
             color: var(--text-primary);
+            letter-spacing: -0.02em;
         }
 
         .news-card {
-            background: var(--bg-card);
+            background: rgba(255, 255, 255, 0.02);
             border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1.25rem;
+            border-radius: 12px;
+            padding: 1.5rem;
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
+            gap: 1rem;
             text-decoration: none;
-            transition: background 0.2s;
+            transition: all 0.3s ease;
         }
 
-        .news-card:hover { background: var(--bg-hover); }
+        .news-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: var(--primary);
+            transform: translateX(4px);
+        }
 
         .news-title {
-            font-size: 1rem;
+            font-size: 1.05rem;
             font-weight: 600;
             color: var(--text-primary);
-            line-height: 1.4;
+            line-height: 1.5;
         }
 
         .news-meta {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             color: var(--text-secondary);
-            margin-top: auto;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .verse-box {
-            padding: 1.25rem;
-            background: #181818;
+            padding: 1.5rem;
+            background: rgba(0, 164, 239, 0.05);
             border-radius: var(--radius);
-            border-left: 4px solid var(--accent);
-            margin-bottom: 1rem;
+            border: 1px solid rgba(0, 164, 239, 0.1);
+            margin-bottom: 1.25rem;
+            position: relative;
+        }
+
+        .verse-box::before {
+            content: '"';
+            position: absolute;
+            top: 0.5rem;
+            left: 0.75rem;
+            font-size: 3rem;
+            color: rgba(0, 164, 239, 0.1);
+            font-family: serif;
+            line-height: 1;
         }
 
         .verse-text {
-            font-size: 1rem;
+            font-size: 1.05rem;
             font-weight: 500;
-            line-height: 1.6;
-            margin-bottom: 0.75rem;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+            color: #efefef;
         }
 
         .verse-ref {
-            font-size: 0.8rem;
-            color: var(--accent);
+            font-size: 0.85rem;
+            color: var(--primary);
             font-weight: 700;
             text-align: right;
+            letter-spacing: 0.05em;
         }
 
         .movie-card {
-            background: #181818;
+            background: rgba(255, 255, 255, 0.02);
             border-radius: var(--radius);
             border: 1px solid var(--border);
             overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .movie-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0, 164, 239, 0.15);
+            transition: all 0.4s ease;
         }
 
         .movie-poster {
             width: 100%;
-            height: 180px;
+            height: 200px;
             object-fit: cover;
-            background: linear-gradient(135deg, #1a1a1a, #222222);
+            filter: grayscale(20%);
+            transition: filter 0.4s ease;
         }
 
-        .movie-info { padding: 1.25rem; }
+        .movie-card:hover .movie-poster {
+            filter: grayscale(0%);
+        }
+
+        .movie-info { padding: 1.5rem; }
         .movie-title {
-            font-size: 1.1rem;
+            font-size: 1.25rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
             color: var(--text-primary);
@@ -257,28 +321,26 @@
             font-size: 0.9rem;
             color: var(--primary);
             font-weight: 600;
-            margin-bottom: 0.75rem;
-        }
-        .movie-description {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            line-height: 1.5;
-            font-style: italic;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .cpp-tip-box {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            padding: 1.5rem;
+            background: linear-gradient(145deg, #0d1117, #161b22);
+            padding: 1.75rem;
             border-radius: var(--radius);
-            border-left: 4px solid #00d4ff;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            box-shadow: inset 0 0 20px rgba(0, 212, 255, 0.05);
         }
 
         .cpp-tip-box p {
-            font-size: 0.95rem;
-            color: #e0e0e0;
-            line-height: 1.6;
+            font-size: 0.9rem;
+            color: #c9d1d9;
+            line-height: 1.7;
             margin: 0;
-            font-family: 'Courier New', monospace;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
         }
 
         .camera-container {
@@ -288,126 +350,129 @@
             border-radius: var(--radius);
             overflow: hidden;
             position: relative;
-        }
-
-        .media-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            border: 1px solid var(--border);
         }
 
         .badge-live {
             position: absolute;
-            top: 1rem;
-            left: 1rem;
-            background: #e81123;
+            top: 1.25rem;
+            left: 1.25rem;
+            background: #ff3b30;
             color: white;
-            padding: 0.25rem 0.6rem;
-            font-size: 0.6rem;
-            font-weight: 900;
-            border-radius: 4px;
+            padding: 0.35rem 0.75rem;
+            font-size: 0.65rem;
+            font-weight: 800;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 12px rgba(255, 59, 48, 0.4);
+        }
+
+        .badge-live::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse-live 1.5s infinite;
+        }
+
+        @keyframes pulse-live {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         .system-line {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.8rem;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid var(--border);
+            font-size: 0.85rem;
+            padding: 0.85rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
         .system-line:last-child { border: none; }
 
         .progress-bar {
-            width: 60%;
-            background-color: var(--border);
-            height: 8px;
-            border-radius: 4px;
+            width: 100px;
+            background-color: rgba(255,255,255,0.05);
+            height: 6px;
+            border-radius: 3px;
             overflow: hidden;
         }
         .progress-bar-inner {
             height: 100%;
-            background-color: var(--secondary);
-            transition: width 0.5s ease;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 3px;
         }
 
-
         .icon-btn {
-            background: transparent;
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border);
             color: var(--text-secondary);
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.2s ease;
         }
         .icon-btn:hover {
             background: var(--bg-hover);
             color: var(--text-primary);
-        }
-
-        .chart-wrapper { height: 300px; }
-        footer {
-            margin-top: 4rem;
-            padding: 2rem 0;
-            border-top: 1px solid var(--border);
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            border-color: var(--primary);
+            transform: rotate(15deg);
         }
 
         .status-pill {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            border: 1px solid var(--border);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--primary);
         }
 
         .spin {
-            width: 12px;
-            height: 12px;
-            border: 2px solid var(--border);
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(0, 164, 239, 0.1);
             border-top-color: var(--primary);
             border-radius: 50%;
-            animation: spinner 1s linear infinite;
+            animation: spinner 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
         }
 
-        .word-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--secondary);
-            margin-bottom: 0.5rem;
-        }
+        @keyframes spinner { to { transform: rotate(360deg); } }
 
-        /* Skeleton Loader */
+        /* Skeleton Loader Improvements */
         .skeleton {
-            background-color: var(--bg-hover);
-            border-radius: 4px;
-            animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            background: linear-gradient(90deg, #1a1a1a 25%, #252525 50%, #1a1a1a 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
         }
-        @keyframes pulse {
-            50% { opacity: 0.5; }
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
-        .skeleton-text {
-            height: 1em;
-            margin-bottom: 0.5rem;
-        }
-        .skeleton-text:last-child { margin-bottom: 0; }
-        .skeleton-title {
-            width: 60%;
-            height: 1.5em;
-            margin-bottom: 1rem;
-        }
-        .skeleton-p {
-             width: 100%;
-             height: 1em;
-             margin-bottom: 0.5rem;
+
+        footer {
+            margin-top: 5rem;
+            padding: 3rem 0;
+            border-top: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
         }
     </style>
+</style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -431,37 +496,35 @@
                 <div class="hero-card">
                     <img id="nature-photo" src="" alt="Hero" class="hero-img skeleton">
                     <div class="hero-overlay">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
                             <div>
-                                <div style="font-size: 0.7rem; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 0.5rem;">Featured Perspective</div>
-                                <h2 id="photo-author" style="font-size: 2rem; font-weight: 800; line-height: 1.1;">Loading...</h2>
-                                <p id="photo-source" style="font-size: 0.9rem; color: #ccc;">Sourced via Web</p>
+                                <div style="font-size: 0.75rem; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 0.75rem; letter-spacing: 0.1em;">Featured Perspective</div>
+                                <h2 id="photo-author" style="font-size: 2.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 0.5rem; letter-spacing: -0.04em;">Loading...</h2>
+                                <p id="photo-source" style="font-size: 0.95rem; color: #aaa; display: flex; align-items: center; gap: 0.5rem;"><i data-lucide="camera" style="width:14px;"></i> Sourced via Web</p>
                             </div>
-                            <button class="icon-btn" style="background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.2); color: white;" onclick="refreshPhoto()">🔄</button>
+                            <button class="icon-btn" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: white;" onclick="refreshPhoto()"><i data-lucide="refresh-cw"></i></button>
                         </div>
                     </div>
                 </div>
 
                 <!-- News Sections -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2.5rem;">
                     <section>
                         <div class="section-header">
-                            <h3>Top Stories</h3>
-                            <button class="icon-btn" onclick="fetchNews()">🔄</button>
+                            <h3><i data-lucide="globe"></i> Top Stories</h3>
+                            <button class="icon-btn" onclick="fetchNews()"><i data-lucide="refresh-cw"></i></button>
                         </div>
                         <div id="news-list-top" class="news-list">
                             <!-- Skeleton -->
-                            <div class="news-card" style="margin-bottom: 1rem;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div></div>
                             <div class="news-card" style="margin-bottom: 1rem;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div></div>
                         </div>
                     </section>
                     <section>
                         <div class="section-header">
-                            <h3>AI Intelligence</h3>
+                            <h3><i data-lucide="cpu"></i> AI Intelligence</h3>
                         </div>
                         <div id="news-list-ai" class="news-list">
                             <!-- Skeleton -->
-                            <div class="news-card" style="margin-bottom: 1rem;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div></div>
                             <div class="news-card" style="margin-bottom: 1rem;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div></div>
                         </div>
                     </section>
@@ -470,8 +533,8 @@
                 <!-- Chart -->
                 <div class="card">
                     <div class="section-header">
-                        <h3>Atmospheric Trends</h3>
-                        <div>
+                        <h3><i data-lucide="activity"></i> Atmospheric Trends</h3>
+                        <div style="display: flex; gap: 0.5rem;">
                             <button class="icon-btn" onclick="refreshTemperatureChart(24)">24h</button>
                             <button class="icon-btn" onclick="refreshTemperatureChart(72)">3d</button>
                             <button class="icon-btn" onclick="refreshTemperatureChart(168)">7d</button>
@@ -487,99 +550,105 @@
                  <!-- Weather Widget -->
                 <div class="card" id="weather-card">
                     <div class="section-header">
-                        <h3>Current Weather</h3>
-                        <span style="font-size: 1.5rem;" id="weather-icon"></span>
+                        <h3><i data-lucide="cloud-sun"></i> Current Weather</h3>
+                        <span style="font-size: 1.75rem;" id="weather-icon"></span>
                     </div>
                     <div class="weather-grid">
-                        <div class="metric-mini"><span class="mini-label">Temp</span><div class="mini-value" id="val-temp">--°</div></div>
-                        <div class="metric-mini"><span class="mini-label">Humidity</span><div class="mini-value" id="val-humidity">--%</div></div>
-                        <div class="metric-mini"><span class="mini-label">Pressure</span><div class="mini-value" id="val-pressure">--</div></div>
-                        <div class="metric-mini"><span class="mini-label">Altitude</span><div class="mini-value" id="val-altitude">--m</div></div>
+                        <div class="metric-mini">
+                            <span class="mini-label"><i data-lucide="thermometer" style="width:12px;"></i> Temp</span>
+                            <div class="mini-value" id="val-temp">--°</div>
+                        </div>
+                        <div class="metric-mini">
+                            <span class="mini-label"><i data-lucide="droplets" style="width:12px;"></i> Humidity</span>
+                            <div class="mini-value" id="val-humidity">--%</div>
+                        </div>
+                        <div class="metric-mini">
+                            <span class="mini-label"><i data-lucide="gauge" style="width:12px;"></i> Pressure</span>
+                            <div class="mini-value" id="val-pressure">--</div>
+                        </div>
+                        <div class="metric-mini">
+                            <span class="mini-label"><i data-lucide="mountain" style="width:12px;"></i> Altitude</span>
+                            <div class="mini-value" id="val-altitude">--m</div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Daily Wisdom -->
                 <div class="card" id="wisdom-card">
-                    <div class="section-header"><h3>Daily Devotional</h3></div>
-                    <div class="verse-box" id="bible-verse-box"><div class="skeleton skeleton-text" style="width: 90%;"></div><div class="skeleton skeleton-text" style="width: 100%;"></div><div class="skeleton skeleton-text" style="width: 40%; float: right;"></div></div>
-                    <div class="verse-box" id="quote-box" style="border-left-color: var(--secondary);"><div class="skeleton skeleton-text" style="width: 100%;"></div><div class="skeleton skeleton-text" style="width: 60%;"></div><div class="skeleton skeleton-text" style="width: 30%; float: right;"></div></div>
+                    <div class="section-header"><h3><i data-lucide="book-open"></i> Daily Devotional</h3></div>
+                    <div class="verse-box" id="bible-verse-box"></div>
+                    <div class="verse-box" id="quote-box" style="border-color: rgba(127, 182, 39, 0.2); background: rgba(127, 182, 39, 0.05);"></div>
                 </div>
 
                 <!-- Word Discovery -->
                 <div class="card" id="word-card">
-                    <div class="section-header"><h3>Word Discovery</h3></div>
-                    <div id="word-title" class="skeleton skeleton-title" style="width: 50%;"></div>
-                    <p id="word-definition" class="skeleton skeleton-p"></p>
-                    <p id="word-example" class="skeleton skeleton-p" style="width: 80%;"></p>
+                    <div class="section-header"><h3><i data-lucide="languages"></i> Word Discovery</h3></div>
+                    <div id="word-content">
+                        <div id="word-title" class="skeleton skeleton-title" style="width: 50%;"></div>
+                        <p id="word-definition" class="skeleton skeleton-p"></p>
+                    </div>
                 </div>
 
                 <!-- Historical Figure -->
                 <div class="card" id="figure-card">
                     <div class="section-header">
-                        <h3>🏛️ Historical Figure</h3>
-                        <button class="icon-btn" onclick="fetchFigure()">🔄</button>
+                        <h3><i data-lucide="landmark"></i> Historical Figure</h3>
+                        <button class="icon-btn" onclick="fetchFigure()"><i data-lucide="refresh-cw"></i></button>
                     </div>
                     <div id="figure-name" class="skeleton skeleton-title" style="width: 80%;"></div>
-                    <p id="figure-title" class="skeleton skeleton-p" style="margin-bottom: 0.8rem; width: 90%;"></p>
-                    <a id="figure-link" href="#" target="_blank" class="skeleton skeleton-text" style="font-size: 0.85rem; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 4px; width: 100px;">
-                        Wikipedia 🔗
+                    <p id="figure-title" class="skeleton skeleton-p" style="margin-bottom: 1rem; width: 90%;"></p>
+                    <a id="figure-link" href="#" target="_blank" style="font-size: 0.85rem; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 6px; font-weight: 600;">
+                        Wikipedia Article <i data-lucide="external-link" style="width:14px;"></i>
                     </a>
                 </div>
 
                 <!-- Movie of the Day -->
                 <div class="card">
                     <div class="section-header">
-                        <h3>🎬 Movie Pick</h3>
-                        <button class="icon-btn" onclick="fetchMovie()">🔄</button>
+                        <h3><i data-lucide="clapperboard"></i> Movie Pick</h3>
+                        <button class="icon-btn" onclick="fetchMovie()"><i data-lucide="refresh-cw"></i></button>
                     </div>
                     <div class="movie-card" id="movie-card">
                         <img id="movie-poster" class="movie-poster skeleton" />
                         <div class="movie-info">
-                            <div class="movie-title" id="movie-title"><div class="skeleton skeleton-title"></div></div>
-                            <div class="movie-year" id="movie-year"><div class="skeleton skeleton-text" style="width: 30%"></div></div>
-                            <div class="movie-description" id="movie-description"><div class="skeleton skeleton-p"></div><div class="skeleton skeleton-p"></div></div>
+                            <div class="movie-title" id="movie-title"></div>
+                            <div class="movie-year" id="movie-year"></div>
+                            <div class="movie-description" id="movie-description"></div>
                         </div>
                     </div>
                 </div>
 
                 <!-- C++ Tip -->
                 <div class="card">
-                    <div class="section-header"><h3>💡 C++ Tip</h3><button class="icon-btn" onclick="fetchCppTip()">🔄</button></div>
+                    <div class="section-header"><h3><i data-lucide="code-2"></i> C++ Tip</h3><button class="icon-btn" onclick="fetchCppTip()"><i data-lucide="refresh-cw"></i></button></div>
                     <div class="cpp-tip-box" id="cpp-tip-box"><p id="cpp-tip" class="skeleton skeleton-text"></p></div>
                 </div>
 
                 <!-- Camera -->
                 <div class="card">
-                    <div class="section-header"><h3>Live Camera</h3><button class="icon-btn" onclick="refreshCamera()">🔄</button></div>
+                    <div class="section-header"><h3><i data-lucide="video"></i> Live Camera</h3><button class="icon-btn" onclick="refreshCamera()"><i data-lucide="refresh-cw"></i></button></div>
                     <div class="camera-container">
-                        <span class="badge-live">LIVE</span>
+                        <span class="badge-live">LIVE FEED</span>
                         {% if image_exists %}
                             <img src="{{url_for('static', filename='image.jpg')}}?t={{curr_time.timestamp()}}" alt="Camera" id="camera-img" class="media-img">
                         {% else %}
-                            <div style="height: 100%; display: flex; align-items: center; justify-content: center; color: var(--text-secondary);">No feed available</div>
+                            <div style="height: 100%; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 0.9rem;">
+                                <i data-lucide="camera-off" style="margin-right: 0.5rem;"></i> No feed available
+                            </div>
                         {% endif %}
                     </div>
                 </div>
 
                 <!-- Holidays -->
                 <div class="card" id="holidays-card">
-                    <div class="section-header"><h3>Upcoming Holidays</h3></div>
-                    <div id="holidays-list">
-                        <div class="system-line"><div class="skeleton skeleton-text" style="width: 100%"></div></div>
-                        <div class="system-line"><div class="skeleton skeleton-text" style="width: 100%"></div></div>
-                        <div class="system-line"><div class="skeleton skeleton-text" style="width: 100%"></div></div>
-                    </div>
+                    <div class="section-header"><h3><i data-lucide="calendar"></i> Upcoming Holidays</h3></div>
+                    <div id="holidays-list"></div>
                 </div>
 
                 <!-- System -->
                 <div class="card" id="system-card">
-                    <div class="section-header"><h3>System Status</h3></div>
-                    <div id="system-list">
-                        <div class="system-line"><span>Uptime</span><span class="skeleton skeleton-text" style="width: 40%"></span></div>
-                        <div class="system-line"><span>CPU Temp</span><span class="skeleton skeleton-text" style="width: 30%"></span></div>
-                        <div class="system-line"><span>Memory</span><span class="skeleton skeleton-text" style="width: 50%"></span></div>
-                        <div class="system-line"><span>Disk</span><span class="skeleton skeleton-text" style="width: 50%"></span></div>
-                    </div>
+                    <div class="section-header"><h3><i data-lucide="terminal"></i> System Status</h3></div>
+                    <div id="system-list"></div>
                 </div>
             </div>
         </div>
@@ -761,57 +830,83 @@
 
         async function initializeTemperatureChart() {
             const ctx = document.getElementById('temperatureChart').getContext('2d');
+            
+            // Create gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(0, 164, 239, 0.3)');
+            gradient.addColorStop(1, 'rgba(0, 164, 239, 0.0)');
+
             temperatureChart = new Chart(ctx, {
                 type: 'line',
                 data: { labels: [], datasets: [{
                     label: 'Temperature', data: [],
-                    borderColor: '#00a4ef', backgroundColor: 'rgba(0, 164, 239, 0.05)',
-                    borderWidth: 2, fill: true, tension: 0.4,
-                    pointRadius: 0, pointHoverRadius: 4,
+                    borderColor: '#00a4ef', 
+                    backgroundColor: gradient,
+                    borderWidth: 3, 
+                    fill: true, 
+                    tension: 0.4,
+                    pointRadius: 0, 
+                    pointHoverRadius: 6,
+                    pointHoverBackgroundColor: '#00a4ef',
+                    pointHoverBorderColor: '#fff',
+                    pointHoverBorderWidth: 2
                 }]},
                 options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    interaction: { intersect: false, mode: 'index' },
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(17, 17, 17, 0.9)',
+                            titleFont: { size: 12, family: 'Inter', weight: 'bold' },
+                            bodyFont: { size: 12, family: 'Inter' },
+                            padding: 12,
+                            cornerRadius: 8,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return ` ${context.parsed.y}°C`;
+                                }
+                            }
+                        }
+                    },
                     scales: {
-                        y: { grid: { color: '#222' }, ticks: { color: '#666', font: { family: 'Inter' } } },
-                        x: { grid: { display: false }, ticks: { color: '#666', font: { family: 'Inter' }, maxTicksLimit: 12 } }
+                        y: { 
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' }, 
+                            ticks: { 
+                                color: '#666', 
+                                font: { family: 'Inter', size: 11 },
+                                callback: value => value + '°'
+                            } 
+                        },
+                        x: { 
+                            grid: { display: false }, 
+                            ticks: { color: '#666', font: { family: 'Inter', size: 11 }, maxTicksLimit: 8 } 
+                        }
                     }
                 }
             });
             await refreshTemperatureChart(24);
         }
-        
-        async function refreshTemperatureChart(hours = 24) {
-            try {
-                const response = await fetch(`/api/temperature-history?hours=${hours}`);
-                const result = await response.json();
-                const data = result.data || [];
-                if (!temperatureChart || data.length === 0) return;
-                
-                temperatureChart.data.labels = data.map(d => new Date(d.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }));
-                temperatureChart.data.datasets[0].data = data.map(d => d.temperature);
-                temperatureChart.update();
-            } catch (error) { console.error('Chart refresh failed:', error); }
-        }
-        
-        function updateClock() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('en-US', { hour12: false });
-            document.getElementById('live-clock').textContent = timeString;
-        }
 
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
             // Initial data load
-            fetchWisdom();
-            fetchNews();
-            fetchHolidays();
-            fetchSystemInfo();
-            fetchMovie();
-            fetchCppTip();
-            fetchFigure();
-            refreshPhoto();
-            fetchWeatherData();
+            Promise.all([
+                fetchWisdom(),
+                fetchNews(),
+                fetchHolidays(),
+                fetchSystemInfo(),
+                fetchMovie(),
+                fetchCppTip(),
+                fetchFigure(),
+                refreshPhoto(),
+                fetchWeatherData()
+            ]).then(() => {
+                // Initialize icons after first batch of content
+                lucide.createIcons();
+            });
             
             initializeTemperatureChart();
 
@@ -821,6 +916,13 @@
             updateClock();
             setInterval(updateClock, 1000);
         });
+
+        // Re-initialize icons after dynamic renders
+        const originalFetchAndRender = fetchAndRender;
+        window.fetchAndRender = async (...args) => {
+            await originalFetchAndRender(...args);
+            lucide.createIcons();
+        };
     </script>
 </body>
 </html>
