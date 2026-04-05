@@ -513,6 +513,12 @@
                     <p id="word-example" class="skeleton skeleton-p" style="width: 80%;"></p>
                 </div>
 
+                <!-- Quick Notes -->
+                <div class="card" id="notes-card">
+                    <div class="section-header"><h3>Quick Notes</h3><button class="icon-btn" onclick="clearNotes()">🗑️</button></div>
+                    <textarea id="quick-notes" placeholder="Jot down quick notes..." oninput="saveNotes()" style="width: 100%; min-height: 100px; background: #181818; border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-primary); padding: 0.75rem; font-family: 'Inter', sans-serif; font-size: 0.85rem; resize: vertical;"></textarea>
+                </div>
+
                 <!-- Historical Figure -->
                 <div class="card" id="figure-card">
                     <div class="section-header">
@@ -800,6 +806,23 @@
             document.getElementById('live-clock').textContent = timeString;
         }
 
+        function saveNotes() {
+            const notes = document.getElementById('quick-notes').value;
+            localStorage.setItem('quickNotes', notes);
+        }
+
+        function loadNotes() {
+            const notes = localStorage.getItem('quickNotes') || '';
+            document.getElementById('quick-notes').value = notes;
+        }
+
+        function clearNotes() {
+            if (confirm('Clear all notes?')) {
+                document.getElementById('quick-notes').value = '';
+                localStorage.removeItem('quickNotes');
+            }
+        }
+
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
             // Initial data load
@@ -812,6 +835,7 @@
             fetchFigure();
             refreshPhoto();
             fetchWeatherData();
+            loadNotes();
             
             initializeTemperatureChart();
 
