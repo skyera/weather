@@ -784,6 +784,41 @@ def get_cpp_tip():
 
 
 
+DAILY_CHALLENGE_WORDS = [
+    {"word": "horizon", "hint": "The line where the earth meets the sky", "difficulty": "easy"},
+    {"word": "quartz", "hint": "A common mineral found in many rocks", "difficulty": "easy"},
+    {"word": "puzzle", "hint": "A game requiring pieces to fit together", "difficulty": "easy"},
+    {"word": "oxygen", "hint": "Gas essential for breathing", "difficulty": "easy"},
+    {"word": "tunnel", "hint": "An underground passage", "difficulty": "easy"},
+    {"word": "mystic", "hint": "Something mysterious or magical", "difficulty": "medium"},
+    {"word": "brisk", "hint": "Cold and refreshing", "difficulty": "medium"},
+    {"word": "fragile", "hint": "Easily broken or damaged", "difficulty": "medium"},
+    {"word": "symphony", "hint": "A long musical composition", "difficulty": "medium"},
+    {"word": "journey", "hint": "A trip or expedition", "difficulty": "medium"},
+    {"word": "serene", "hint": "Calm and peaceful", "difficulty": "medium"},
+    {"word": "oracle", "hint": "A person or place giving wise predictions", "difficulty": "hard"},
+    {"word": "zenith", "hint": "The highest point reached", "difficulty": "hard"},
+    {"word": "cipher", "hint": "A secret or disguised way of writing", "difficulty": "hard"},
+    {"word": "ethereal", "hint": "Extremely delicate and light", "difficulty": "hard"},
+    {"word": "cascade", "hint": "A waterfall or flowing downward", "difficulty": "hard"},
+]
+
+def get_daily_challenge():
+    """Get the daily challenge based on today's date."""
+    today = datetime.now().date()
+    day_of_year = today.timetuple().tm_yday
+    index = (day_of_year - 1) % len(DAILY_CHALLENGE_WORDS)
+    challenge = DAILY_CHALLENGE_WORDS[index]
+    
+    return {
+        "word": challenge["word"],
+        "hint": challenge["hint"],
+        "difficulty": challenge["difficulty"],
+        "date": str(today),
+        "maxGuesses": 6
+    }
+
+
 def get_historical_figure():
     """Get a random historical figure with a Wikipedia link."""
     figures = [
@@ -886,6 +921,12 @@ def api_temperature_history():
         "data": history,
         "count": len(history)
     })
+
+
+@app.route("/api/daily-challenge")
+def api_daily_challenge():
+    """API endpoint for daily word challenge."""
+    return jsonify(get_daily_challenge())
 
 
 if __name__ == "__main__":

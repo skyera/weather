@@ -548,6 +548,25 @@
                     <div class="cpp-tip-box" id="cpp-tip-box"><p id="cpp-tip" class="skeleton skeleton-text"></p></div>
                 </div>
 
+                <!-- Daily Challenge -->
+                <div class="card" id="challenge-card">
+                    <div class="section-header">
+                        <h3>🎯 Daily Challenge</h3>
+                        <span id="challenge-difficulty" style="font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; background: var(--primary); color: white;"></span>
+                    </div>
+                    <div id="challenge-hint" style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;"></div>
+                    <div id="challenge-board" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-bottom: 1rem;"></div>
+                    <div id="challenge-message" style="font-size: 0.85rem; margin-bottom: 0.5rem; min-height: 1.2em;"></div>
+                    <input type="text" id="challenge-input" maxlength="6" placeholder="Guess (6 letters)" 
+                           style="width: 100%; padding: 0.6rem; border-radius: 6px; border: 1px solid var(--border); 
+                                  background: var(--bg-dark); color: var(--text-primary); text-transform: lowercase;
+                                  font-size: 1rem; text-align: center; margin-bottom: 0.5rem;">
+                    <button onclick="submitGuess()" style="width: 100%; padding: 0.6rem; border-radius: 6px; 
+                           border: none; background: var(--primary); color: white; font-weight: 600; cursor: pointer;">
+                        Guess
+                    </button>
+                </div>
+
                 <!-- Camera -->
                 <div class="card">
                     <div class="section-header"><h3>Live Camera</h3><button class="icon-btn" onclick="refreshCamera()">🔄</button></div>
@@ -748,6 +767,87 @@
         const refreshPhoto = () => fetchAndRender('/api/photo', renderPhoto);
         const fetchWeatherData = () => fetchAndRender('/api/data', renderWeatherData);
 
+        // --- DAILY CHALLENGE GAME ---
+        let challengeState = { word: '', hint: '', maxGuesses: 6, guesses: [], gameOver: false };
+        const difficultyColors = { easy: '#7fb627', medium: '#ffb900', hard: '#ff6b6b' };
+
+        function renderChallenge(data) {
+            challengeState = { word: data.word, hint: data.hint, maxGuesses: data.maxGuesses, guesses: [], gameOver: false };
+            document.getElementById('challenge-difficulty').textContent = data.difficulty.toUpperCase();
+            document.getElementById('challenge-difficulty').style.background = difficultyColors[data.difficulty] || '#00a4ef';
+            document.getElementById('challenge-hint').textContent = '💡 ' + data.hint;
+            document.getElementById('challenge-message').textContent = `${data.maxGuesses} guesses remaining`;
+            document.getElementById('challenge-message').style.color = 'var(--text-secondary)';
+            renderBoard();
+        }
+
+        function renderBoard() {
+            const board = document.getElementById('challenge-board');
+            board.innerHTML = '';
+            for (let i = 0; i < challengeState.maxGuesses; i++) {
+                for (let j = 0; j < 6; j++) {
+                    const cell = document.createElement('div');
+                    cell.style.cssText = 'width: 32px; height: 32px; border: 2px solid var(--border); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700;';
+                    if (i < challengeState.guesses.length) {
+                        const guess = challengeState.guesses[i];
+                        const letter = guess[j];
+                        const target = challengeState.word[j];
+                        if (letter === target) {
+                            cell.style.background = '#7fb627';
+                            cell.style.borderColor = '#7fb627';
+                        } else if (challengeState.word.includes(letter)) {
+                            cell.style.background = '#ffb900';
+                            cell.style.borderColor = '#ffb900';
+                        } else {
+                            cell.style.background = '#333';
+                        }
+                        cell.textContent = letter;
+                        cell.style.color = 'white';
+                    }
+                    board.appendChild(cell);
+                }
+            }
+            if (!challengeState.gameOver) {
+                for (let j = 0; j < 6; j++) {
+                    const cell = document.createElement('div');
+                    cell.style.cssText = 'width: 32px; height: 32px; border: 2px dashed var(--border); border-radius: 4px; display: flex; align-items: center; justify-content: center;';
+                    board.appendChild(cell);
+                }
+            }
+        }
+
+        function submitGuess() {
+            if (challengeState.gameOver) return;
+            const input = document.getElementById('challenge-input');
+            const guess = input.value.toLowerCase().trim();
+            if (guess.length !== 6) {
+                document.getElementById('challenge-message').textContent = 'Enter exactly 6 letters!';
+                document.getElementById('challenge-message').style.color = '#ff6b6b';
+                return;
+            }
+            challengeState.guesses.push(guess);
+            input.value = '';
+            if (guess === challengeState.word) {
+                challengeState.gameOver = true;
+                document.getElementById('challenge-message').textContent = '🎉 Correct! You won!';
+                document.getElementById('challenge-message').style.color = '#7fb627';
+            } else if (challengeState.guesses.length >= challengeState.maxGuesses) {
+                challengeState.gameOver = true;
+                document.getElementById('challenge-message').textContent = `😞 Word was: ${challengeState.word.toUpperCase()}`;
+                document.getElementById('challenge-message').style.color = '#ff6b6b';
+            } else {
+                document.getElementById('challenge-message').textContent = `${challengeState.maxGuesses - challengeState.guesses.length} guesses remaining`;
+                document.getElementById('challenge-message').style.color = 'var(--text-secondary)';
+            }
+            renderBoard();
+        }
+
+        document.getElementById('challenge-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') submitGuess();
+        });
+
+        const fetchDailyChallenge = () => fetchAndRender('/api/daily-challenge', renderChallenge, 'challenge-card');
+
         async function refreshCamera() {
             try {
                 const resp = await fetch('/api/capture', { method: 'POST' });
@@ -812,6 +912,7 @@
             fetchFigure();
             refreshPhoto();
             fetchWeatherData();
+            fetchDailyChallenge();
             
             initializeTemperatureChart();
 
