@@ -696,6 +696,30 @@ def get_news():
     return []
 
 
+def get_hacker_news():
+    """Get top 5 stories from Hacker News using the Firebase API."""
+    try:
+        # Get top story IDs
+        top_ids_resp = requests.get("https://hacker-news.firebaseio.com/v0/topstories.json", timeout=5)
+        if top_ids_resp.status_code == 200:
+            top_ids = top_ids_resp.json()[:5]
+            stories = []
+            for item_id in top_ids:
+                item_resp = requests.get(f"https://hacker-news.firebaseio.com/v0/item/{item_id}.json", timeout=5)
+                if item_resp.status_code == 200:
+                    item = item_resp.json()
+                    stories.append({
+                        "title": item.get("title", "No Title"),
+                        "link": item.get("url") or f"https://news.ycombinator.com/item?id={item_id}",
+                        "score": item.get("score", 0),
+                        "comments": item.get("descendants", 0)
+                    })
+            return stories
+    except Exception as e:
+        app.logger.warning(f"Failed to fetch Hacker News: {e}")
+    return []
+
+
 def get_ai_news():
     """Get AI-related news (Claude, Gemini, etc.) from Google News RSS."""
     try:
@@ -910,7 +934,8 @@ def api_news():
     """API endpoint for news."""
     return jsonify({
         "top_stories": get_news(),
-        "ai_news": get_ai_news()
+        "ai_news": get_ai_news(),
+        "hn_stories": get_hacker_news()
     })
 
 

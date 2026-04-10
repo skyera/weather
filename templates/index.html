@@ -443,7 +443,7 @@
                 </div>
 
                 <!-- News Sections -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
                     <section>
                         <div class="section-header">
                             <h3>Top Stories</h3>
@@ -451,7 +451,6 @@
                         </div>
                         <div id="news-list-top" class="news-list">
                             <!-- Skeleton -->
-                            <div class="news-card" style="margin-bottom: 1rem;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div></div>
                             <div class="news-card" style="margin-bottom: 1rem;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div></div>
                         </div>
                     </section>
@@ -462,6 +461,14 @@
                         <div id="news-list-ai" class="news-list">
                             <!-- Skeleton -->
                             <div class="news-card" style="margin-bottom: 1rem;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div></div>
+                        </div>
+                    </section>
+                    <section>
+                        <div class="section-header">
+                            <h3>Hacker News</h3>
+                        </div>
+                        <div id="news-list-hn" class="news-list">
+                            <!-- Skeleton -->
                             <div class="news-card" style="margin-bottom: 1rem;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div></div>
                         </div>
                     </section>
@@ -672,7 +679,7 @@
         }
 
         function renderNews(data) {
-            const { top_stories, ai_news } = data;
+            const { top_stories, ai_news, hn_stories } = data;
             const topList = document.getElementById('news-list-top');
             topList.innerHTML = top_stories.map(item => `
                 <a href="${item.link}" target="_blank" class="news-card" style="margin-bottom: 1rem;">
@@ -683,9 +690,20 @@
 
             const aiList = document.getElementById('news-list-ai');
             aiList.innerHTML = ai_news.map(item => `
-                <a href="${item.link}" target="_blank" class="news-card" style="margin-bottom: 1rem; border-left: 3px solid var(--primary);">
+                <a href="${item.link}" target="_blank" class="news-card" style="margin-bottom: 1rem; border-left: 3px solid #ffb900;">
                     <span class="news-title" style="font-size: 0.95rem;">${item.title}</span>
                     <span class="news-meta">${item.pubDate}</span>
+                </a>
+            `).join('');
+
+            const hnList = document.getElementById('news-list-hn');
+            hnList.innerHTML = hn_stories.map(item => `
+                <a href="${item.link}" target="_blank" class="news-card" style="margin-bottom: 1rem; border-left: 3px solid #ff6600;">
+                    <span class="news-title" style="font-size: 0.95rem;">${item.title}</span>
+                    <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                        <span class="news-meta" style="color: #ff6600;">🔥 ${item.score} points</span>
+                        <span class="news-meta">💬 ${item.comments} comments</span>
+                    </div>
                 </a>
             `).join('');
         }

@@ -45,7 +45,7 @@
 
 ## 🌐 Tech & Dev
 - [ ] **GitHub contribution graph** — Your commit activity
-- [ ] **Hacker News top stories** — `https://hacker-news.firebaseio.com/v0/topstories.json`
+- [x] **Hacker News top stories** — `https://hacker-news.firebaseio.com/v0/topstories.json`
 - [ ] **Product Hunt trending** — Today's hot products
 - [ ] **Stack Overflow hot questions** — From the SO API
 - [ ] **Is it down?** — Monitor status of services you care about (ping check)
