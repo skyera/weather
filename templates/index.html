@@ -519,6 +519,24 @@
                     <textarea id="quick-notes" placeholder="Jot down quick notes..." oninput="saveNotes()" style="width: 100%; min-height: 100px; background: #181818; border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-primary); padding: 0.75rem; font-family: 'Inter', sans-serif; font-size: 0.85rem; resize: vertical;"></textarea>
                 </div>
 
+                <!-- This Day in History -->
+                <div class="card" id="history-card">
+                    <div class="section-header">
+                        <h3>📜 This Day in History</h3>
+                        <button class="icon-btn" onclick="fetchThisDayInHistory()">🔄</button>
+                    </div>
+                    <div id="history-date" style="font-size: 1.1rem; font-weight: 700; color: var(--accent); margin-bottom: 1rem;">
+                        <div class="skeleton skeleton-title" style="width: 40%;"></div>
+                    </div>
+                    <div id="history-events">
+                        <div class="skeleton skeleton-text" style="width: 100%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.5rem;"></div>
+                    </div>
+                    <div id="history-births" style="margin-top: 1rem;"></div>
+                    <div id="history-deaths" style="margin-top: 1rem;"></div>
+                </div>
+
                 <!-- Historical Figure -->
                 <div class="card" id="figure-card">
                     <div class="section-header">
@@ -709,6 +727,39 @@
             document.getElementById('cpp-tip').classList.remove('skeleton', 'skeleton-text');
         }
 
+        function renderThisDayInHistory(data) {
+            document.getElementById('history-date').textContent = data.date || 'Today';
+
+            const eventsHtml = (data.events || []).map(e => `
+                <div style="margin-bottom: 0.75rem; padding-left: 0.75rem; border-left: 2px solid var(--accent);">
+                    <span style="font-size: 0.7rem; font-weight: 700; color: var(--accent); display: block; margin-bottom: 0.15rem;">${e.year}</span>
+                    <span style="font-size: 0.85rem; color: var(--text-primary); line-height: 1.4;">${e.text}</span>
+                </div>
+            `).join('');
+            document.getElementById('history-events').innerHTML =
+                `<div style="font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.5rem;">Events</div>` + eventsHtml;
+
+            if (data.births && data.births.length > 0) {
+                const birthsHtml = data.births.map(b => `
+                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.4rem;">
+                        <span style="color: var(--secondary); font-weight: 600;">${b.year}</span> — ${b.text}
+                    </div>
+                `).join('');
+                document.getElementById('history-births').innerHTML =
+                    `<div style="font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.5rem;">🎂 Born This Day</div>` + birthsHtml;
+            }
+
+            if (data.deaths && data.deaths.length > 0) {
+                const deathsHtml = data.deaths.map(d => `
+                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.4rem;">
+                        <span style="color: #888; font-weight: 600;">${d.year}</span> — ${d.text}
+                    </div>
+                `).join('');
+                document.getElementById('history-deaths').innerHTML =
+                    `<div style="font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.5rem;">🕊️ Died This Day</div>` + deathsHtml;
+            }
+        }
+
         function renderFigure(data) {
             const nameEl = document.getElementById('figure-name');
             const titleEl = document.getElementById('figure-title');
@@ -751,6 +802,7 @@
         const fetchMovie = () => fetchAndRender('/api/movie', renderMovie);
         const fetchCppTip = () => fetchAndRender('/api/cpp-tip', renderCppTip);
         const fetchFigure = () => fetchAndRender('/api/historical-figure', renderFigure);
+        const fetchThisDayInHistory = () => fetchAndRender('/api/this-day-in-history', renderThisDayInHistory, 'history-card');
         const refreshPhoto = () => fetchAndRender('/api/photo', renderPhoto);
         const fetchWeatherData = () => fetchAndRender('/api/data', renderWeatherData);
 
@@ -833,6 +885,7 @@
             fetchMovie();
             fetchCppTip();
             fetchFigure();
+            fetchThisDayInHistory();
             refreshPhoto();
             fetchWeatherData();
             loadNotes();

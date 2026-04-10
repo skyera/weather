@@ -784,6 +784,49 @@ def get_cpp_tip():
 
 
 
+def get_this_day_in_history():
+    """Get historical events that happened on this day using the Muffin Labs API."""
+    today = datetime.now()
+    month = today.month
+    day = today.day
+    try:
+        response = requests.get(
+            f"https://history.muffinlabs.com/date/{month}/{day}",
+            headers={"Accept": "application/json"},
+            timeout=8,
+        )
+        if response.status_code == 200:
+            data = response.json().get("data", {})
+            events = data.get("Events", [])[:5]
+            births = data.get("Births", [])[:3]
+            deaths = data.get("Deaths", [])[:3]
+            return {
+                "date": f"{today.strftime('%B')} {day}",
+                "events": [
+                    {"year": e.get("year", "?"), "text": e.get("text", "")}
+                    for e in events
+                ],
+                "births": [
+                    {"year": b.get("year", "?"), "text": b.get("text", "")}
+                    for b in births
+                ],
+                "deaths": [
+                    {"year": d.get("year", "?"), "text": d.get("text", "")}
+                    for d in deaths
+                ],
+            }
+    except Exception as e:
+        app.logger.warning(f"Failed to fetch this day in history: {e}")
+
+    # Fallback
+    return {
+        "date": f"{today.strftime('%B')} {day}",
+        "events": [{"year": "—", "text": "Could not load historical events."}],
+        "births": [],
+        "deaths": [],
+    }
+
+
 def get_historical_figure():
     """Get a random historical figure with a Wikipedia link."""
     figures = [
@@ -815,6 +858,12 @@ def index():
         curr_time=datetime.now(),
         image_exists=IMAGE_PATH.exists()
     )
+
+
+@app.route("/api/this-day-in-history")
+def api_this_day_in_history():
+    """API endpoint for this day in history."""
+    return jsonify(get_this_day_in_history())
 
 
 @app.route("/api/historical-figure")
