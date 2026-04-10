@@ -525,6 +525,24 @@
                     <div class="verse-box" id="quote-box" style="border-left-color: var(--secondary);"><div class="skeleton skeleton-text" style="width: 100%;"></div><div class="skeleton skeleton-text" style="width: 60%;"></div><div class="skeleton skeleton-text" style="width: 30%; float: right;"></div></div>
                 </div>
 
+                <!-- NASA APOD -->
+                <div class="card" id="nasa-card">
+                    <div class="section-header">
+                        <h3>🌌 NASA APOD</h3>
+                        <button class="icon-btn" onclick="fetchNasaApod()">🔄</button>
+                    </div>
+                    <div id="nasa-container" class="camera-container" style="aspect-ratio: 1/1; margin-bottom: 1rem;">
+                        <img id="nasa-img" src="" alt="NASA APOD" class="media-img skeleton">
+                    </div>
+                    <div id="nasa-title" style="font-size: 0.95rem; font-weight: 700; color: var(--accent); margin-bottom: 0.5rem;">
+                        <div class="skeleton skeleton-title"></div>
+                    </div>
+                    <p id="nasa-explanation" style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;">
+                        <span class="skeleton skeleton-p"></span>
+                        <span class="skeleton skeleton-p"></span>
+                    </p>
+                </div>
+
                 <!-- Word Discovery -->
                 <div class="card" id="word-card">
                     <div class="section-header"><h3>Word Discovery</h3></div>
@@ -672,6 +690,27 @@
         };
         
         // --- RENDER FUNCTIONS ---
+
+        function renderNasaApod(data) {
+            const img = document.getElementById('nasa-img');
+            const title = document.getElementById('nasa-title');
+            const explanation = document.getElementById('nasa-explanation');
+            
+            if (data.media_type === 'image') {
+                img.src = data.url;
+                img.classList.remove('skeleton');
+            } else if (data.media_type === 'video') {
+                // If it's a video, show a placeholder or link
+                img.src = "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=400&fit=crop";
+                img.classList.remove('skeleton');
+                title.innerHTML += " (Video Link)";
+            }
+            
+            title.textContent = data.title;
+            title.classList.remove('skeleton', 'skeleton-title');
+            explanation.textContent = data.explanation;
+            explanation.classList.remove('skeleton', 'skeleton-p');
+        }
 
         function renderWisdom(data) {
             const { bible_verse, famous_quote, random_word } = data;
@@ -867,6 +906,7 @@
         const fetchCppTip = () => fetchAndRender('/api/cpp-tip', renderCppTip);
         const fetchAlgorithm = () => fetchAndRender('/api/algorithm', renderAlgorithm, 'algorithm-card');
         const fetchFigure = () => fetchAndRender('/api/historical-figure', renderFigure);
+        const fetchNasaApod = () => fetchAndRender('/api/nasa-apod', renderNasaApod, 'nasa-card');
         const fetchThisDayInHistory = () => fetchAndRender('/api/this-day-in-history', renderThisDayInHistory, 'history-card');
         const refreshPhoto = () => fetchAndRender('/api/photo', renderPhoto);
         const fetchWeatherData = () => fetchAndRender('/api/data', renderWeatherData);
@@ -967,6 +1007,7 @@
             fetchCppTip();
             fetchAlgorithm();
             fetchFigure();
+            fetchNasaApod();
             fetchThisDayInHistory();
             refreshPhoto();
             fetchWeatherData();

@@ -631,11 +631,33 @@ def capture_image():
         return False
 
 
+def get_nasa_apod():
+    """Get NASA Astronomy Picture of the Day."""
+    # Using 'DEMO_KEY' by default (limited but works)
+    api_key = os.environ.get("NASA_API_KEY", "DEMO_KEY")
+    try:
+        response = requests.get(f"https://api.nasa.gov/planetary/apod?api_key={api_key}", timeout=10)
+        if response.status_code == 200:
+            return response.json()
+    except Exception as e:
+        app.logger.warning(f"Failed to fetch NASA APOD: {e}")
+    return None
+
+
 @app.route('/api/photo')
 def api_photo():
     """Return a JSON object with a random nature photo."""
     photo = get_random_nature_photo()
     return jsonify(photo)
+
+
+@app.route('/api/nasa-apod')
+def api_nasa_apod():
+    """Return NASA Astronomy Picture of the Day."""
+    apod = get_nasa_apod()
+    if apod:
+        return jsonify(apod)
+    return jsonify({"error": "Failed to fetch APOD"}), 500
 
 
 @app.route('/api/capture', methods=['POST'])

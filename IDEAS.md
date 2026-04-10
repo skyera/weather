@@ -23,7 +23,7 @@
 ## 🎮 Fun & Entertainment
 - [ ] **Riddle / brain teaser of the day** — From a trivia API
 - [ ] **Random joke** — `https://official-joke-api.appspot.com/random_joke`
-- [ ] **NASA Astronomy Picture of the Day** — `api.nasa.gov/planetary/apod`
+- [x] **NASA Astronomy Picture of the Day** — `api.nasa.gov/planetary/apod`
 - [ ] **Random fun fact** — `https://uselessfacts.jsph.pl/api/v2/facts/random`
 - [ ] **Spotify "Now Playing"** — If Spotify is used on the Pi
 - [ ] **Random recipe** — From TheMealDB (`themealdb.com/api.php`)
