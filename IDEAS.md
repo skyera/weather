@@ -1,7 +1,7 @@
 # 💡 Feature Ideas for Scripture & Skies Dashboard
 
 ## 🕐 Time & Date
-- [ ] **World clocks** — Show time in multiple cities (Tokyo, London, NYC, etc.)
+- [x] **World clocks** — Show time in multiple cities (San Jose, CA and China)
 - [ ] **Countdown timer** — Days until next holiday, birthday, or custom event
 - [x] **This day in history** — What happened on this date in past years
 - [ ] **Moon phase** — Current lunar phase with emoji 🌑🌒🌓🌔🌕

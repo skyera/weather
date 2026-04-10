@@ -505,6 +505,19 @@
                     </div>
                 </div>
 
+                <!-- World Clocks -->
+                <div class="card" id="world-clocks-card">
+                    <div class="section-header"><h3>🕒 World Clocks</h3></div>
+                    <div class="system-line">
+                        <span>San Jose, CA</span>
+                        <span id="clock-sj" style="font-weight: 700; color: var(--primary);">--:--:--</span>
+                    </div>
+                    <div class="system-line">
+                        <span>China (CST)</span>
+                        <span id="clock-china" style="font-weight: 700; color: var(--secondary);">--:--:--</span>
+                    </div>
+                </div>
+
                 <!-- Daily Wisdom -->
                 <div class="card" id="wisdom-card">
                     <div class="section-header"><h3>Daily Devotional</h3></div>
@@ -906,8 +919,24 @@
         
         function updateClock() {
             const now = new Date();
-            const timeString = now.toLocaleTimeString('en-US', { hour12: false });
-            document.getElementById('live-clock').textContent = timeString;
+            
+            // Local/Main Clock
+            document.getElementById('live-clock').textContent = now.toLocaleTimeString('en-US', { hour12: false });
+            
+            // World Clocks
+            const sjTime = new Date().toLocaleTimeString('en-US', { 
+                timeZone: 'America/Los_Angeles', 
+                hour12: false,
+                hour: '2-digit', minute: '2-digit', second: '2-digit' 
+            });
+            document.getElementById('clock-sj').textContent = sjTime;
+
+            const chinaTime = new Date().toLocaleTimeString('en-US', { 
+                timeZone: 'Asia/Shanghai', 
+                hour12: false,
+                hour: '2-digit', minute: '2-digit', second: '2-digit' 
+            });
+            document.getElementById('clock-china').textContent = chinaTime;
         }
 
         function saveNotes() {
