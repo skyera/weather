@@ -572,6 +572,26 @@
                     <div class="cpp-tip-box" id="cpp-tip-box"><p id="cpp-tip" class="skeleton skeleton-text"></p></div>
                 </div>
 
+                <!-- Algorithm of the Day -->
+                <div class="card" id="algorithm-card">
+                    <div class="section-header">
+                        <h3>🧮 Algorithm of the Day</h3>
+                    </div>
+                    <div id="algo-name" style="font-size: 1.15rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem;">
+                        <div class="skeleton skeleton-title" style="width: 60%;"></div>
+                    </div>
+                    <div id="algo-meta" style="margin-bottom: 0.75rem;">
+                        <div class="skeleton skeleton-text" style="width: 40%;"></div>
+                    </div>
+                    <p id="algo-description" style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1rem;">
+                        <span class="skeleton skeleton-p"></span>
+                        <span class="skeleton skeleton-p" style="width: 80%;"></span>
+                    </p>
+                    <div id="algo-pseudocode" style="background: #0d1117; border: 1px solid #21262d; border-radius: 8px; padding: 1rem; overflow-x: auto;">
+                        <pre style="margin: 0; font-family: 'Courier New', monospace; font-size: 0.8rem; color: #c9d1d9; line-height: 1.6; white-space: pre-wrap;"><code class="skeleton skeleton-text" style="display: block; height: 6em;"></code></pre>
+                    </div>
+                </div>
+
                 <!-- Camera -->
                 <div class="card">
                     <div class="section-header"><h3>Live Camera</h3><button class="icon-btn" onclick="refreshCamera()">🔄</button></div>
@@ -722,6 +742,19 @@
             document.getElementById('movie-description').innerHTML = data.description;
         }
 
+        function renderAlgorithm(data) {
+            document.getElementById('algo-name').textContent = data.name;
+            document.getElementById('algo-meta').innerHTML = `
+                <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; padding: 0.2rem 0.5rem; border-radius: 4px; background: rgba(0,164,239,0.15); color: var(--primary); margin-right: 0.5rem;">${data.category}</span>
+                <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; padding: 0.2rem 0.5rem; border-radius: 4px; background: rgba(127,182,39,0.15); color: var(--secondary);">${data.complexity}</span>
+            `;
+            document.getElementById('algo-description').textContent = data.description;
+            const codeEl = document.getElementById('algo-pseudocode').querySelector('code');
+            codeEl.textContent = data.pseudocode;
+            codeEl.classList.remove('skeleton', 'skeleton-text');
+            codeEl.style.height = 'auto';
+        }
+
         function renderCppTip(data) {
             document.getElementById('cpp-tip').textContent = data.tip;
             document.getElementById('cpp-tip').classList.remove('skeleton', 'skeleton-text');
@@ -801,6 +834,7 @@
         const fetchSystemInfo = () => fetchAndRender('/api/system', renderSystemInfo, 'system-card');
         const fetchMovie = () => fetchAndRender('/api/movie', renderMovie);
         const fetchCppTip = () => fetchAndRender('/api/cpp-tip', renderCppTip);
+        const fetchAlgorithm = () => fetchAndRender('/api/algorithm', renderAlgorithm, 'algorithm-card');
         const fetchFigure = () => fetchAndRender('/api/historical-figure', renderFigure);
         const fetchThisDayInHistory = () => fetchAndRender('/api/this-day-in-history', renderThisDayInHistory, 'history-card');
         const refreshPhoto = () => fetchAndRender('/api/photo', renderPhoto);
@@ -884,6 +918,7 @@
             fetchSystemInfo();
             fetchMovie();
             fetchCppTip();
+            fetchAlgorithm();
             fetchFigure();
             fetchThisDayInHistory();
             refreshPhoto();

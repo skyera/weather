@@ -1,0 +1,142 @@
+[
+  {
+    "name": "Binary Search",
+    "category": "Searching",
+    "complexity": "O(log n)",
+    "description": "Efficiently finds a target value in a sorted array by repeatedly dividing the search interval in half.",
+    "pseudocode": "function binarySearch(arr, target):\n  low = 0, high = len(arr) - 1\n  while low <= high:\n    mid = (low + high) / 2\n    if arr[mid] == target: return mid\n    else if arr[mid] < target: low = mid + 1\n    else: high = mid - 1\n  return -1"
+  },
+  {
+    "name": "Merge Sort",
+    "category": "Sorting",
+    "complexity": "O(n log n)",
+    "description": "A divide-and-conquer algorithm that splits the array in half, recursively sorts each half, then merges the sorted halves.",
+    "pseudocode": "function mergeSort(arr):\n  if len(arr) <= 1: return arr\n  mid = len(arr) / 2\n  left = mergeSort(arr[:mid])\n  right = mergeSort(arr[mid:])\n  return merge(left, right)\n\nfunction merge(L, R):\n  result = []\n  while L and R:\n    if L[0] <= R[0]: result.append(L.pop(0))\n    else: result.append(R.pop(0))\n  return result + L + R"
+  },
+  {
+    "name": "Quick Sort",
+    "category": "Sorting",
+    "complexity": "O(n log n) avg, O(n²) worst",
+    "description": "Picks a pivot element, partitions the array around it so smaller elements go left and larger go right, then recurses.",
+    "pseudocode": "function quickSort(arr, lo, hi):\n  if lo < hi:\n    p = partition(arr, lo, hi)\n    quickSort(arr, lo, p - 1)\n    quickSort(arr, p + 1, hi)\n\nfunction partition(arr, lo, hi):\n  pivot = arr[hi]\n  i = lo - 1\n  for j = lo to hi - 1:\n    if arr[j] < pivot:\n      i++; swap(arr[i], arr[j])\n  swap(arr[i+1], arr[hi])\n  return i + 1"
+  },
+  {
+    "name": "Depth-First Search (DFS)",
+    "category": "Graph",
+    "complexity": "O(V + E)",
+    "description": "Explores a graph by going as deep as possible along each branch before backtracking. Uses a stack (or recursion).",
+    "pseudocode": "function DFS(graph, start):\n  visited = set()\n  stack = [start]\n  while stack:\n    node = stack.pop()\n    if node not in visited:\n      visited.add(node)\n      process(node)\n      for neighbor in graph[node]:\n        if neighbor not in visited:\n          stack.push(neighbor)"
+  },
+  {
+    "name": "Breadth-First Search (BFS)",
+    "category": "Graph",
+    "complexity": "O(V + E)",
+    "description": "Explores a graph level by level, visiting all neighbors before moving deeper. Uses a queue.",
+    "pseudocode": "function BFS(graph, start):\n  visited = set([start])\n  queue = [start]\n  while queue:\n    node = queue.dequeue()\n    process(node)\n    for neighbor in graph[node]:\n      if neighbor not in visited:\n        visited.add(neighbor)\n        queue.enqueue(neighbor)"
+  },
+  {
+    "name": "Dijkstra's Algorithm",
+    "category": "Graph",
+    "complexity": "O((V + E) log V)",
+    "description": "Finds the shortest path from a source node to all other nodes in a weighted graph with non-negative edges.",
+    "pseudocode": "function dijkstra(graph, source):\n  dist = {v: INF for v in graph}\n  dist[source] = 0\n  pq = MinHeap([(0, source)])\n  while pq:\n    d, u = pq.extractMin()\n    if d > dist[u]: continue\n    for v, w in graph[u]:\n      if dist[u] + w < dist[v]:\n        dist[v] = dist[u] + w\n        pq.insert((dist[v], v))\n  return dist"
+  },
+  {
+    "name": "Dynamic Programming (Fibonacci)",
+    "category": "Dynamic Programming",
+    "complexity": "O(n)",
+    "description": "Computes Fibonacci numbers efficiently by storing previously computed results to avoid redundant work.",
+    "pseudocode": "function fib(n):\n  if n <= 1: return n\n  dp = [0] * (n + 1)\n  dp[1] = 1\n  for i = 2 to n:\n    dp[i] = dp[i-1] + dp[i-2]\n  return dp[n]\n\n// Space-optimized:\nfunction fib(n):\n  a, b = 0, 1\n  for i = 2 to n:\n    a, b = b, a + b\n  return b"
+  },
+  {
+    "name": "Kadane's Algorithm",
+    "category": "Dynamic Programming",
+    "complexity": "O(n)",
+    "description": "Finds the contiguous subarray with the maximum sum in a one-dimensional array.",
+    "pseudocode": "function maxSubarraySum(arr):\n  maxSoFar = arr[0]\n  maxEndingHere = arr[0]\n  for i = 1 to len(arr) - 1:\n    maxEndingHere = max(arr[i],\n                       maxEndingHere + arr[i])\n    maxSoFar = max(maxSoFar, maxEndingHere)\n  return maxSoFar"
+  },
+  {
+    "name": "Knapsack (0/1)",
+    "category": "Dynamic Programming",
+    "complexity": "O(n × W)",
+    "description": "Determines the maximum value that can be carried in a knapsack of capacity W, given n items each with a weight and value.",
+    "pseudocode": "function knapsack(weights, values, W):\n  n = len(weights)\n  dp = 2D array [n+1][W+1] = 0\n  for i = 1 to n:\n    for w = 0 to W:\n      if weights[i-1] <= w:\n        dp[i][w] = max(\n          dp[i-1][w],\n          dp[i-1][w - weights[i-1]] + values[i-1]\n        )\n      else:\n        dp[i][w] = dp[i-1][w]\n  return dp[n][W]"
+  },
+  {
+    "name": "Two Pointers",
+    "category": "Technique",
+    "complexity": "O(n)",
+    "description": "Uses two pointers moving towards each other (or in the same direction) to solve problems on sorted arrays or linked lists.",
+    "pseudocode": "function twoSum(sorted_arr, target):\n  left = 0\n  right = len(arr) - 1\n  while left < right:\n    sum = arr[left] + arr[right]\n    if sum == target:\n      return (left, right)\n    else if sum < target:\n      left++\n    else:\n      right--\n  return None"
+  },
+  {
+    "name": "Sliding Window",
+    "category": "Technique",
+    "complexity": "O(n)",
+    "description": "Maintains a window over a sequence that slides forward, efficiently computing properties like max sum of k consecutive elements.",
+    "pseudocode": "function maxSumWindow(arr, k):\n  windowSum = sum(arr[0..k-1])\n  maxSum = windowSum\n  for i = k to len(arr) - 1:\n    windowSum += arr[i] - arr[i - k]\n    maxSum = max(maxSum, windowSum)\n  return maxSum"
+  },
+  {
+    "name": "Topological Sort",
+    "category": "Graph",
+    "complexity": "O(V + E)",
+    "description": "Orders vertices of a directed acyclic graph (DAG) so that for every edge u→v, u comes before v.",
+    "pseudocode": "function topoSort(graph):\n  inDegree = count incoming edges\n  queue = [v for v if inDegree[v] == 0]\n  result = []\n  while queue:\n    node = queue.dequeue()\n    result.append(node)\n    for neighbor in graph[node]:\n      inDegree[neighbor]--\n      if inDegree[neighbor] == 0:\n        queue.enqueue(neighbor)\n  return result"
+  },
+  {
+    "name": "Union-Find (Disjoint Set)",
+    "category": "Data Structure",
+    "complexity": "O(α(n)) per operation",
+    "description": "Tracks a set of elements partitioned into disjoint subsets. Supports near-constant time union and find with path compression and rank.",
+    "pseudocode": "function find(x):\n  if parent[x] != x:\n    parent[x] = find(parent[x])  // path compression\n  return parent[x]\n\nfunction union(x, y):\n  px, py = find(x), find(y)\n  if px == py: return\n  if rank[px] < rank[py]: swap(px, py)\n  parent[py] = px\n  if rank[px] == rank[py]: rank[px]++"
+  },
+  {
+    "name": "Binary Search Tree (BST) Insert",
+    "category": "Data Structure",
+    "complexity": "O(h) where h = tree height",
+    "description": "Inserts a value into a BST by traversing left for smaller values and right for larger values until finding an empty spot.",
+    "pseudocode": "function insert(root, val):\n  if root is null:\n    return new Node(val)\n  if val < root.val:\n    root.left = insert(root.left, val)\n  else:\n    root.right = insert(root.right, val)\n  return root"
+  },
+  {
+    "name": "Heap Sort",
+    "category": "Sorting",
+    "complexity": "O(n log n)",
+    "description": "Builds a max-heap from the array, then repeatedly extracts the maximum element to build the sorted result.",
+    "pseudocode": "function heapSort(arr):\n  n = len(arr)\n  // Build max heap\n  for i = n/2 - 1 downto 0:\n    heapify(arr, n, i)\n  // Extract elements\n  for i = n - 1 downto 1:\n    swap(arr[0], arr[i])\n    heapify(arr, i, 0)\n\nfunction heapify(arr, n, i):\n  largest = i\n  l = 2*i + 1, r = 2*i + 2\n  if l < n and arr[l] > arr[largest]: largest = l\n  if r < n and arr[r] > arr[largest]: largest = r\n  if largest != i:\n    swap(arr[i], arr[largest])\n    heapify(arr, n, largest)"
+  },
+  {
+    "name": "A* Search",
+    "category": "Graph",
+    "complexity": "O(E log V)",
+    "description": "A best-first pathfinding algorithm that uses a heuristic to estimate the cost to the goal, combining actual cost g(n) and heuristic h(n).",
+    "pseudocode": "function aStar(start, goal, h):\n  open = MinHeap([(h(start), start)])\n  gScore = {start: 0}\n  while open:\n    _, current = open.extractMin()\n    if current == goal: return reconstructPath()\n    for neighbor, cost in edges(current):\n      tentative = gScore[current] + cost\n      if tentative < gScore.get(neighbor, INF):\n        gScore[neighbor] = tentative\n        f = tentative + h(neighbor)\n        open.insert((f, neighbor))"
+  },
+  {
+    "name": "LRU Cache",
+    "category": "Data Structure",
+    "complexity": "O(1) get/put",
+    "description": "A cache that evicts the least recently used item when full. Implemented with a hash map and a doubly linked list.",
+    "pseudocode": "class LRUCache(capacity):\n  map = HashMap()\n  list = DoublyLinkedList()\n\n  function get(key):\n    if key in map:\n      move map[key] to front of list\n      return map[key].value\n    return -1\n\n  function put(key, value):\n    if key in map: remove map[key]\n    else if size == capacity:\n      remove last from list\n      delete from map\n    add (key, value) to front of list\n    map[key] = new node"
+  },
+  {
+    "name": "Trie (Prefix Tree)",
+    "category": "Data Structure",
+    "complexity": "O(m) per operation, m = word length",
+    "description": "A tree-like data structure for efficient retrieval of keys in a dataset of strings. Each node represents a character.",
+    "pseudocode": "class TrieNode:\n  children = {}\n  isEnd = false\n\nfunction insert(word):\n  node = root\n  for char in word:\n    if char not in node.children:\n      node.children[char] = TrieNode()\n    node = node.children[char]\n  node.isEnd = true\n\nfunction search(word):\n  node = root\n  for char in word:\n    if char not in node.children: return false\n    node = node.children[char]\n  return node.isEnd"
+  },
+  {
+    "name": "Floyd-Warshall",
+    "category": "Graph",
+    "complexity": "O(V³)",
+    "description": "Finds shortest paths between all pairs of vertices in a weighted graph, including negative edges (but no negative cycles).",
+    "pseudocode": "function floydWarshall(graph):\n  dist = copy of adjacency matrix\n  for k = 0 to V-1:\n    for i = 0 to V-1:\n      for j = 0 to V-1:\n        if dist[i][k] + dist[k][j] < dist[i][j]:\n          dist[i][j] = dist[i][k] + dist[k][j]\n  return dist"
+  },
+  {
+    "name": "Counting Sort",
+    "category": "Sorting",
+    "complexity": "O(n + k) where k = range",
+    "description": "A non-comparison sort that counts occurrences of each value and uses arithmetic to place elements in the correct position.",
+    "pseudocode": "function countingSort(arr):\n  maxVal = max(arr)\n  count = [0] * (maxVal + 1)\n  for x in arr:\n    count[x]++\n  output = []\n  for i = 0 to maxVal:\n    while count[i] > 0:\n      output.append(i)\n      count[i]--\n  return output"
+  }
+]

@@ -668,6 +668,12 @@ def api_cpp_tip():
     return jsonify({"tip": tip})
 
 
+@app.route('/api/algorithm')
+def api_algorithm():
+    """Return the algorithm of the day."""
+    return jsonify(get_algorithm_of_the_day())
+
+
 import xml.etree.ElementTree as ET
 
 def get_news():
@@ -771,6 +777,26 @@ def get_random_movie():
     except (IOError, json.JSONDecodeError, IndexError) as e:
         app.logger.error(f"Error reading or parsing movies.json: {e}")
         return {"title": "Error", "year": "N/A", "description": "Could not load movie data."}
+
+def get_algorithm_of_the_day():
+    """Get the algorithm of the day, rotating daily through the collection."""
+    try:
+        with open(BASE_DIR / 'algorithms.json', 'r') as f:
+            algorithms = json.load(f)
+        # Use the day of year to deterministically pick one algorithm per day
+        day_of_year = datetime.now().timetuple().tm_yday
+        index = day_of_year % len(algorithms)
+        return algorithms[index]
+    except (IOError, json.JSONDecodeError, IndexError) as e:
+        app.logger.error(f"Error reading algorithms.json: {e}")
+        return {
+            "name": "Binary Search",
+            "category": "Searching",
+            "complexity": "O(log n)",
+            "description": "Finds a target in a sorted array by halving the search space.",
+            "pseudocode": "low=0, high=n-1\nwhile low<=high:\n  mid=(low+high)/2\n  if arr[mid]==target: return mid"
+        }
+
 
 def get_cpp_tip():
     """Get a random C++ best practice tip from the JSON file."""
