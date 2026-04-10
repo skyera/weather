@@ -696,6 +696,12 @@ def api_algorithm():
     return jsonify(get_algorithm_of_the_day())
 
 
+@app.route('/api/shortcut')
+def api_shortcut():
+    """Return a random keyboard shortcut tip."""
+    return jsonify(get_shortcut_tip())
+
+
 import xml.etree.ElementTree as ET
 
 def get_news():
@@ -842,6 +848,17 @@ def get_algorithm_of_the_day():
             "description": "Finds a target in a sorted array by halving the search space.",
             "pseudocode": "low=0, high=n-1\nwhile low<=high:\n  mid=(low+high)/2\n  if arr[mid]==target: return mid"
         }
+
+
+def get_shortcut_tip():
+    """Get a random keyboard shortcut tip from the JSON file."""
+    try:
+        with open(BASE_DIR / 'shortcuts.json', 'r') as f:
+            shortcuts = json.load(f)
+        return random.choice(shortcuts)
+    except (IOError, json.JSONDecodeError, IndexError) as e:
+        app.logger.error(f"Error reading or parsing shortcuts.json: {e}")
+        return {"app": "Error", "shortcut": "N/A", "description": "Could not load shortcut data."}
 
 
 def get_cpp_tip():

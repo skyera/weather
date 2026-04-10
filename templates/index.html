@@ -610,6 +610,18 @@
                     <div class="cpp-tip-box" id="cpp-tip-box"><p id="cpp-tip" class="skeleton skeleton-text"></p></div>
                 </div>
 
+                <!-- Keyboard Shortcut Tip -->
+                <div class="card">
+                    <div class="section-header"><h3>⌨️ Keyboard Shortcut</h3><button class="icon-btn" onclick="fetchShortcut()">🔄</button></div>
+                    <div id="shortcut-card" style="background: var(--bg-hover); padding: 1.25rem; border-radius: var(--radius); border-left: 4px solid #f81ce5; display: flex; flex-direction: column; gap: 0.5rem;">
+                        <div id="shortcut-app" class="skeleton skeleton-title" style="width: 40%; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);"></div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0;" id="shortcut-keys">
+                            <span class="skeleton skeleton-text" style="width: 80px; height: 30px; display: inline-block; border-radius: 4px;"></span>
+                        </div>
+                        <div id="shortcut-desc" class="skeleton skeleton-p" style="font-size: 0.95rem; color: var(--text-primary);"></div>
+                    </div>
+                </div>
+
                 <!-- Algorithm of the Day -->
                 <div class="card" id="algorithm-card">
                     <div class="section-header">
@@ -830,6 +842,24 @@
             document.getElementById('cpp-tip').classList.remove('skeleton', 'skeleton-text');
         }
 
+        function renderShortcut(data) {
+            const appEl = document.getElementById('shortcut-app');
+            appEl.textContent = data.app;
+            appEl.classList.remove('skeleton', 'skeleton-title');
+            appEl.style.width = 'auto';
+
+            const keysEl = document.getElementById('shortcut-keys');
+            const keys = data.shortcut.split('+').map(k => k.trim());
+            const parsedHTML = keys.map(k => `
+                <kbd style="background: #333; border: 1px solid #555; border-radius: 4px; padding: 0.3rem 0.6rem; font-family: monospace; font-size: 0.9rem; color: #fff; box-shadow: 0 2px 0 #555;">${k}</kbd>
+            `).join('<span style="color: var(--text-secondary); align-self: center;">+</span>');
+            keysEl.innerHTML = parsedHTML;
+            
+            const descEl = document.getElementById('shortcut-desc');
+            descEl.textContent = data.description;
+            descEl.classList.remove('skeleton', 'skeleton-p');
+        }
+
         function renderThisDayInHistory(data) {
             document.getElementById('history-date').textContent = data.date || 'Today';
 
@@ -904,6 +934,7 @@
         const fetchSystemInfo = () => fetchAndRender('/api/system', renderSystemInfo, 'system-card');
         const fetchMovie = () => fetchAndRender('/api/movie', renderMovie);
         const fetchCppTip = () => fetchAndRender('/api/cpp-tip', renderCppTip);
+        const fetchShortcut = () => fetchAndRender('/api/shortcut', renderShortcut);
         const fetchAlgorithm = () => fetchAndRender('/api/algorithm', renderAlgorithm, 'algorithm-card');
         const fetchFigure = () => fetchAndRender('/api/historical-figure', renderFigure);
         const fetchNasaApod = () => fetchAndRender('/api/nasa-apod', renderNasaApod, 'nasa-card');
@@ -1005,6 +1036,7 @@
             fetchSystemInfo();
             fetchMovie();
             fetchCppTip();
+            fetchShortcut();
             fetchAlgorithm();
             fetchFigure();
             fetchNasaApod();

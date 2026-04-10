@@ -34,7 +34,7 @@
 - [ ] **LeetCode daily challenge** — Link to the daily problem
 - [ ] **Language learning word** — Random word in Spanish/Japanese/etc.
 - [ ] **Math puzzle** — Simple daily math challenge
-- [ ] **Keyboard shortcut tip** — Vim, VS Code, Linux shortcuts
+- [x] **Keyboard shortcut tip** — Vim, VS Code, Linux shortcuts
 - [ ] **Design pattern of the day** — Rotate through GoF patterns
 
 ## 🏥 Health & Lifestyle
