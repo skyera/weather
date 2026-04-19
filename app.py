@@ -28,12 +28,15 @@ def command_exists(cmd):
 RASPISILL_AVAILABLE = command_exists('raspistill')
 LIBCAMERA_STILL_AVAILABLE = command_exists('libcamera-still')
 
-
+# BME280 sensor availability
+BME280_AVAILABLE = False
+bme = None
 try:
     import bme280 as bme
     BME280_AVAILABLE = True
-except ImportError:
+except Exception:
     BME280_AVAILABLE = False
+    bme = None
 
 from PIL import Image, ImageDraw, ImageFont
 
@@ -201,7 +204,7 @@ def get_system_info():
         with open("/proc/device-tree/model", "r") as f:
             info["model"] = f.read().strip().replace("\x00", "")
     except (FileNotFoundError, IOError):
-        info["model"] = "Unknown Model"
+        info["model"] = "Generic Server"
     
     # Get uptime in formatted days/hours/minutes
     try:
@@ -221,7 +224,7 @@ def get_system_info():
             # Store raw seconds for badge display
             info["uptime_seconds"] = uptime_seconds
     except (FileNotFoundError, IOError, ValueError):
-        info["uptime"] = "Uptime unavailable"
+        info["uptime"] = "N/A"
         info["uptime_seconds"] = 0
     
     # Get memory info (free and total)
@@ -237,13 +240,13 @@ def get_system_info():
                     free = parts[3]
                     info["memory"] = f"Used: {used} / {total} (Free: {free})"
                 else:
-                    info["memory"] = "Memory info unavailable"
+                    info["memory"] = "N/A"
             else:
-                info["memory"] = "Memory info unavailable"
+                info["memory"] = "N/A"
         else:
-            info["memory"] = "Memory info unavailable"
+            info["memory"] = "N/A"
     except (subprocess.TimeoutExpired, FileNotFoundError):
-        info["memory"] = "Memory info unavailable"
+        info["memory"] = "N/A"
     
     # Get CPU temperature
     try:
@@ -267,13 +270,13 @@ def get_system_info():
                     percent = parts[4]
                     info["disk"] = f"{used} / {total} ({percent})"
                 else:
-                    info["disk"] = "Disk info unavailable"
+                    info["disk"] = "N/A"
             else:
-                info["disk"] = "Disk info unavailable"
+                info["disk"] = "N/A"
         else:
-            info["disk"] = "Disk info unavailable"
+            info["disk"] = "N/A"
     except (subprocess.TimeoutExpired, FileNotFoundError):
-        info["disk"] = "Disk info unavailable"
+        info["disk"] = "N/A"
     
     # Camera hardware info
     camera_info = {
@@ -297,7 +300,7 @@ def get_system_info():
 
     # BME280 hardware info
     try:
-        if BME280_AVAILABLE:
+        if BME280_AVAILABLE and bme is not None:
             try:
                 bme_id = bme.readBME280ID()
                 info["bme280"] = {"present": True, "id": str(bme_id)}
@@ -459,12 +462,13 @@ def get_random_nature_photo():
 
 def get_sensor_data():
     """Read BME280 sensor data with fallback values."""
-    if not BME280_AVAILABLE:
+    if not BME280_AVAILABLE or bme is None:
         data = {
             "temperature": 22.5,
             "pressure": 1013.25,
             "humidity": 45.0,
-            "altitude": 0
+            "altitude": 0,
+            "sensor_available": False
         }
     else:
         try:
@@ -475,15 +479,17 @@ def get_sensor_data():
                 "temperature": round(temperature, 1),
                 "pressure": round(pressure, 2),
                 "humidity": round(humidity, 1),
-                "altitude": round(altitude, 1)
+                "altitude": round(altitude, 1),
+                "sensor_available": True
             }
         except Exception as e:
             app.logger.error(f"Sensor error: {e}")
             data = {
-                "temperature": None,
-                "pressure": None,
-                "humidity": None,
-                "altitude": None,
+                "temperature": 22.5,
+                "pressure": 1013.25,
+                "humidity": 45.0,
+                "altitude": 0,
+                "sensor_available": False,
                 "error": str(e)
             }
     
@@ -942,10 +948,12 @@ def get_historical_figure():
 def index():
     # This route is now very lightweight. It just renders the shell.
     # All data will be loaded by JavaScript on the client side.
+    camera_available = PICAMERA_AVAILABLE or RASPISILL_AVAILABLE or LIBCAMERA_STILL_AVAILABLE
     return render_template(
         "index.html",
         curr_time=datetime.now(),
-        image_exists=IMAGE_PATH.exists()
+        image_exists=IMAGE_PATH.exists(),
+        camera_available=camera_available
     )
 
 

@@ -643,6 +643,7 @@
                 </div>
 
                 <!-- Camera -->
+                {% if camera_available or image_exists %}
                 <div class="card">
                     <div class="section-header"><h3>Live Camera</h3><button class="icon-btn" onclick="refreshCamera()">🔄</button></div>
                     <div class="camera-container">
@@ -654,6 +655,7 @@
                         {% endif %}
                     </div>
                 </div>
+                {% endif %}
 
                 <!-- Holidays -->
                 <div class="card" id="holidays-card">
