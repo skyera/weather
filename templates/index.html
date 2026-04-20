@@ -961,7 +961,7 @@
         const fetchNasaApod = () => fetchAndRender('/api/nasa-apod', renderNasaApod, 'nasa-card');
         const fetchThisDayInHistory = () => fetchAndRender('/api/this-day-in-history', renderThisDayInHistory, 'history-card');
         const refreshPhoto = () => fetchAndRender('/api/photo', renderPhoto);
-        const fetchWeatherData = () => fetchAndRender('/api/data', renderWeatherData);
+        const fetchWeatherData = () => fetchAndRender('/api/data', renderWeatherData, 'weather-card');
 
         async function refreshCamera() {
             try {

@@ -305,9 +305,9 @@ def get_system_info():
                 bme_id = bme.readBME280ID()
                 info["bme280"] = {"present": True, "id": str(bme_id)}
             except Exception as e:
-                info["bme280"] = {"present": True, "error": str(e)}
+                info["bme280"] = {"present": True, "error": str(e), "hint": "Check wiring and I2C enable"}
         else:
-            info["bme280"] = {"present": False}
+            info["bme280"] = {"present": False, "reason": "Module not loaded"}
     except Exception as e:
         info["bme280"] = {"present": False, "error": str(e)}
 
@@ -1021,6 +1021,17 @@ def api_data():
         **sensor_data,
         "weather_icon": get_weather_icon(sensor_data.get("temperature")),
         "speedtest": get_latest_speedtest()
+    })
+
+
+@app.route("/api/hardware")
+def api_hardware():
+    """Check hardware availability."""
+    return jsonify({
+        "picamera": PICAMERA_AVAILABLE,
+        "bme280": BME280_AVAILABLE,
+        "raspistill": RASPISILL_AVAILABLE,
+        "libcamera": LIBCAMERA_STILL_AVAILABLE
     })
 
 
