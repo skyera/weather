@@ -26,6 +26,19 @@
             --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
 
+        [data-theme="light"] {
+            --primary: #0077cc;
+            --secondary: #5a8a1a;
+            --accent: #cc9900;
+            --bg-dark: #f5f5f5;
+            --bg-card: #ffffff;
+            --bg-hover: #eeeeee;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --border: #dddddd;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg-dark);
@@ -44,6 +57,11 @@
             pointer-events: none;
             z-index: 0;
             background: radial-gradient(circle at 50% -20%, #1a1a1a 0%, #050505 100%);
+            transition: background 0.3s ease;
+        }
+
+        [data-theme="light"] .bg-animation {
+            background: radial-gradient(circle at 50% -20%, #e0e0e0 0%, #f5f5f5 100%);
         }
 
         .container {
@@ -420,6 +438,7 @@
                 <p class="subtitle">Raspberry Pi Weather Intelligence Portal</p>
             </div>
             <div class="status-pill">
+                <button class="icon-btn" id="theme-toggle" onclick="toggleTheme()" title="Toggle theme">🌙</button>
                 <div class="spin"></div>
                 <span id="live-clock">--:--:--</span>
             </div>
@@ -1029,8 +1048,26 @@
             }
         }
 
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            document.getElementById('theme-toggle').textContent = next === 'light' ? '☀️' : '🌙';
+        }
+
+        function loadTheme() {
+            const saved = localStorage.getItem('theme');
+            if (saved) {
+                document.documentElement.setAttribute('data-theme', saved);
+                document.getElementById('theme-toggle').textContent = saved === 'light' ? '☀️' : '🌙';
+            }
+        }
+
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
             // Initial data load
             fetchWisdom();
             fetchNews();
