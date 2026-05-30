@@ -944,7 +944,7 @@ def get_historical_figure():
     return random.choice(figures)
 
 
-@app.route("/")
+@app.route("/modern")
 def index():
     # This route is now very lightweight. It just renders the shell.
     # All data will be loaded by JavaScript on the client side.
@@ -957,7 +957,7 @@ def index():
     )
 
 
-@app.route("/html")
+@app.route("/")
 def html_dashboard():
     """Server-side rendered pure-HTML weather dashboard based on justfuckingusehtml.com"""
     # Fetch sensor data and weather icon
@@ -1053,7 +1053,7 @@ def html_feedback():
     <body>
         <h1>Feedback Received, you opinionated fuck!</h1>
         <p>We logged your feedback in the console. No bloated database record created, just standard Unix logging.</p>
-        <p><a href="/html">← Back to the pure HTML dashboard</a></p>
+        <p><a href="/">← Back to the pure HTML dashboard</a></p>
     </body>
     </html>
     """
