@@ -959,7 +959,7 @@ def index():
 
 @app.route("/")
 def html_dashboard():
-    """Server-side rendered pure-HTML weather dashboard based on justfuckingusehtml.com"""
+    """Server-side rendered pure-HTML weather dashboard based on justusehtml.com"""
     # Fetch sensor data and weather icon
     sensor_data = get_sensor_data()
     weather_icon = get_weather_icon(sensor_data.get("temperature"))
@@ -1051,7 +1051,7 @@ def html_feedback():
         </style>
     </head>
     <body>
-        <h1>Feedback Received, you opinionated fuck!</h1>
+        <h1>Feedback Received, you opinionated developer!</h1>
         <p>We logged your feedback in the console. No bloated database record created, just standard Unix logging.</p>
         <p><a href="/">← Back to the pure HTML dashboard</a></p>
     </body>
