@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ Just Fucking Use HTML Weather Dashboard</title>
+    <meta name="color-scheme" content="light dark">
+    <meta name="description" content="A real, raw, pure-HTML weather dashboard with zero Javascript frameworks. Fits on a floppy disk.">
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        pre, code {
+            background: rgba(128, 128, 128, 0.15);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        pre code {
+            display: block;
+            padding: 1rem;
+            overflow-x: auto;
+        }
+        blockquote {
+            border-left: 4px solid #00a4ef;
+            margin: 1.5rem 0;
+            padding-left: 1rem;
+            font-style: italic;
+        }
+        hr {
+            border: 0;
+            border-top: 1px solid rgba(128, 128, 128, 0.3);
+            margin: 2rem 0;
+        }
+        section {
+            margin: 2.5rem 0;
+        }
+        button {
+            padding: 0.5rem 1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        fieldset {
+            padding: 1rem;
+            border: 1px solid rgba(128, 128, 128, 0.3);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        legend {
+            font-weight: bold;
+            padding: 0 0.5rem;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+        .metric-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        .metric-table th, .metric-table td {
+            border: 1px solid rgba(128, 128, 128, 0.3);
+            padding: 0.75rem;
+            text-align: left;
+        }
+        .metric-table th {
+            background: rgba(128, 128, 128, 0.1);
+        }
+        dialog {
+            border: 1px solid rgba(128, 128, 128, 0.3);
+            border-radius: 8px;
+            padding: 2rem;
+            max-width: 500px;
+        }
+        dialog::backdrop {
+            background: rgba(0,0,0,0.6);
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-link">← Go back to the bloated, 50MB JavaScript dashboard</a>
+
+    <header>
+        <h1>Just Fucking Use HTML Weather Dashboard</h1>
+        <p>
+            Hey, smartass! You know what loads faster than your React-hydrate-Webpack-Vite-Tailwind-Next.js-tangled mess?
+            Plain, server-side rendered HTML. 
+            No spinners, no web sockets screaming for updates, and no hydration errors. Just pure, unadulterated weather intelligence.
+            Why the fuck are you loading 5MB of JavaScript to tell if it's raining outside? Look out the motherfucking window.
+        </p>
+        <p><strong>Generated at:</strong> <code>{{ curr_time.strftime('%Y-%m-%d %H:%M:%S %Z') }}</code> (No, it doesn't tick. It's static. Get over it.)</p>
+    </header>
+
+    <hr>
+
+    <section>
+        <h2>1. Atmospheric Metrics, No Bloated JSON Parsing</h2>
+        <p>
+            Look at these raw numbers, you pixel-pushing dipshit. They are calculated on the server and served straight to your eyeballs.
+            No React state, no async hook waiting to crash when your connection drops.
+        </p>
+        
+        <table class="metric-table">
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>Value</th>
+                    <th>Source / Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Temperature</strong></td>
+                    <td>{{ sensor.temperature }}°C {{ weather_icon }}</td>
+                    <td>BME280 Sensor (or fallback)</td>
+                </tr>
+                <tr>
+                    <td><strong>Humidity</strong></td>
+                    <td>{{ sensor.humidity }}%</td>
+                    <td>Pure water vapor in the air</td>
+                </tr>
+                <tr>
+                    <td><strong>Atmospheric Pressure</strong></td>
+                    <td>{{ sensor.pressure }} hPa</td>
+                    <td>Gravity pulling the atmosphere down</td>
+                </tr>
+                <tr>
+                    <td><strong>Estimated Altitude</strong></td>
+                    <td>{{ sensor.altitude }}m</td>
+                    <td>Calculated from barometric pressure</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>2. Live Camera Feed (Real Images, Not Placeholders)</h2>
+        <p>
+            Did you buy a fancy camera to let it sit in a drawer? Hell no. 
+            Here is the latest snapshot from the Raspberry Pi. 
+            Clicking reload page actually reloads the image. No dynamic socket-stream needed.
+        </p>
+        {% if image_exists %}
+            <div style="text-align: center; margin: 1.5rem 0;">
+                <img src="{{ url_for('static', filename='image.jpg') }}?t={{ curr_time.timestamp() }}" alt="Raspberry Pi Camera Snapshot" style="max-width: 100%; border: 2px solid rgba(128,128,128,0.5); border-radius: 8px;">
+                <br>
+                <small>Actual photo captured from your Pi.</small>
+            </div>
+        {% else %}
+            <p><strong>No camera feed available.</strong> Probably because you didn't plug in the Pi Camera or you are running on a virtual machine like a peasant.</p>
+        {% endif %}
+        <br>
+        <form method="POST" action="/html/capture" style="display:inline;">
+             <button type="submit" onclick="alert('Starting background capture. Reload page in 3 seconds to see the new photo, you impatient prick!')">Trigger New Capture</button>
+        </form>
+    </section>
+
+    <section>
+        <h2>3. Daily Wisdom, No API Hydration Errors</h2>
+        <p>
+            Drink some water and read these holy texts instead of arguing about state management libraries on Twitter all day.
+        </p>
+        
+        <fieldset>
+            <legend>Daily Scripture Devotional</legend>
+            <blockquote>
+                <p>"{{ wisdom.bible_verse.text }}"</p>
+                <cite>— {{ wisdom.bible_verse.reference }} ({{ wisdom.bible_verse.translation }})</cite>
+            </blockquote>
+        </fieldset>
+
+        <fieldset>
+            <legend>Famous Quote</legend>
+            <blockquote>
+                <p>"{{ wisdom.famous_quote.text }}"</p>
+                <cite>— {{ wisdom.famous_quote.author }}</cite>
+            </blockquote>
+        </fieldset>
+
+        <fieldset>
+            <legend>Word Discovery</legend>
+            <h3>{{ wisdom.random_word.word }}</h3>
+            <p><strong>Definition:</strong> {{ wisdom.random_word.definition }}</p>
+            <p><em>Example:</em> "{{ wisdom.random_word.example }}"</p>
+        </fieldset>
+    </section>
+
+    <section>
+        <h2>4. The Motherfucking News</h2>
+        <p>Google News RSS feed and Hacker News stories, fetched server-side. No API keys, no analytics, no bloated tracking cookies.</p>
+        
+        <details>
+            <summary><strong>🔥 Top Stories (Click to expand, yes this is native HTML, no JS!)</strong></summary>
+            <ul style="margin-top: 0.5rem;">
+                {% for item in news.top_stories %}
+                    <li><a href="{{ item.link }}" target="_blank">{{ item.title }}</a> <small>({{ item.pubDate }})</small></li>
+                {% endfor %}
+            </ul>
+        </details>
+        <br>
+
+        <details>
+            <summary><strong>🤖 AI Buzzword Bingo (Click to expand)</strong></summary>
+            <ul style="margin-top: 0.5rem;">
+                {% for item in news.ai_news %}
+                    <li><a href="{{ item.link }}" target="_blank">{{ item.title }}</a> <small>({{ item.pubDate }})</small></li>
+                {% endfor %}
+            </ul>
+        </details>
+        <br>
+
+        <details>
+            <summary><strong>🧡 Hacker News (For the self-proclaimed tech elites)</strong></summary>
+            <ul style="margin-top: 0.5rem;">
+                {% for item in news.hn_stories %}
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="{{ item.link }}" target="_blank">{{ item.title }}</a>
+                        <br>
+                        <small>🔥 {{ item.score }} points &middot; 💬 {{ item.comments }} comments</small>
+                    </li>
+                {% endfor %}
+            </ul>
+        </details>
+    </section>
+
+    <section>
+        <h2>5. Space & Screen (NASA APOD & Movie Pick)</h2>
+        
+        <details>
+            <summary><strong>🌌 NASA Astronomy Picture of the Day</strong></summary>
+            <div style="margin-top: 0.5rem;">
+                {% if nasa %}
+                    <h3>{{ nasa.title }}</h3>
+                    {% if nasa.media_type == 'image' %}
+                        <img src="{{ nasa.url }}" alt="{{ nasa.title }}" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;">
+                    {% else %}
+                        <p>NASA served a video today. <a href="{{ nasa.url }}" target="_blank">Watch it here</a>.</p>
+                    {% endif %}
+                    <p>{{ nasa.explanation }}</p>
+                {% else %}
+                    <p>NASA fetch failed. Space is big and full of errors.</p>
+                {% endif %}
+            </div>
+        </details>
+        <br>
+
+        <details>
+            <summary><strong>🎬 Random Movie Pick</strong></summary>
+            <div style="margin-top: 0.5rem;">
+                <h3>{{ movie.title }} ({{ movie.year }})</h3>
+                <p><em>{{ movie.description }}</em></p>
+            </div>
+        </details>
+    </section>
+
+    <section>
+        <h2>6. Hardware & Server Health Status</h2>
+        <p>Our server doesn't need to cry to a web socket to tell you how it feels. It just dumps the facts.</p>
+        
+        <ul>
+            <li><strong>Raspberry Pi Model:</strong> {{ system.model }}</li>
+            <li><strong>Uptime:</strong> {{ system.uptime }}</li>
+            <li><strong>Memory Usage:</strong> {{ system.memory }}</li>
+            <li><strong>CPU Temperature:</strong> {{ system.cpu_temp }}</li>
+            <li><strong>Root Disk Space:</strong> {{ system.disk }}</li>
+            <li><strong>BME280 Sensor Connected:</strong> {{ 'Yes (ID: ' ~ system.bme280.id ~ ')' if system.bme280.present else 'No sensor detected, using fallbacks like a fraud.' }}</li>
+        </ul>
+
+        <h3>Speedtest Status</h3>
+        {% if speedtest %}
+            <p>
+                <strong>Download:</strong> {{ speedtest.download|round(2) }} Mbps | 
+                <strong>Upload:</strong> {{ speedtest.upload|round(2) }} Mbps | 
+                <strong>Ping:</strong> {{ speedtest.ping|round(1) }} ms
+                <br>
+                <small>Tested on: {{ speedtest.timestamp }}</small>
+            </p>
+        {% else %}
+            <p>No speedtest history. Run one in the background below.</p>
+        {% endif %}
+        <form method="POST" action="/html/speedtest">
+             <button type="submit" onclick="alert('Starting background speedtest. Reload in 30-60 seconds to see results!')">Run Speedtest</button>
+        </form>
+    </section>
+
+    <section>
+        <h2>7. History & Legend (This Day in History)</h2>
+        <p>Real history. Not git commit history, you terminal-addicted monkey.</p>
+        
+        <fieldset>
+            <legend>Historical Figure of the Moment</legend>
+            <div style="display: flex; align-items: flex-start; gap: 1.5rem; flex-wrap: wrap;">
+                {% if figure.photo %}
+                    <img src="{{ figure.photo }}" alt="{{ figure.name }}" style="width: 100px; border-radius: 8px;">
+                {% endif %}
+                <div>
+                    <h3>{{ figure.name }}</h3>
+                    <p><strong>Title:</strong> {{ figure.title }}</p>
+                    <p><a href="{{ figure.link }}" target="_blank">Wikipedia Article 🔗</a></p>
+                </div>
+            </div>
+        </fieldset>
+
+        <h3>Events on {{ history.date }}</h3>
+        <ul>
+            {% for event in history.events %}
+                <li><strong>{{ event.year }}:</strong> {{ event.text }}</li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <section>
+        <h2>8. Code & Shortcuts (For your inner nerd)</h2>
+        
+        <details>
+            <summary><strong>💡 C++ Best Practice Tip</strong></summary>
+            <div style="margin-top: 0.5rem;">
+                <pre><code>{{ cpp_tip }}</code></pre>
+            </div>
+        </details>
+        <br>
+
+        <details>
+            <summary><strong>🧮 Algorithm of the Day: {{ algo.name }}</strong></summary>
+            <div style="margin-top: 0.5rem;">
+                <p><strong>Category:</strong> {{ algo.category }} | <strong>Complexity:</strong> <code>{{ algo.complexity }}</code></p>
+                <p>{{ algo.description }}</p>
+                <pre><code>{{ algo.pseudocode }}</code></pre>
+            </div>
+        </details>
+        <br>
+
+        <details>
+            <summary><strong>⌨️ Keyboard Shortcut Tip</strong></summary>
+            <div style="margin-top: 0.5rem;">
+                <p><strong>Application:</strong> {{ shortcut.app }}</p>
+                <p><strong>Shortcut:</strong> <code>{{ shortcut.shortcut }}</code></p>
+                <p><strong>Description:</strong> {{ shortcut.description }}</p>
+            </div>
+        </details>
+    </section>
+
+    <section>
+        <h2>9. Interactive Shit? HTML's Got It Natively, No React Required</h2>
+        <p>Think you need your precious framework for a simple popup? Eat this native dialog:</p>
+        
+        <dialog id="htmlDialog">
+            <p>Hello! You opened this dialog using 100% native HTML tags. No React Portal, no state hooks, no bundle bloating. It just fucking works.</p>
+            <button onclick="htmlDialog.close()">Close this beauty</button>
+        </dialog>
+        
+        <button onclick="htmlDialog.showModal()">Open Native Dialog</button>
+    </section>
+
+    <section>
+        <h2>10. Give Feedback (A Form That Works on a Casio Calculator)</h2>
+        <p>No client-side dynamic validation libraries needed. Only raw, browser-native validation.</p>
+        
+        <form action="/html/feedback" method="POST">
+            <fieldset>
+                <legend>Feedback Form</legend>
+                <p>
+                    <label for="username">Your Name:</label><br>
+                    <input type="text" id="username" name="username" placeholder="Anonymous Geek" required>
+                </p>
+                
+                <p>
+                    <label for="opinion">How much do you hate modern JS bloat?</label><br>
+                    <select id="opinion" name="opinion">
+                        <option value="hate">Extremely hate it</option>
+                        <option value="love">I am a React masochist</option>
+                    </select>
+                </p>
+                
+                <p>
+                    <label for="msg">Vent your frustrations here:</label><br>
+                    <textarea id="msg" name="msg" rows="4" cols="50" placeholder="Type your text..." required></textarea>
+                </p>
+                
+                <button type="submit">Submit Feedback</button>
+            </fieldset>
+        </form>
+    </section>
+
+    <footer>
+        <hr>
+        <p><small>© Just Fucking Use HTML Weather Dashboard. Inspired by <a href="https://justfuckingusehtml.com/" target="_blank">justfuckingusehtml.com</a>.</small></p>
+        <p><small>Brought to you by <a href="/">Scripture & Skies</a>.</small></p>
+    </footer>
+</body>
+</html>

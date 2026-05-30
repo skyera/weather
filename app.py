@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytz
 import requests
-from flask import Flask, render_template, jsonify, url_for, request
+from flask import Flask, render_template, jsonify, url_for, request, redirect
 
 # Camera availability detection
 PICAMERA_AVAILABLE = False
@@ -955,6 +955,108 @@ def index():
         image_exists=IMAGE_PATH.exists(),
         camera_available=camera_available
     )
+
+
+@app.route("/html")
+def html_dashboard():
+    """Server-side rendered pure-HTML weather dashboard based on justfuckingusehtml.com"""
+    # Fetch sensor data and weather icon
+    sensor_data = get_sensor_data()
+    weather_icon = get_weather_icon(sensor_data.get("temperature"))
+    
+    # Fetch wisdom
+    bible_verse = get_bible_verse()
+    famous_quote = get_famous_quote()
+    random_word = get_random_word()
+    
+    # Fetch news
+    news_stories = {
+        "top_stories": get_news(),
+        "ai_news": get_ai_news(),
+        "hn_stories": get_hacker_news()
+    }
+    
+    # Fetch history
+    history = get_this_day_in_history()
+    figure = get_historical_figure()
+    
+    # Fetch holidays
+    holidays = get_upcoming_holidays()
+    
+    # Fetch APOD, movie, C++ tip, shortcut, algorithm
+    nasa = get_nasa_apod()
+    movie = get_random_movie()
+    cpp_tip = get_cpp_tip()
+    shortcut = get_shortcut_tip()
+    algo = get_algorithm_of_the_day()
+    
+    # Fetch system and speedtest
+    system = get_system_info()
+    speedtest = get_latest_speedtest()
+    
+    return render_template(
+        "html.html",
+        curr_time=datetime.now(),
+        sensor=sensor_data,
+        weather_icon=weather_icon,
+        wisdom={
+            "bible_verse": bible_verse,
+            "famous_quote": famous_quote,
+            "random_word": random_word
+        },
+        news=news_stories,
+        history=history,
+        figure=figure,
+        holidays=holidays,
+        nasa=nasa,
+        movie=movie,
+        cpp_tip=cpp_tip,
+        shortcut=shortcut,
+        algo=algo,
+        system=system,
+        speedtest=speedtest,
+        image_exists=IMAGE_PATH.exists()
+    )
+
+
+@app.route("/html/capture", methods=['POST'])
+def html_capture():
+    capture_image()
+    return redirect(url_for('html_dashboard'))
+
+
+@app.route("/html/speedtest", methods=['POST'])
+def html_speedtest():
+    thread = threading.Thread(target=run_speedtest_task)
+    thread.daemon = True
+    thread.start()
+    return redirect(url_for('html_dashboard'))
+
+
+@app.route("/html/feedback", methods=['POST'])
+def html_feedback():
+    username = request.form.get("username")
+    opinion = request.form.get("opinion")
+    msg = request.form.get("msg")
+    app.logger.info(f"Feedback from {username} ({opinion}): {msg}")
+    return f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Feedback Received</title>
+        <meta name="color-scheme" content="light dark">
+        <style>
+            body {{ font-family: system-ui, sans-serif; max-width: 600px; margin: 100px auto; text-align: center; }}
+        </style>
+    </head>
+    <body>
+        <h1>Feedback Received, you opinionated fuck!</h1>
+        <p>We logged your feedback in the console. No bloated database record created, just standard Unix logging.</p>
+        <p><a href="/html">← Back to the pure HTML dashboard</a></p>
+    </body>
+    </html>
+    """
 
 
 @app.route("/api/this-day-in-history")
