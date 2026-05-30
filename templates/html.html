@@ -9,8 +9,6 @@
     <style>
         :root {
             --bg: #f8fafc;
-            --text-primary: #0f172a;
-            --text-secondary: #475569;
             --primary: #0284c7;
             --primary-hover: #0369a1;
             --button-text: #ffffff;
@@ -26,8 +24,6 @@
         @media (prefers-color-scheme: dark) {
             :root {
                 --bg: #090d16;
-                --text-primary: #f8fafc;
-                --text-secondary: #94a3b8;
                 --primary: #38bdf8;
                 --primary-hover: #0ea5e9;
                 --button-text: #090d16;
@@ -45,11 +41,10 @@
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             line-height: 1.6;
             background-color: var(--bg);
-            color: var(--text-primary);
             max-width: 900px;
             margin: 0 auto;
             padding: 2.5rem 1.5rem;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.3s ease;
         }
 
         header {
@@ -61,18 +56,15 @@
             font-weight: 800;
             letter-spacing: -0.025em;
             margin-bottom: 0.75rem;
-            color: var(--primary);
         }
 
         header p {
-            color: var(--text-secondary);
             font-size: 1.05rem;
             max-width: 800px;
         }
 
         pre, code {
             background-color: var(--code-bg);
-            color: var(--primary);
             padding: 0.2rem 0.4rem;
             border-radius: 6px;
             font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -106,11 +98,9 @@
 
         blockquote p {
             margin-bottom: 0.5rem;
-            color: var(--text-primary);
         }
 
         blockquote cite {
-            color: var(--text-secondary);
             font-weight: 600;
             font-size: 0.875rem;
         }
@@ -142,11 +132,9 @@
             letter-spacing: -0.02em;
             margin-top: 0;
             margin-bottom: 0.75rem;
-            color: var(--primary);
         }
 
         section p {
-            color: var(--text-secondary);
             margin-bottom: 1.5rem;
         }
 
@@ -183,7 +171,6 @@
             font-size: 0.85rem;
             letter-spacing: 0.05em;
             text-transform: uppercase;
-            color: var(--primary);
             background: var(--card-bg);
             padding: 0.25rem 0.75rem;
             border: 1px solid var(--border);
@@ -195,15 +182,13 @@
             align-items: center;
             gap: 0.5rem;
             margin-bottom: 2rem;
-            color: var(--primary);
             text-decoration: none;
             font-weight: 700;
             font-size: 0.9rem;
-            transition: color 0.2s ease, transform 0.2s ease;
+            transition: transform 0.2s ease;
         }
 
         .back-link:hover {
-            color: var(--primary-hover);
             transform: translateX(-4px);
             text-decoration: underline;
         }
@@ -231,7 +216,6 @@
         .metric-table th {
             background-color: var(--code-bg);
             font-weight: 700;
-            color: var(--text-primary);
         }
 
         .metric-table tr:hover td {
@@ -257,7 +241,6 @@
             font-weight: 700;
             cursor: pointer;
             user-select: none;
-            color: var(--text-primary);
             outline: none;
         }
 
@@ -271,7 +254,6 @@
             padding: 2.5rem;
             max-width: 500px;
             background-color: var(--card-bg);
-            color: var(--text-primary);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
@@ -338,13 +320,11 @@
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: var(--text-secondary);
         }
 
         .system-metric-value {
             font-size: 1.05rem;
             font-weight: 700;
-            color: var(--text-primary);
         }
 
         input[type="text"], select, textarea {
@@ -353,7 +333,7 @@
             border: 1px solid var(--border);
             border-radius: 6px;
             background-color: var(--bg);
-            color: var(--text-primary);
+            color: inherit;
             font-family: inherit;
             font-size: 0.95rem;
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -368,7 +348,6 @@
         footer {
             margin-top: 3rem;
             text-align: center;
-            color: var(--text-secondary);
         }
 
         footer hr {
@@ -443,7 +422,7 @@
             <div style="text-align: center; margin: 1.5rem 0;">
                 <img src="{{ url_for('static', filename='image.jpg') }}?t={{ curr_time.timestamp() }}" alt="Raspberry Pi Camera Snapshot" style="max-width: 100%; border: 2px solid var(--border); border-radius: 8px; box-shadow: var(--shadow);">
                 <br>
-                <small style="color: var(--text-secondary); display: inline-block; margin-top: 0.5rem;">Actual photo captured from your Pi.</small>
+                <small style="display: inline-block; margin-top: 0.5rem;">Actual photo captured from your Pi.</small>
             </div>
         {% else %}
             <p><strong>No camera feed available.</strong> Probably because you didn't plug in the Pi Camera or you are running on a virtual machine.</p>
@@ -479,9 +458,9 @@
 
             <fieldset class="full-width-card">
                 <legend>Word Discovery</legend>
-                <h3 style="font-size: 1.4rem; font-weight: 800; margin-top: 0; margin-bottom: 0.5rem; color: var(--primary);">{{ wisdom.random_word.word }}</h3>
+                <h3 style="font-size: 1.4rem; font-weight: 800; margin-top: 0; margin-bottom: 0.5rem;">{{ wisdom.random_word.word }}</h3>
                 <p style="margin-bottom: 0.5rem;"><strong>Definition:</strong> {{ wisdom.random_word.definition }}</p>
-                <p style="margin-bottom: 0; font-style: italic; color: var(--text-secondary);">Example: "{{ wisdom.random_word.example }}"</p>
+                <p style="margin-bottom: 0; font-style: italic;">Example: "{{ wisdom.random_word.example }}"</p>
             </fieldset>
         </div>
     </section>
@@ -494,7 +473,7 @@
             <summary><strong>🔥 Top Stories (Click to expand, yes this is native HTML, no JS!)</strong></summary>
             <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
                 {% for item in news.top_stories %}
-                    <li style="margin-bottom: 0.5rem;"><a href="{{ item.link }}" target="_blank" style="color: var(--primary);">{{ item.title }}</a> <small style="color: var(--text-secondary);">({{ item.pubDate }})</small></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="{{ item.link }}" target="_blank">{{ item.title }}</a> <small>({{ item.pubDate }})</small></li>
                 {% endfor %}
             </ul>
         </details>
@@ -504,7 +483,7 @@
             <summary><strong>🤖 AI Buzzword Bingo (Click to expand)</strong></summary>
             <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
                 {% for item in news.ai_news %}
-                    <li style="margin-bottom: 0.5rem;"><a href="{{ item.link }}" target="_blank" style="color: var(--primary);">{{ item.title }}</a> <small style="color: var(--text-secondary);">({{ item.pubDate }})</small></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="{{ item.link }}" target="_blank">{{ item.title }}</a> <small>({{ item.pubDate }})</small></li>
                 {% endfor %}
             </ul>
         </details>
@@ -515,9 +494,9 @@
             <ul style="margin-top: 0.5rem; padding-left: 1.5rem; list-style-type: none;">
                 {% for item in news.hn_stories %}
                     <li style="margin-bottom: 0.75rem;">
-                        <a href="{{ item.link }}" target="_blank" style="color: var(--primary); font-weight: 600; text-decoration: none; border-bottom: 1px dashed var(--border);">{{ item.title }}</a>
+                        <a href="{{ item.link }}" target="_blank" style="font-weight: 600; text-decoration: none; border-bottom: 1px dashed var(--border);">{{ item.title }}</a>
                         <br>
-                        <small style="color: var(--text-secondary);">🔥 {{ item.score }} points &middot; 💬 {{ item.comments }} comments</small>
+                        <small>🔥 {{ item.score }} points &middot; 💬 {{ item.comments }} comments</small>
                     </li>
                 {% endfor %}
             </ul>
@@ -531,11 +510,11 @@
             <summary><strong>🌌 NASA Astronomy Picture of the Day</strong></summary>
             <div style="margin-top: 0.5rem;">
                 {% if nasa %}
-                    <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--primary);">{{ nasa.title }}</h3>
+                    <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem;">{{ nasa.title }}</h3>
                     {% if nasa.media_type == 'image' %}
                         <img src="{{ nasa.url }}" alt="{{ nasa.title }}" style="max-width: 100%; border-radius: 8px; margin: 1rem 0; box-shadow: var(--shadow);">
                     {% else %}
-                        <p>NASA served a video today. <a href="{{ nasa.url }}" target="_blank" style="color: var(--primary);">Watch it here</a>.</p>
+                        <p>NASA served a video today. <a href="{{ nasa.url }}" target="_blank">Watch it here</a>.</p>
                     {% endif %}
                     <p style="font-size: 0.95rem; line-height: 1.6; margin-bottom: 0;">{{ nasa.explanation }}</p>
                 {% else %}
@@ -548,8 +527,8 @@
         <details>
             <summary><strong>🎬 Random Movie Pick</strong></summary>
             <div style="margin-top: 0.5rem;">
-                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--primary);">{{ movie.title }} ({{ movie.year }})</h3>
-                <p style="margin-bottom: 0; font-style: italic; color: var(--text-secondary);">"{{ movie.description }}"</p>
+                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">{{ movie.title }} ({{ movie.year }})</h3>
+                <p style="margin-bottom: 0; font-style: italic;">"{{ movie.description }}"</p>
             </div>
         </details>
     </section>
@@ -585,14 +564,14 @@
             </div>
         </div>
 
-        <h3 style="font-size: 1.2rem; font-weight: 700; margin-top: 2rem; margin-bottom: 0.5rem; color: var(--primary);">Speedtest Status</h3>
+        <h3 style="font-size: 1.2rem; font-weight: 700; margin-top: 2rem; margin-bottom: 0.5rem;">Speedtest Status</h3>
         {% if speedtest %}
             <p style="margin-bottom: 1rem;">
                 <strong>Download:</strong> {{ speedtest.download|round(2) }} Mbps | 
                 <strong>Upload:</strong> {{ speedtest.upload|round(2) }} Mbps | 
                 <strong>Ping:</strong> {{ speedtest.ping|round(1) }} ms
                 <br>
-                <small style="color: var(--text-secondary);">Tested on: {{ speedtest.timestamp }}</small>
+                <small>Tested on: {{ speedtest.timestamp }}</small>
             </p>
         {% else %}
             <p style="margin-bottom: 1rem;">No speedtest history. Run one in the background below.</p>
@@ -613,14 +592,14 @@
                     <img src="{{ figure.photo }}" alt="{{ figure.name }}" style="width: 100px; border-radius: 8px; box-shadow: var(--shadow); border: 1px solid var(--border);">
                 {% endif %}
                 <div style="flex: 1; min-width: 200px;">
-                    <h3 style="margin-top: 0; margin-bottom: 0.25rem; font-size: 1.2rem; color: var(--primary);">{{ figure.name }}</h3>
+                    <h3 style="margin-top: 0; margin-bottom: 0.25rem; font-size: 1.2rem;">{{ figure.name }}</h3>
                     <p style="margin-bottom: 0.5rem; font-weight: 600;">{{ figure.title }}</p>
-                    <p style="margin-bottom: 0;"><a href="{{ figure.link }}" target="_blank" style="color: var(--primary);">Wikipedia Article 🔗</a></p>
+                    <p style="margin-bottom: 0;"><a href="{{ figure.link }}" target="_blank">Wikipedia Article 🔗</a></p>
                 </div>
             </div>
         </fieldset>
 
-        <h3 style="font-size: 1.25rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.75rem; color: var(--primary);">Events on {{ history.date }}</h3>
+        <h3 style="font-size: 1.25rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.75rem;">Events on {{ history.date }}</h3>
         <ul style="padding-left: 1.5rem; margin-bottom: 1.5rem;">
             {% for event in history.events %}
                 <li style="margin-bottom: 0.5rem;"><strong>{{ event.year }}:</strong> {{ event.text }}</li>
@@ -710,7 +689,7 @@
         <p>Think you need your precious framework for a simple popup? Eat this native dialog:</p>
         
         <dialog id="htmlDialog">
-            <p style="color: var(--text-primary); margin-bottom: 1.5rem;">Hello! You opened this dialog using 100% native HTML tags. No React Portal, no state hooks, no bundle bloating. It just works.</p>
+            <p style="margin-bottom: 1.5rem;">Hello! You opened this dialog using 100% native HTML tags. No React Portal, no state hooks, no bundle bloating. It just works.</p>
             <button onclick="htmlDialog.close()">Close this beauty</button>
         </dialog>
         
@@ -749,8 +728,8 @@
 
     <footer>
         <hr>
-        <p><small>© Just Use HTML Weather Dashboard. Inspired by <a href="https://justfuckingusehtml.com/" style="color: var(--primary);" target="_blank">justfuckingusehtml.com</a>.</small></p>
-        <p><small>Brought to you by <a href="/modern" style="color: var(--primary);">Scripture & Skies</a>.</small></p>
+        <p><small>© Just Use HTML Weather Dashboard. Inspired by <a href="https://justfuckingusehtml.com/" target="_blank">justfuckingusehtml.com</a>.</small></p>
+        <p><small>Brought to you by <a href="/modern">Scripture & Skies</a>.</small></p>
     </footer>
 </body>
 </html>
