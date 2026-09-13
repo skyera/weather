@@ -95,39 +95,45 @@ def ttl_cache(seconds=300, failure_ttl=60):
 def init_db():
     """Initialize the temperature history database."""
     with DB_LOCK:
-        conn = sqlite3.connect(str(DB_PATH), timeout=10.0)
-        cursor = conn.cursor()
-        cursor.execute('PRAGMA journal_mode=WAL;')
-        cursor.execute('PRAGMA busy_timeout=5000;')
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS temperature_readings (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-                temperature REAL,
-                pressure REAL,
-                humidity REAL
-            )
-        ''')
-        cursor.execute('CREATE INDEX IF NOT EXISTS idx_timestamp ON temperature_readings(timestamp)')
-        
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS speed_tests (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-                download REAL,
-                upload REAL,
-                ping REAL
-            )
-        ''')
-        conn.commit()
-        conn.close()
+        try:
+            conn = sqlite3.connect(str(DB_PATH), timeout=30.0)
+            cursor = conn.cursor()
+            cursor.execute('PRAGMA busy_timeout=10000;')
+            try:
+                cursor.execute('PRAGMA journal_mode=WAL;')
+            except sqlite3.OperationalError:
+                pass
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS temperature_readings (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    temperature REAL,
+                    pressure REAL,
+                    humidity REAL
+                )
+            ''')
+            cursor.execute('CREATE INDEX IF NOT EXISTS idx_timestamp ON temperature_readings(timestamp)')
+            
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS speed_tests (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    download REAL,
+                    upload REAL,
+                    ping REAL
+                )
+            ''')
+            conn.commit()
+            conn.close()
+        except sqlite3.OperationalError as e:
+            app.logger.warning(f"init_db operational notice: {e}")
 
 
 def record_temperature(temperature, pressure, humidity):
     """Record temperature reading in the database."""
     with DB_LOCK:
         try:
-            conn = sqlite3.connect(str(DB_PATH))
+            conn = sqlite3.connect(str(DB_PATH), timeout=30.0)
             cursor = conn.cursor()
             cursor.execute(
                 'INSERT INTO temperature_readings (temperature, pressure, humidity) VALUES (?, ?, ?)',
@@ -148,7 +154,7 @@ def get_temperature_history(hours=24):
     """Get temperature history for the last N hours."""
     with DB_LOCK:
         try:
-            conn = sqlite3.connect(str(DB_PATH))
+            conn = sqlite3.connect(str(DB_PATH), timeout=30.0)
             cursor = conn.cursor()
             cutoff_time = datetime.now() - timedelta(hours=hours)
             cursor.execute(
@@ -191,7 +197,7 @@ def run_speedtest_task():
                     ping = float(row.get('idle latency', 0))
                     
                     with DB_LOCK:
-                        conn = sqlite3.connect(str(DB_PATH))
+                        conn = sqlite3.connect(str(DB_PATH), timeout=30.0)
                         cursor = conn.cursor()
                         cursor.execute(
                             'INSERT INTO speed_tests (download, upload, ping) VALUES (?, ?, ?)',
@@ -213,7 +219,7 @@ def get_latest_speedtest():
     """Get the most recent speedtest result from the database."""
     with DB_LOCK:
         try:
-            conn = sqlite3.connect(str(DB_PATH))
+            conn = sqlite3.connect(str(DB_PATH), timeout=30.0)
             cursor = conn.cursor()
             cursor.execute('SELECT download, upload, ping, timestamp FROM speed_tests ORDER BY timestamp DESC LIMIT 1')
             row = cursor.fetchone()
