@@ -5,7 +5,12 @@ import time
 import random
 import sqlite3
 import threading
+import json
+import csv
+import io
+import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta
+from functools import wraps
 from pathlib import Path
 
 import pytz
@@ -55,11 +60,45 @@ IMAGE_FOLDER.mkdir(exist_ok=True)
 DB_LOCK = threading.Lock()
 
 
+def ttl_cache(seconds=300, failure_ttl=60):
+    """Thread-safe in-memory cache decorator with TTL in seconds.
+    
+    If the function returns an empty collection or None, failure_ttl is used
+    so transient network issues can recover quickly without pinning stale errors.
+    """
+    def decorator(func):
+        cache = {}
+        lock = threading.Lock()
+
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            key = (args, tuple(sorted(kwargs.items())))
+            now = time.time()
+            with lock:
+                if key in cache:
+                    val, expiry = cache[key]
+                    if now < expiry:
+                        return val
+
+            result = func(*args, **kwargs)
+            if result is not None:
+                ttl = failure_ttl if (result == [] or result == {}) else seconds
+                with lock:
+                    cache[key] = (result, now + ttl)
+            return result
+
+        wrapper.clear_cache = lambda: cache.clear()
+        return wrapper
+    return decorator
+
+
 def init_db():
     """Initialize the temperature history database."""
     with DB_LOCK:
-        conn = sqlite3.connect(str(DB_PATH))
+        conn = sqlite3.connect(str(DB_PATH), timeout=10.0)
         cursor = conn.cursor()
+        cursor.execute('PRAGMA journal_mode=WAL;')
+        cursor.execute('PRAGMA busy_timeout=5000;')
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS temperature_readings (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -135,14 +174,10 @@ def get_temperature_history(hours=24):
 init_db()
 
 
-import json
-
 def run_speedtest_task():
     """Background task to run speedtest and record results."""
     app.logger.info("Starting background speedtest...")
     try:
-        import csv
-        import io
         # Run speedtest with CSV output for reliable parsing
         result = subprocess.run(['speedtest', '-f', 'csv', '--output-header'], capture_output=True, text=True, timeout=300)
         if result.returncode == 0:
@@ -314,6 +349,7 @@ def get_system_info():
     return info
 
 
+@ttl_cache(seconds=3600)
 def get_bible_verse():
     """Get a random Bible verse from the Bible API."""
     try:
@@ -336,6 +372,7 @@ def get_bible_verse():
     }
 
 
+@ttl_cache(seconds=3600)
 def get_random_word():
     """Get a random word with definition and example from dictionary APIs."""
     try:
@@ -422,6 +459,7 @@ def get_fallback_word():
     return random.choice(fallback_words)
 
 
+@ttl_cache(seconds=900)
 def get_random_nature_photo():
     """Get a random nature/landscape photo URL from Picsum (no API key required).
 
@@ -637,6 +675,7 @@ def capture_image():
         return False
 
 
+@ttl_cache(seconds=86400)
 def get_nasa_apod():
     """Get NASA Astronomy Picture of the Day."""
     # Using 'DEMO_KEY' by default (limited but works)
@@ -708,8 +747,7 @@ def api_shortcut():
     return jsonify(get_shortcut_tip())
 
 
-import xml.etree.ElementTree as ET
-
+@ttl_cache(seconds=900)
 def get_news():
     """Get top general news headlines from Google News RSS."""
     try:
@@ -730,6 +768,7 @@ def get_news():
     return []
 
 
+@ttl_cache(seconds=900)
 def get_hacker_news():
     """Get top 5 stories from Hacker News using the Firebase API."""
     try:
@@ -754,6 +793,7 @@ def get_hacker_news():
     return []
 
 
+@ttl_cache(seconds=900)
 def get_ai_news():
     """Get AI-related news (Claude, Gemini, etc.) from Google News RSS."""
     try:
@@ -777,6 +817,7 @@ def get_ai_news():
     return []
 
 
+@ttl_cache(seconds=3600)
 def get_famous_quote():
     """Get a random famous quote from the ZenQuotes API."""
     try:
@@ -814,6 +855,7 @@ def get_weather_icon(temp):
         return "🔥"
 
 
+@ttl_cache(seconds=86400)
 def get_upcoming_holidays(country_code="US"):
     """Get upcoming public holidays using the Nager.Date API."""
     try:
@@ -879,6 +921,7 @@ def get_cpp_tip():
 
 
 
+@ttl_cache(seconds=86400)
 def get_this_day_in_history():
     """Get historical events that happened on this day using the Muffin Labs API."""
     today = datetime.now()
@@ -1116,7 +1159,6 @@ def api_speedtest():
 @app.route("/api/data")
 def api_data():
     """API endpoint for live data updates."""
-    capture_image()
     sensor_data = get_sensor_data()
     return jsonify({
         "timestamp": datetime.now().isoformat(),
