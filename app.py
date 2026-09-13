@@ -8,6 +8,7 @@ import threading
 import json
 import csv
 import io
+import math
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta
 from functools import wraps
@@ -861,6 +862,95 @@ def get_weather_icon(temp):
         return "🔥"
 
 
+def get_barometer_trend(current_pressure):
+    """Determine pressure trend compared to 3 hours ago."""
+    if not current_pressure:
+        return {"arrow": "→", "text": "Steady", "diff": 0.0}
+    with DB_LOCK:
+        try:
+            conn = sqlite3.connect(str(DB_PATH), timeout=10.0)
+            cursor = conn.cursor()
+            three_hours_ago = datetime.now() - timedelta(hours=3)
+            cursor.execute(
+                'SELECT pressure FROM temperature_readings WHERE timestamp <= ? AND pressure IS NOT NULL ORDER BY timestamp DESC LIMIT 1',
+                (three_hours_ago,)
+            )
+            row = cursor.fetchone()
+            conn.close()
+            if row and row[0]:
+                diff = round(current_pressure - row[0], 2)
+                if diff >= 1.0:
+                    return {"arrow": "↗", "text": "Rising (Fair weather)", "diff": f"+{diff}"}
+                elif diff <= -1.0:
+                    return {"arrow": "↘", "text": "Falling (Rain / Unsettled)", "diff": f"{diff}"}
+                else:
+                    return {"arrow": "→", "text": "Steady", "diff": f"{diff}"}
+        except Exception as e:
+            app.logger.warning(f"Error calculating barometer trend: {e}")
+    return {"arrow": "→", "text": "Steady", "diff": "0.0"}
+
+
+def calculate_dew_point(temp, humidity):
+    """Magnus formula calculation for Dew Point (°C) and comfort index."""
+    if temp is None or humidity is None or humidity <= 0:
+        return {"value": None, "comfort": "Unknown"}
+    try:
+        a = 17.27
+        b = 237.7
+        alpha = ((a * temp) / (b + temp)) + math.log(humidity / 100.0)
+        dew_point = round((b * alpha) / (a - alpha), 1)
+        
+        if dew_point < 10:
+            comfort = "Crisp / Dry"
+        elif dew_point <= 16:
+            comfort = "Comfortable"
+        elif dew_point <= 21:
+            comfort = "Humid"
+        else:
+            comfort = "Muggy / Oppressive"
+        return {"value": dew_point, "comfort": comfort}
+    except Exception:
+        return {"value": None, "comfort": "Unknown"}
+
+
+def get_moon_phase(date=None):
+    """Calculate the current lunar phase and illumination percentage."""
+    if date is None:
+        date = datetime.now()
+    year = date.year
+    month = date.month
+    day = date.day
+    if month < 3:
+        year -= 1
+        month += 12
+    # Julian cycle calculation
+    c = 365.25 * year
+    e = 30.6 * month
+    jd = c + e + day - 694039.09
+    jd /= 29.53058867
+    b = int(jd)
+    jd -= b
+    phase = jd
+    
+    illumination = int(round((1 - math.cos(phase * 2 * math.pi)) / 2 * 100))
+    if phase < 0.03 or phase > 0.97:
+        return {"emoji": "🌑", "name": "New Moon", "illumination": illumination}
+    elif phase < 0.22:
+        return {"emoji": "🌒", "name": "Waxing Crescent", "illumination": illumination}
+    elif phase < 0.28:
+        return {"emoji": "🌓", "name": "First Quarter", "illumination": illumination}
+    elif phase < 0.47:
+        return {"emoji": "🌔", "name": "Waxing Gibbous", "illumination": illumination}
+    elif phase < 0.53:
+        return {"emoji": "🌕", "name": "Full Moon", "illumination": illumination}
+    elif phase < 0.72:
+        return {"emoji": "🌖", "name": "Waning Gibbous", "illumination": illumination}
+    elif phase < 0.78:
+        return {"emoji": "🌗", "name": "Last Quarter", "illumination": illumination}
+    else:
+        return {"emoji": "🌘", "name": "Waning Crescent", "illumination": illumination}
+
+
 @ttl_cache(seconds=86400)
 def get_upcoming_holidays(country_code="US"):
     """Get upcoming public holidays using the Nager.Date API."""
@@ -1009,9 +1099,12 @@ def index():
 @app.route("/")
 def html_dashboard():
     """Server-side rendered pure-HTML weather dashboard based on justusehtml.com"""
-    # Fetch sensor data and weather icon
+    # Fetch sensor data and environmental calculations
     sensor_data = get_sensor_data()
     weather_icon = get_weather_icon(sensor_data.get("temperature"))
+    barometer = get_barometer_trend(sensor_data.get("pressure"))
+    dew_point = calculate_dew_point(sensor_data.get("temperature"), sensor_data.get("humidity"))
+    moon = get_moon_phase()
     
     # Fetch wisdom
     bible_verse = get_bible_verse()
@@ -1043,11 +1136,18 @@ def html_dashboard():
     system = get_system_info()
     speedtest = get_latest_speedtest()
     
+    # Native flash status message from redirect
+    flash_type = request.args.get('msg')
+    
     return render_template(
         "html.html",
         curr_time=datetime.now(),
         sensor=sensor_data,
         weather_icon=weather_icon,
+        barometer=barometer,
+        dew_point=dew_point,
+        moon=moon,
+        flash_type=flash_type,
         wisdom={
             "bible_verse": bible_verse,
             "famous_quote": famous_quote,
@@ -1071,7 +1171,7 @@ def html_dashboard():
 @app.route("/html/capture", methods=['POST'])
 def html_capture():
     capture_image()
-    return redirect(url_for('html_dashboard'))
+    return redirect(url_for('html_dashboard', msg='photo_captured'))
 
 
 @app.route("/html/speedtest", methods=['POST'])
@@ -1079,7 +1179,7 @@ def html_speedtest():
     thread = threading.Thread(target=run_speedtest_task)
     thread.daemon = True
     thread.start()
-    return redirect(url_for('html_dashboard'))
+    return redirect(url_for('html_dashboard', msg='speedtest_started'))
 
 
 @app.route("/html/feedback", methods=['POST'])

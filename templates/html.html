@@ -345,6 +345,138 @@
             box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
         }
 
+        /* Flash Status Banner */
+        .flash-banner {
+            padding: 0.9rem 1.25rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border: 1px solid transparent;
+        }
+        .flash-success {
+            background-color: rgba(16, 185, 129, 0.12);
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #10b981;
+        }
+        .flash-info {
+            background-color: rgba(2, 132, 199, 0.12);
+            border-color: rgba(2, 132, 199, 0.3);
+            color: var(--primary);
+        }
+
+        /* Weather Hero Card */
+        .weather-hero {
+            background: linear-gradient(135deg, var(--card-bg), var(--bg));
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+        .hero-temp-block {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .hero-temp-value {
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -0.03em;
+            color: var(--primary);
+        }
+        .hero-temp-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+        .comfort-badge {
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--primary);
+            display: inline-block;
+            width: fit-content;
+        }
+        .hero-aux-grid {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        .aux-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+        .aux-label {
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--primary);
+        }
+        .aux-value {
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+        .aux-sub {
+            font-size: 0.75rem;
+            opacity: 0.75;
+        }
+
+        /* Pure CSS Native Tabs */
+        .css-tabs {
+            margin-top: 1.5rem;
+        }
+        .tab-controls {
+            display: flex;
+            gap: 0.5rem;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 1.25rem;
+            overflow-x: auto;
+        }
+        .css-tabs input[type="radio"] {
+            display: none;
+        }
+        .tab-label {
+            padding: 0.6rem 1rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s ease;
+            user-select: none;
+            white-space: nowrap;
+        }
+        .tab-label:hover {
+            color: var(--primary);
+        }
+        #tab-top:checked ~ .tab-controls label[for="tab-top"],
+        #tab-ai:checked ~ .tab-controls label[for="tab-ai"],
+        #tab-hn:checked ~ .tab-controls label[for="tab-hn"] {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+        }
+        .tab-panel {
+            display: none;
+        }
+        #tab-top:checked ~ .panel-top,
+        #tab-ai:checked ~ .panel-ai,
+        #tab-hn:checked ~ .panel-hn {
+            display: block;
+        }
+
         footer {
             margin-top: 3rem;
             text-align: center;
@@ -369,6 +501,16 @@
         <p><strong>Generated at:</strong> <code>{{ curr_time.strftime('%Y-%m-%d %H:%M:%S %Z') }}</code> (No, it doesn't tick. It's static. Get over it.)</p>
     </header>
 
+    {% if flash_type == 'photo_captured' %}
+        <div class="flash-banner flash-success">
+            <span>📸 <strong>Photo captured successfully!</strong> Reloaded latest sensor photo.</span>
+        </div>
+    {% elif flash_type == 'speedtest_started' %}
+        <div class="flash-banner flash-info">
+            <span>⚡ <strong>Speedtest initiated in background!</strong> Refresh in 30–60 seconds to inspect results.</span>
+        </div>
+    {% endif %}
+
     <hr>
 
     <section>
@@ -378,28 +520,61 @@
             No React state, no async hook waiting to crash when your connection drops.
         </p>
         
+        <div class="weather-hero">
+            <div class="hero-temp-block">
+                <div class="hero-temp-value">{{ sensor.temperature }}°C</div>
+                <div class="hero-temp-meta">
+                    <span style="font-size: 1.25rem;">{{ weather_icon }} Indoor Atmosphere</span>
+                    {% if dew_point.value is not none %}
+                        <span class="comfort-badge">Dew Point: {{ dew_point.value }}°C &bull; {{ dew_point.comfort }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="hero-aux-grid">
+                <div class="aux-stat">
+                    <span class="aux-label">Barometer Tendency</span>
+                    <span class="aux-value">{{ barometer.arrow }} {{ barometer.text }}</span>
+                    <span class="aux-sub">{{ barometer.diff }} hPa vs 3h ago</span>
+                </div>
+                <div class="aux-stat">
+                    <span class="aux-label">Lunar Phase</span>
+                    <span class="aux-value">{{ moon.emoji }} {{ moon.name }}</span>
+                    <span class="aux-sub">{{ moon.illumination }}% illuminated</span>
+                </div>
+            </div>
+        </div>
+
         <table class="metric-table">
             <thead>
                 <tr>
                     <th>Metric</th>
-                    <th>Value</th>
+                    <th>Value & Indicator</th>
                     <th>Source / Status</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td><strong>Temperature</strong></td>
-                    <td>{{ sensor.temperature }}°C {{ weather_icon }}</td>
+                    <td>
+                        {{ sensor.temperature }}°C {{ weather_icon }}
+                        <meter min="-10" max="50" low="15" high="28" optimum="21" value="{{ sensor.temperature }}" style="width: 100px; vertical-align: middle; margin-left: 0.5rem;"></meter>
+                    </td>
                     <td>BME280 Sensor (or fallback)</td>
                 </tr>
                 <tr>
-                    <td><strong>Humidity</strong></td>
-                    <td>{{ sensor.humidity }}%</td>
+                    <td><strong>Relative Humidity</strong></td>
+                    <td>
+                        {{ sensor.humidity }}%
+                        <meter min="0" max="100" low="30" high="60" optimum="45" value="{{ sensor.humidity }}" style="width: 100px; vertical-align: middle; margin-left: 0.5rem;"></meter>
+                    </td>
                     <td>Pure water vapor in the air</td>
                 </tr>
                 <tr>
                     <td><strong>Atmospheric Pressure</strong></td>
-                    <td>{{ sensor.pressure }} hPa</td>
+                    <td>
+                        {{ sensor.pressure }} hPa ({{ barometer.arrow }} {{ barometer.text }})
+                        <meter min="950" max="1050" low="980" high="1025" optimum="1013" value="{{ sensor.pressure }}" style="width: 100px; vertical-align: middle; margin-left: 0.5rem;"></meter>
+                    </td>
                     <td>Gravity pulling the atmosphere down</td>
                 </tr>
                 <tr>
@@ -429,7 +604,7 @@
         {% endif %}
         <br>
         <form method="POST" action="/html/capture" style="display:inline;">
-             <button type="submit" onclick="alert('Starting background capture. Reload page in 3 seconds to see the new photo, you impatient developer!')">Trigger New Capture</button>
+             <button type="submit">📸 Trigger New Capture</button>
         </form>
     </section>
 
@@ -469,38 +644,44 @@
         <h2>4. The Actual News</h2>
         <p>Google News RSS feed and Hacker News stories, fetched server-side. No API keys, no analytics, no bloated tracking cookies.</p>
         
-        <details>
-            <summary><strong>🔥 Top Stories (Click to expand, yes this is native HTML, no JS!)</strong></summary>
-            <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
-                {% for item in news.top_stories %}
-                    <li style="margin-bottom: 0.5rem;"><a href="{{ item.link }}" target="_blank">{{ item.title }}</a> <small>({{ item.pubDate }})</small></li>
-                {% endfor %}
-            </ul>
-        </details>
-        <br>
+        <div class="css-tabs">
+            <input type="radio" name="news_tab" id="tab-top" checked>
+            <input type="radio" name="news_tab" id="tab-ai">
+            <input type="radio" name="news_tab" id="tab-hn">
+            <div class="tab-controls">
+                <label for="tab-top" class="tab-label">🔥 Top Stories ({{ news.top_stories|length }})</label>
+                <label for="tab-ai" class="tab-label">🤖 AI Intel ({{ news.ai_news|length }})</label>
+                <label for="tab-hn" class="tab-label">🧡 Hacker News ({{ news.hn_stories|length }})</label>
+            </div>
 
-        <details>
-            <summary><strong>🤖 AI Buzzword Bingo (Click to expand)</strong></summary>
-            <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
-                {% for item in news.ai_news %}
-                    <li style="margin-bottom: 0.5rem;"><a href="{{ item.link }}" target="_blank">{{ item.title }}</a> <small>({{ item.pubDate }})</small></li>
-                {% endfor %}
-            </ul>
-        </details>
-        <br>
+            <div class="tab-panel panel-top">
+                <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                    {% for item in news.top_stories %}
+                        <li style="margin-bottom: 0.5rem;"><a href="{{ item.link }}" target="_blank">{{ item.title }}</a> <small>({{ item.pubDate }})</small></li>
+                    {% endfor %}
+                </ul>
+            </div>
 
-        <details>
-            <summary><strong>🧡 Hacker News (For the self-proclaimed tech elites)</strong></summary>
-            <ul style="margin-top: 0.5rem; padding-left: 1.5rem; list-style-type: none;">
-                {% for item in news.hn_stories %}
-                    <li style="margin-bottom: 0.75rem;">
-                        <a href="{{ item.link }}" target="_blank" style="font-weight: 600; text-decoration: none; border-bottom: 1px dashed var(--border);">{{ item.title }}</a>
-                        <br>
-                        <small>🔥 {{ item.score }} points &middot; 💬 {{ item.comments }} comments</small>
-                    </li>
-                {% endfor %}
-            </ul>
-        </details>
+            <div class="tab-panel panel-ai">
+                <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                    {% for item in news.ai_news %}
+                        <li style="margin-bottom: 0.5rem;"><a href="{{ item.link }}" target="_blank">{{ item.title }}</a> <small>({{ item.pubDate }})</small></li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="tab-panel panel-hn">
+                <ul style="margin-top: 0.5rem; padding-left: 1.5rem; list-style-type: none;">
+                    {% for item in news.hn_stories %}
+                        <li style="margin-bottom: 0.75rem;">
+                            <a href="{{ item.link }}" target="_blank" style="font-weight: 600; text-decoration: none; border-bottom: 1px dashed var(--border);">{{ item.title }}</a>
+                            <br>
+                            <small>🔥 {{ item.score }} points &middot; 💬 {{ item.comments }} comments</small>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
     </section>
 
     <section>
@@ -577,7 +758,7 @@
             <p style="margin-bottom: 1rem;">No speedtest history. Run one in the background below.</p>
         {% endif %}
         <form method="POST" action="/html/speedtest">
-             <button type="submit" onclick="alert('Starting background speedtest. Reload in 30-60 seconds to see results!')">Run Speedtest</button>
+             <button type="submit">🚀 Run Background Speedtest</button>
         </form>
     </section>
 
