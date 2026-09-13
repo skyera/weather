@@ -67,6 +67,8 @@ weather_history.db
 # Flask stuff:
 instance/
 .webassets-cache
+static/image.jpg
+static/*.jpg
 
 # Scrapy stuff:
 .scrapy
