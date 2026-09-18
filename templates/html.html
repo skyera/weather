@@ -505,9 +505,21 @@
         <div class="flash-banner flash-success">
             <span>📸 <strong>Photo captured successfully!</strong> Reloaded latest sensor photo.</span>
         </div>
+    {% elif flash_type == 'photo_busy' %}
+        <div class="flash-banner flash-info">
+            <span>📷 <strong>Camera is currently busy.</strong> Another capture is in progress. Please try again shortly.</span>
+        </div>
     {% elif flash_type == 'speedtest_started' %}
         <div class="flash-banner flash-info">
             <span>⚡ <strong>Speedtest initiated in background!</strong> Refresh in 30–60 seconds to inspect results.</span>
+        </div>
+    {% elif flash_type == 'speedtest_busy' %}
+        <div class="flash-banner flash-info">
+            <span>⏳ <strong>Speedtest already in progress.</strong> Please wait for the current benchmark to complete.</span>
+        </div>
+    {% elif flash_type == 'feedback_received' %}
+        <div class="flash-banner flash-success">
+            <span>💬 <strong>Feedback received!</strong> Cleanly logged without database bloat.</span>
         </div>
     {% endif %}
 
@@ -909,7 +921,7 @@
 
     <footer>
         <hr>
-        <p><small>© Just Use HTML Weather Dashboard. Inspired by <a href="https://justfuckingusehtml.com/" target="_blank">justfuckingusehtml.com</a>.</small></p>
+        <p><small>© Just Use HTML Weather Dashboard. Inspired by <a href="https://justusehtml.com/" target="_blank">justusehtml.com</a>.</small></p>
         <p><small>Brought to you by <a href="/modern">Scripture & Skies</a>.</small></p>
     </footer>
 </body>

@@ -10,6 +10,7 @@ import csv
 import io
 import math
 import xml.etree.ElementTree as ET
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 from functools import wraps
 from pathlib import Path
@@ -59,6 +60,11 @@ IMAGE_FOLDER.mkdir(exist_ok=True)
 
 # Database lock for thread-safe operations
 DB_LOCK = threading.Lock()
+CAMERA_LOCK = threading.Lock()
+SPEEDTEST_LOCK = threading.Lock()
+SPEEDTEST_RUNNING = False
+RECORD_LOCK = threading.Lock()
+LAST_RECORDED_TIME = 0
 
 
 def ttl_cache(seconds=300, failure_ttl=60):
@@ -183,6 +189,13 @@ init_db()
 
 def run_speedtest_task():
     """Background task to run speedtest and record results."""
+    global SPEEDTEST_RUNNING
+    with SPEEDTEST_LOCK:
+        if SPEEDTEST_RUNNING:
+            app.logger.warning("Speedtest is already running; skipping redundant execution.")
+            return
+        SPEEDTEST_RUNNING = True
+
     app.logger.info("Starting background speedtest...")
     try:
         # Run speedtest with CSV output for reliable parsing
@@ -214,6 +227,9 @@ def run_speedtest_task():
             app.logger.error(f"Speedtest failed: {result.stderr}")
     except Exception as e:
         app.logger.error(f"Background speedtest error: {e}")
+    finally:
+        with SPEEDTEST_LOCK:
+            SPEEDTEST_RUNNING = False
 
 
 def get_latest_speedtest():
@@ -276,7 +292,7 @@ def get_system_info():
             lines = result.stdout.strip().split("\n")
             if len(lines) > 1:
                 parts = lines[1].split()
-                if len(parts) >= 7:
+                if len(parts) >= 4:
                     total = parts[1]
                     used = parts[2]
                     free = parts[3]
@@ -384,14 +400,14 @@ def get_random_word():
     """Get a random word with definition and example from dictionary APIs."""
     try:
         # Fetch random word from Random Word API
-        word_response = requests.get('https://random-word-api.herokuapp.com/word', timeout=5)
+        word_response = requests.get('https://random-word-api.herokuapp.com/word', timeout=2.5)
         if word_response.status_code != 200:
             return get_fallback_word()
         
         word = word_response.json()[0]
         
         # Fetch definition from Free Dictionary API
-        def_response = requests.get(f'https://api.dictionaryapi.dev/api/v2/entries/en/{word}', timeout=5)
+        def_response = requests.get(f'https://api.dictionaryapi.dev/api/v2/entries/en/{word}', timeout=2.5)
         if def_response.status_code != 200:
             return get_fallback_word()
         
@@ -538,9 +554,14 @@ def get_sensor_data():
                 "error": str(e)
             }
     
-    # Record the reading if temperature is available
+    # Record the reading if temperature is available, throttled to at most once per 5 minutes
     if data.get("temperature") is not None:
-        record_temperature(data["temperature"], data.get("pressure"), data.get("humidity"))
+        global LAST_RECORDED_TIME
+        now = time.time()
+        with RECORD_LOCK:
+            if now - LAST_RECORDED_TIME >= 300:
+                record_temperature(data["temperature"], data.get("pressure"), data.get("humidity"))
+                LAST_RECORDED_TIME = now
     
     return data
 
@@ -608,78 +629,85 @@ def capture_image():
 
     Saves to static/image.jpg and creates timestamped backups.
     """
-    # Get Pacific timezone
-    tz_pacific = pytz.timezone('US/Pacific')
-    now_pacific = datetime.now(tz_pacific)
-    timestamp = now_pacific.strftime("%Y-%m-%d_%H-%M-%S")
-    backup_path = IMAGE_FOLDER / f"{timestamp}.jpg"
-
-    # If no camera capabilities detected, skip
-    if not (PICAMERA_AVAILABLE or RASPISILL_AVAILABLE or LIBCAMERA_STILL_AVAILABLE):
-        app.logger.info("No camera method available; skipping capture.")
+    if not CAMERA_LOCK.acquire(blocking=False):
+        app.logger.warning("Camera is busy processing another capture request.")
         return False
 
-    success = False
     try:
-        if IMAGE_PATH.exists():
-            shutil.copy(IMAGE_PATH, backup_path)
+        # Get Pacific timezone
+        tz_pacific = pytz.timezone('US/Pacific')
+        now_pacific = datetime.now(tz_pacific)
+        timestamp = now_pacific.strftime("%Y-%m-%d_%H-%M-%S")
+        backup_path = IMAGE_FOLDER / f"{timestamp}.jpg"
 
-        # Try picamera first
-        if PICAMERA_AVAILABLE:
-            try:
-                with PiCamera() as camera:
-                    camera.resolution = (1280, 720)
-                    camera.start_preview()
-                    time.sleep(1)
-                    camera.capture(str(IMAGE_PATH))
-                    camera.stop_preview()
-                success = True
-            except Exception as e:
-                app.logger.warning(f"picamera capture failed: {e}")
+        # If no camera capabilities detected, skip
+        if not (PICAMERA_AVAILABLE or RASPISILL_AVAILABLE or LIBCAMERA_STILL_AVAILABLE):
+            app.logger.info("No camera method available; skipping capture.")
+            return False
 
-        # Next try raspistill (legacy)
-        if not success and RASPISILL_AVAILABLE:
-            try:
-                cmd = [
-                    'raspistill',
-                    '-o', str(IMAGE_PATH),
-                    '-t', '1000',
-                    '-w', '1280',
-                    '-h', '720',
-                    '-q', '85'
-                ]
-                subprocess.run(cmd, check=True, timeout=10)
-                success = True
-            except Exception as e:
-                app.logger.warning(f"raspistill capture failed: {e}")
+        success = False
+        try:
+            if IMAGE_PATH.exists():
+                shutil.copy(IMAGE_PATH, backup_path)
 
-        # Finally try libcamera-still
-        if not success and LIBCAMERA_STILL_AVAILABLE:
-            try:
-                cmd = [
-                    'libcamera-still',
-                    '-o', str(IMAGE_PATH),
-                    '--timeout', '1000',
-                    '--width', '1280',
-                    '--height', '720'
-                ]
-                subprocess.run(cmd, check=True, timeout=15)
-                success = True
-            except Exception as e:
-                app.logger.warning(f"libcamera-still capture failed: {e}")
+            # Try picamera first
+            if PICAMERA_AVAILABLE:
+                try:
+                    with PiCamera() as camera:
+                        camera.resolution = (1280, 720)
+                        camera.start_preview()
+                        time.sleep(1)
+                        camera.capture(str(IMAGE_PATH))
+                        camera.stop_preview()
+                    success = True
+                except Exception as e:
+                    app.logger.warning(f"picamera capture failed: {e}")
 
-        # Add timestamp overlay using PIL for consistency
-        if success and IMAGE_PATH.exists():
-            add_timestamp_to_image(IMAGE_PATH)
-            # Also update the backup with the timestamped version
-            shutil.copy(IMAGE_PATH, backup_path)
-            return True
+            # Next try raspistill (legacy)
+            if not success and RASPISILL_AVAILABLE:
+                try:
+                    cmd = [
+                        'raspistill',
+                        '-o', str(IMAGE_PATH),
+                        '-t', '1000',
+                        '-w', '1280',
+                        '-h', '720',
+                        '-q', '85'
+                    ]
+                    subprocess.run(cmd, check=True, timeout=10)
+                    success = True
+                except Exception as e:
+                    app.logger.warning(f"raspistill capture failed: {e}")
 
-        return False
+            # Finally try libcamera-still
+            if not success and LIBCAMERA_STILL_AVAILABLE:
+                try:
+                    cmd = [
+                        'libcamera-still',
+                        '-o', str(IMAGE_PATH),
+                        '--timeout', '1000',
+                        '--width', '1280',
+                        '--height', '720'
+                    ]
+                    subprocess.run(cmd, check=True, timeout=15)
+                    success = True
+                except Exception as e:
+                    app.logger.warning(f"libcamera-still capture failed: {e}")
 
-    except Exception as e:
-        app.logger.error(f"Camera overall error: {e}")
-        return False
+            # Add timestamp overlay using PIL for consistency
+            if success and IMAGE_PATH.exists():
+                add_timestamp_to_image(IMAGE_PATH)
+                # Also update the backup with the timestamped version
+                shutil.copy(IMAGE_PATH, backup_path)
+                return True
+
+            return False
+
+        except Exception as e:
+            app.logger.error(f"Camera overall error: {e}")
+            return False
+    finally:
+        CAMERA_LOCK.release()
 
 
 @ttl_cache(seconds=86400)
@@ -780,21 +808,28 @@ def get_hacker_news():
     """Get top 5 stories from Hacker News using the Firebase API."""
     try:
         # Get top story IDs
-        top_ids_resp = requests.get("https://hacker-news.firebaseio.com/v0/topstories.json", timeout=5)
+        top_ids_resp = requests.get("https://hacker-news.firebaseio.com/v0/topstories.json", timeout=4)
         if top_ids_resp.status_code == 200:
             top_ids = top_ids_resp.json()[:5]
-            stories = []
-            for item_id in top_ids:
-                item_resp = requests.get(f"https://hacker-news.firebaseio.com/v0/item/{item_id}.json", timeout=5)
-                if item_resp.status_code == 200:
-                    item = item_resp.json()
-                    stories.append({
-                        "title": item.get("title", "No Title"),
-                        "link": item.get("url") or f"https://news.ycombinator.com/item?id={item_id}",
-                        "score": item.get("score", 0),
-                        "comments": item.get("descendants", 0)
-                    })
-            return stories
+
+            def fetch_item(item_id):
+                try:
+                    item_resp = requests.get(f"https://hacker-news.firebaseio.com/v0/item/{item_id}.json", timeout=3)
+                    if item_resp.status_code == 200:
+                        item = item_resp.json()
+                        return {
+                            "title": item.get("title", "No Title"),
+                            "link": item.get("url") or f"https://news.ycombinator.com/item?id={item_id}",
+                            "score": item.get("score", 0),
+                            "comments": item.get("descendants", 0)
+                        }
+                except Exception:
+                    pass
+                return None
+
+            with ThreadPoolExecutor(max_workers=5) as executor:
+                results = list(executor.map(fetch_item, top_ids))
+            return [s for s in results if s is not None]
     except Exception as e:
         app.logger.warning(f"Failed to fetch Hacker News: {e}")
     return []
@@ -1106,27 +1141,32 @@ def html_dashboard():
     dew_point = calculate_dew_point(sensor_data.get("temperature"), sensor_data.get("humidity"))
     moon = get_moon_phase()
     
-    # Fetch wisdom
-    bible_verse = get_bible_verse()
-    famous_quote = get_famous_quote()
-    random_word = get_random_word()
-    
-    # Fetch news
-    news_stories = {
-        "top_stories": get_news(),
-        "ai_news": get_ai_news(),
-        "hn_stories": get_hacker_news()
-    }
-    
-    # Fetch history
-    history = get_this_day_in_history()
+    # Concurrently fetch external network resources to prevent blocking gunicorn sync workers
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        f_verse = executor.submit(get_bible_verse)
+        f_quote = executor.submit(get_famous_quote)
+        f_word = executor.submit(get_random_word)
+        f_news = executor.submit(get_news)
+        f_ainews = executor.submit(get_ai_news)
+        f_hn = executor.submit(get_hacker_news)
+        f_history = executor.submit(get_this_day_in_history)
+        f_holidays = executor.submit(get_upcoming_holidays)
+        f_nasa = executor.submit(get_nasa_apod)
+
+        bible_verse = f_verse.result()
+        famous_quote = f_quote.result()
+        random_word = f_word.result()
+        news_stories = {
+            "top_stories": f_news.result(),
+            "ai_news": f_ainews.result(),
+            "hn_stories": f_hn.result()
+        }
+        history = f_history.result()
+        holidays = f_holidays.result()
+        nasa = f_nasa.result()
+
+    # Local resources
     figure = get_historical_figure()
-    
-    # Fetch holidays
-    holidays = get_upcoming_holidays()
-    
-    # Fetch APOD, movie, C++ tip, shortcut, algorithm
-    nasa = get_nasa_apod()
     movie = get_random_movie()
     cpp_tip = get_cpp_tip()
     shortcut = get_shortcut_tip()
@@ -1170,12 +1210,16 @@ def html_dashboard():
 
 @app.route("/html/capture", methods=['POST'])
 def html_capture():
-    capture_image()
-    return redirect(url_for('html_dashboard', msg='photo_captured'))
+    ok = capture_image()
+    msg = 'photo_captured' if ok else 'photo_busy'
+    return redirect(url_for('html_dashboard', msg=msg))
 
 
 @app.route("/html/speedtest", methods=['POST'])
 def html_speedtest():
+    with SPEEDTEST_LOCK:
+        if SPEEDTEST_RUNNING:
+            return redirect(url_for('html_dashboard', msg='speedtest_busy'))
     thread = threading.Thread(target=run_speedtest_task)
     thread.daemon = True
     thread.start()
@@ -1184,28 +1228,12 @@ def html_speedtest():
 
 @app.route("/html/feedback", methods=['POST'])
 def html_feedback():
-    username = request.form.get("username")
-    opinion = request.form.get("opinion")
-    msg = request.form.get("msg")
-    app.logger.info(f"Feedback from {username} ({opinion}): {msg}")
-    return f"""
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Feedback Received</title>
-        <meta name="color-scheme" content="light dark">
-        <style>
-            body {{ font-family: system-ui, sans-serif; max-width: 600px; margin: 100px auto; text-align: center; }}
-        </style>
-    </head>
-    <body>
-        <h1>Feedback Received, you opinionated developer!</h1>
-        <p>We logged your feedback in the console. No bloated database record created, just standard Unix logging.</p>
-        <p><a href="/">← Back to the pure HTML dashboard</a></p>
-    </body>
-    </html>
-    """
+    username = (request.form.get("username") or "").strip()[:50]
+    opinion = (request.form.get("opinion") or "").strip()[:50]
+    msg = (request.form.get("msg") or "").strip()[:500]
+    clean_msg = msg.replace("\r", " ").replace("\n", " ")
+    app.logger.info(f"Feedback from {username} ({opinion}): {clean_msg}")
+    return redirect(url_for('html_dashboard', msg='feedback_received'))
 
 
 @app.route("/api/this-day-in-history")
@@ -1256,6 +1284,9 @@ def api_system():
 @app.route("/api/speedtest", methods=['POST'])
 def api_speedtest():
     """Trigger a background speedtest."""
+    with SPEEDTEST_LOCK:
+        if SPEEDTEST_RUNNING:
+            return jsonify({"status": "Speedtest already in progress"}), 429
     thread = threading.Thread(target=run_speedtest_task)
     thread.daemon = True
     thread.start()
